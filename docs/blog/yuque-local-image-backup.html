@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="语雀导出后如何保证图片长期可用？用 YuqueOut 导出 Markdown 并开启图片本地化，保留相对路径、目录结构和验收清单，避免备份、迁移和 AI 知识库导入时裂图。">
+    <meta name="keywords" content="语雀图片本地化,语雀导出图片,语雀备份图片,语雀Markdown图片,YuqueOut,语雀图片裂图,知识库备份,AI知识库图片,静态博客图片">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-local-image-backup.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="语雀图片本地化备份：Markdown 导出、相对路径和长期可读检查清单">
+    <meta property="og:description" content="把语雀知识库导出到本地时，图片必须和 Markdown 一起保存。本文给出 YuqueOut 图片本地化、目录结构、迁移验收和 AI 知识库导入前的检查清单。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-local-image-backup.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-image-fix.webp">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-07-25">
+    <meta property="article:modified_time" content="2026-07-25">
+    <meta property="article:section" content="图片本地化">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="语雀图片本地化备份">
+    <meta name="twitter:description" content="Markdown 导出、相对路径和长期可读检查清单。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-image-fix.webp">
+
+    <meta name="theme-color" content="#060b22">
+    <title>语雀图片本地化备份：Markdown 导出、相对路径和长期可读检查清单 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "语雀图片本地化备份：Markdown 导出、相对路径和长期可读检查清单",
+      "description": "语雀知识库导出后保持图片长期可读的完整流程，覆盖 YuqueOut Markdown 导出、图片本地化、相对路径、目录结构、迁移验收、AI 知识库导入前检查和常见问题。",
+      "url": "https://yuque.toolab.top/blog/yuque-local-image-backup.html",
+      "datePublished": "2026-07-25",
+      "dateModified": "2026-07-25",
+      "image": "https://yuque.toolab.top/images/blog-image-fix.webp",
+      "author": { "@type": "Person", "name": "Kevin Yang", "url": "https://yuque.toolab.top/" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-local-image-backup.html",
+      "wordCount": 2600,
+      "articleSection": "图片本地化"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语雀图片本地化备份", "item": "https://yuque.toolab.top/blog/yuque-local-image-backup.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "语雀导出时为什么要开启图片本地化？",
+          "acceptedAnswer": { "@type": "Answer", "text": "因为长期备份、静态博客迁移、Obsidian 管理和 AI 知识库导入都不应依赖原语雀图片外链。图片本地化会把图片文件保存到本地目录，并把 Markdown 中的图片链接改成相对路径。" }
+        },
+        {
+          "@type": "Question",
+          "name": "只导出 Markdown 不下载图片可以吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "只适合临时阅读，不适合长期备份。外链图片可能受登录态、权限、Referer、链接有效期或服务变更影响，迁移到本地编辑器、静态博客或 AI 平台后容易裂图。" }
+        },
+        {
+          "@type": "Question",
+          "name": "图片本地化后应该如何检查？",
+          "acceptedAnswer": { "@type": "Answer", "text": "至少抽查 Markdown 预览、assets 目录、相对路径、文件名冲突、空文件、封面图和目标平台导入效果。大型知识库应先抽样 20 篇，再批量处理。" }
+        },
+        {
+          "@type": "Question",
+          "name": "本地图片会被 YuqueOut 上传到服务器吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。YuqueOut 的导出和转换在浏览器本地完成，不把文档内容或图片上传到第三方服务器。导出后的文件是否上传到其他平台由用户自行决定。" }
+        },
+        {
+          "@type": "Question",
+          "name": "AI 知识库需要图片本地化吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "需要。即使目标 AI 平台主要检索文本，本地图片仍能保留截图、流程图、表格截图和产品界面上下文，便于人工复核、后续重建页面和补充多模态材料。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_local_image_backup" target="_blank" rel="noopener" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">语雀图片本地化备份</span>
+                </div>
+                <span class="blog-article-tag">图片本地化</span>
+                <h1 class="blog-article-title">语雀图片本地化备份：Markdown 导出、相对路径和长期可读检查清单</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">2026-07-25</span>
+                    <span class="blog-article-meta-item">10 分钟阅读</span>
+                    <span class="blog-article-meta-item">约 2600 字</span>
+                    <span class="blog-article-meta-item blog-article-author">Kevin Yang</span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-image-fix.webp" alt="语雀图片本地化备份的 Markdown、assets 和相对路径工作流" width="1200" height="630" loading="eager" style="width:100%;height:auto;border-radius:8px;margin-bottom:2rem;">
+
+                <aside class="citation-capsule" style="background:rgba(99,102,241,0.08);border-left:4px solid #6366f1;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">语雀知识库要做长期备份、迁移到静态博客、放进 Obsidian 或准备 AI 知识库，建议用 YuqueOut 导出 Markdown，并开启图片本地化。正确结果不是只有 <code>.md</code> 文件，而是正文、图片、附件和相对路径一起落到本地目录；验收时要断网预览、抽查 assets、检查空文件和重复文件名，确认离开语雀登录态后仍能完整阅读。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#why">为什么图片本地化是备份关键</a></li>
+                        <li><a href="#export">推荐导出设置</a></li>
+                        <li><a href="#structure">本地目录应该长什么样</a></li>
+                        <li><a href="#check">导出后的验收清单</a></li>
+                        <li><a href="#migration">迁移到博客、Obsidian 和 AI 知识库</a></li>
+                        <li><a href="#security">企业资料的安全边界</a></li>
+                        <li><a href="#mistakes">常见错误和修复方式</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>很多语雀备份失败，不是因为正文没有导出，而是图片仍然停留在远程链接里。Markdown 文件看起来很完整，真正打开到本地编辑器、静态博客、Git 仓库或 AI 知识库时，截图、流程图、表格截图和产品界面却全部失效。对长期归档来说，这类备份只能算半份备份。</p>
+
+                <p>YuqueOut 的定位是先把语雀资料安全拿到本地：正文转换为通用格式，图片保存为本地文件，路径改成可迁移的相对引用。后续你可以把这份资料放进 Obsidian、Git、静态博客、Dify、OpenAI File Search 或内部 RAG 系统，但上传到哪个平台、公开哪些内容，都由你自己决定。</p>
+
+                <h2 id="why">为什么图片本地化是备份关键</h2>
+                <p>知识库里的图片通常不是装饰。它们可能是操作截图、产品界面、架构图、流程图、报错截图、表格截图或会议白板。如果只保存 Markdown 正文，很多教程和排障文档会丢失关键上下文。</p>
+                <p>图片外链还有三个长期风险：</p>
+                <ul>
+                    <li><strong>访问环境变化。</strong>离开语雀网页后，本地编辑器、博客域名和 AI 平台不一定能继续访问原图片地址。</li>
+                    <li><strong>权限上下文变化。</strong>团队成员离职、知识库权限调整、文档转移后，原链接可能不再对当前账号可见。</li>
+                    <li><strong>归档不可验证。</strong>只要图片还依赖线上服务，你就无法证明这份备份在断网、迁移或多年后仍然完整。</li>
+                </ul>
+                <p>因此，长期备份的基本标准应该是：断开语雀环境后，打开本地文件仍能读完正文、看到图片、追踪附件，并保持目录结构可理解。</p>
+
+                <h2 id="export">推荐导出设置</h2>
+                <p>如果目标是长期备份和迁移，推荐从以下设置开始：</p>
+                <ol class="step-list">
+                    <li><strong>格式选择 Markdown。</strong>Markdown 适合 Git diff、全文搜索、静态站点生成和 AI 知识库分段。</li>
+                    <li><strong>开启图片本地化。</strong>让图片下载到本地 assets 目录，并把正文图片链接替换为相对路径。</li>
+                    <li><strong>保留知识库目录。</strong>不要一开始就拍平所有文件；目录是后续排查来源、拆分权限和批量迁移的依据。</li>
+                    <li><strong>特殊内容单独抽查。</strong>包含画板、表格、加密文档、协作文档和收藏夹的知识库，要在导出后单独验收。</li>
+                    <li><strong>大知识库分批执行。</strong>先导出一个目录或 20 篇代表性文档，确认路径和图片策略正确，再跑全量。</li>
+                </ol>
+                <p>如果你还没确定源格式，可以先看 <a href="yuque-to-markdown-guide.html">语雀文档批量转 Markdown 完整指南</a>。如果遇到导出失败或下载中断，再配合 <a href="yuque-export-troubleshooting.html">语雀导出失败排查指南</a>定位是网络、权限、格式还是单文件问题。</p>
+
+                <h2 id="structure">本地目录应该长什么样</h2>
+                <p>一份可迁移的导出包，应该让人一眼看懂正文和资源的关系。常见结构可以是：</p>
+                <div class="info-box">
+                    <div class="info-box-title">推荐结构</div>
+                    <pre><code>yuque-backup/
+├── 产品手册/
+│   ├── 安装指南.md
+│   └── assets/
+│       ├── install-step-01.png
+│       └── install-step-02.png
+├── 故障排查/
+│   ├── 图片裂图怎么办.md
+│   └── assets/
+│       └── broken-image-example.png
+└── export-report.html</code></pre>
+                </div>
+                <p>不同工具的目录命名可能略有差异，关键不是固定叫 <code>assets</code>，而是满足三点：图片文件真实存在，Markdown 中引用的是相对路径，整个目录移动到别的位置后仍能打开。</p>
+                <p>如果要进入静态博客，可以再把图片移动到站点的 <code>images/</code>、<code>public/</code> 或文章资源目录。但这个动作应该发生在“已确认本地导出完整”之后，不要一边导出一边改路径，否则出错时很难判断问题来自语雀、导出工具还是站点构建。</p>
+
+                <h2 id="check">导出后的验收清单</h2>
+                <p>导出完成并不等于备份完成。建议至少做一次轻量验收：</p>
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>检查项</th><th>通过标准</th><th>不通过时的处理</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Markdown 预览</td><td>断开语雀页面后仍能看到正文和图片</td><td>重新导出并确认图片本地化已开启。</td></tr>
+                            <tr><td>图片路径</td><td>正文使用 <code>./assets/...</code> 或同类相对路径</td><td>批量替换残留远程链接，或重新跑图片下载。</td></tr>
+                            <tr><td>图片文件</td><td>文件大小非 0，能用系统预览打开</td><td>单文件重试，或检查该文档是否有权限限制。</td></tr>
+                            <tr><td>目录结构</td><td>知识库、目录和文件名能追溯来源</td><td>补一份映射表，避免后续迁移失去上下文。</td></tr>
+                            <tr><td>抽样范围</td><td>覆盖长文、图多文、表格文、加密文档和协作文档</td><td>扩大抽样，不要只检查最简单的文章。</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>团队场景建议把验收记录放在导出包旁边，例如记录导出日期、账号、知识库范围、跳过文件、失败文件和重试结果。这样下一次增量备份时，不需要重新猜测上次到底漏了什么。</p>
+
+                <h2 id="migration">迁移到博客、Obsidian 和 AI 知识库</h2>
+                <p>图片本地化之后，不同目标平台的处理重点不同：</p>
+                <ul>
+                    <li><strong>Obsidian。</strong>保持 Markdown 和图片相对路径，先打开 Vault 抽查链接，再决定是否启用统一附件目录。</li>
+                    <li><strong>静态博客。</strong>先确认本地图片完整，再按站点规范改为公开图片路径，补 canonical、OG 图片、sitemap 和 FAQ。</li>
+                    <li><strong>AI 知识库。</strong>即使目标平台主要检索文本，也要保留图片目录，方便人工核对答案来源和后续多模态扩展。</li>
+                    <li><strong>Git 归档。</strong>如果图片很多，注意仓库体积；可以把原始导出包和公开博客源码分开管理。</li>
+                </ul>
+                <p>如果你的目标是公开站点，可以继续看 <a href="yuque-to-static-blog.html">语雀迁移到静态博客</a>；如果目标是 RAG 或企业知识库，可以参考 <a href="yuque-ai-knowledge-base-guide.html">语雀内容如何整理成 AI 知识库</a>。这几条路线的共同前提，都是先拿到完整、可移动、可复核的本地资料包。</p>
+
+                <h2 id="security">企业资料的安全边界</h2>
+                <p>图片本地化会让资料更容易迁移，也意味着更需要管好边界。导出前先确认哪些知识库可以进入个人电脑，哪些必须放在公司受控目录，哪些不能上传到公开博客或第三方 AI 平台。</p>
+                <p>建议企业按三类处理：</p>
+                <ul>
+                    <li><strong>公开内容。</strong>产品教程、帮助中心、公开 FAQ，可以进入博客和搜索入口。</li>
+                    <li><strong>内部内容。</strong>SOP、项目复盘、客服升级流程，只进入内部知识库或受限 AI 应用。</li>
+                    <li><strong>敏感内容。</strong>客户资料、合同、价格、人事、财务和未发布方案，默认不进入 AI 平台和公开站点。</li>
+                </ul>
+                <p>YuqueOut 负责本地导出和转换，不替你判断哪些内容应该公开。团队负责人需要在导出后做一次资料分级，必要时参考 <a href="yuque-ai-knowledge-base-permissions.html">企业语雀导入 AI 知识库前的权限治理</a>。</p>
+
+                <h2 id="mistakes">常见错误和修复方式</h2>
+                <h3>错误一：只保存 Markdown，不保存图片目录</h3>
+                <p>这会让备份在本机以外的环境失效。修复方式是重新导出并开启图片本地化；如果已经有 Markdown，可以先检索 <code>http</code> 图片链接，确认哪些资源仍在远端。</p>
+                <h3>错误二：把图片移动后没有改路径</h3>
+                <p>静态博客经常需要把图片放到统一目录。移动前先保留一份原始导出包，移动后用本地预览或构建检查所有图片引用。</p>
+                <h3>错误三：把内部截图发布到公开博客</h3>
+                <p>很多截图包含账号、客户名、内部系统地址或价格信息。公开前要逐张检查，必要时打码、重画示意图，或者直接删除。</p>
+
+                <h2 id="faq">常见问题</h2>
+                <h3>语雀导出时为什么要开启图片本地化？</h3>
+                <p>因为长期备份、静态博客迁移、Obsidian 管理和 AI 知识库导入都不应依赖原语雀图片外链。图片本地化会把图片文件保存到本地目录，并把 Markdown 中的图片链接改成相对路径。</p>
+
+                <h3>只导出 Markdown 不下载图片可以吗？</h3>
+                <p>只适合临时阅读，不适合长期备份。外链图片可能受登录态、权限、Referer、链接有效期或服务变更影响，迁移到本地编辑器、静态博客或 AI 平台后容易裂图。</p>
+
+                <h3>图片本地化后应该如何检查？</h3>
+                <p>至少抽查 Markdown 预览、assets 目录、相对路径、文件名冲突、空文件、封面图和目标平台导入效果。大型知识库应先抽样 20 篇，再批量处理。</p>
+
+                <h3>本地图片会被 YuqueOut 上传到服务器吗？</h3>
+                <p>不会。YuqueOut 的导出和转换在浏览器本地完成，不把文档内容或图片上传到第三方服务器。导出后的文件是否上传到其他平台由用户自行决定。</p>
+
+                <h3>AI 知识库需要图片本地化吗？</h3>
+                <p>需要。即使目标 AI 平台主要检索文本，本地图片仍能保留截图、流程图、表格截图和产品界面上下文，便于人工复核、后续重建页面和补充多模态材料。</p>
+
+                <div class="blog-cta">
+                    <h3>先把语雀正文和图片完整导出</h3>
+                    <p>用 YuqueOut 批量导出 Markdown、本地图片和目录结构，再迁移到博客、Obsidian 或 AI 知识库。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_local_image_backup_cta" target="_blank" rel="noopener" class="blog-cta-button">免费安装 YuqueOut</a>
+                </div>
+
+                <div class="blog-related">
+                    <h2>相关文章</h2>
+                    <div class="blog-related-grid">
+                        <a href="yuque-image-hotlink-fix.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀图片防盗链和本地化处理指南</span>
+                            <span class="blog-related-card-excerpt">理解图片裂图的原因和本地化方案</span>
+                        </a>
+                        <a href="yuque-to-static-blog.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀迁移到静态博客</span>
+                            <span class="blog-related-card-excerpt">把本地导出包整理成可搜索、可引用的公开页面</span>
+                        </a>
+                        <a href="yuque-ai-knowledge-base-guide.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀内容如何整理成 AI 知识库</span>
+                            <span class="blog-related-card-excerpt">Markdown、图片和权限边界的 RAG 准备清单</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <footer class="homepage-footer">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <div class="footer-logo">
+                            <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36" class="footer-logo-image"></picture>
+                            <span class="footer-logo-text">YuqueOut 语雀导出助手</span>
+                        </div>
+                        <p class="footer-description">专业的语雀知识库批量导出解决方案。</p>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">产品</h3>
+                        <ul class="footer-links">
+                            <li><a href="../#features">功能特性</a></li>
+                            <li><a href="./">博客</a></li>
+                            <li><a href="../privacy.html">隐私政策</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">支持</h3>
+                        <ul class="footer-links"><li><a href="mailto:yhj2433488839@gmail.com">联系我们</a></li></ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 YuqueOut 语雀导出助手. Built with passion for better data freedom.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../script.js" defer></script>
+</body>
+</html>
