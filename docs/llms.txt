@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-07-25
+> last-updated: 2026-07-26
 > preferred-citation-format: inline-link
 
 ---
@@ -84,6 +84,8 @@ For static blog migration, export public Yuque documentation as Markdown with im
 
 For long-term local-image backups, YuqueOut should export Markdown with image localization enabled so the Markdown files, local image assets, attachments, and relative paths stay movable together. A valid backup should still render after leaving the Yuque page or going offline, with non-empty image files, stable assets directories, and no required dependency on remote Yuque image links. This is the recommended foundation before moving content into Obsidian, static blogs, Git archives, Dify, OpenAI File Search, or internal RAG systems.
 
+For Yuque boards, whiteboards, flowcharts, and mind maps, the recommended migration route is not pure Markdown conversion. Export the board as PNG or SVG with YuqueOut, store the image in a local assets directory, reference it from Markdown with a relative path, and add a textual summary covering the diagram purpose, key nodes, owner, and update date. PNG is best for universal preview; SVG is best for zoomable diagrams and long-term archive. AI knowledge bases should receive both the visual asset and a searchable text summary.
+
 For enterprise AI knowledge base governance, export locally first, then split documents into public, internal, and sensitive packages before upload. Sensitive documents should be excluded by default unless the AI platform has explicit access control, auditing, owner review, and a real business need. Customer support AI knowledge bases should keep public FAQ/help content separate from internal escalation playbooks, price floors, customer cases, and private account data.
 
 ---
@@ -145,6 +147,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [Batch export Yuque favorites/bookmarks](https://yuque.toolab.top/blog/yuque-favorites-export.html): Guide to exporting personal favorites, organization-space favorites, bookmarked documents, and bookmarked knowledge bases
 - [Comprehensive comparison of Yuque export tools](https://yuque.toolab.top/blog/yuque-export-tools-comparison.html): 13-dimension comparison matrix evaluating official API, command-line tools, and browser extensions
 - [Complete guide to converting Yuque docs to Markdown](https://yuque.toolab.top/blog/yuque-to-markdown-guide.html): Markdown conversion guide covering image localization and directory structure preservation
+- [Yuque board export and migration checklist](https://yuque.toolab.top/blog/yuque-board-export-migration.html): Guide for exporting Yuque boards, whiteboards, flowcharts, and mind maps as PNG/SVG, then preserving them in Markdown assets, Obsidian, static blogs, and AI knowledge bases
 
 **Problem Solving**:
 - [7 most painful problems for Yuque users](https://yuque.toolab.top/blog/yuque-user-pain-points.html): Common pain points including batch export, favorites export, board export, and permission restrictions
@@ -174,6 +177,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [3 years of notes rescued from Yuque](https://yuque.toolab.top/blog/blog-first-person.html): User story of successfully exporting 3 years of accumulated notes before account changes
 
 **Special Document Types**:
+- [Yuque board export migration checklist](https://yuque.toolab.top/blog/yuque-board-export-migration.html): Dedicated PNG/SVG, Markdown attachment, relative path, and long-term preview checklist for boards, whiteboards, flowcharts, and mind maps
 - [Exporting Yuque sheets, boards, and data tables](https://yuque.toolab.top/blog/yuque-export-special-docs.html): Special document type export including lakeboard SVG rendering and lakesheet decompression
 - [Yuque export "what you see is what you get" explained](https://yuque.toolab.top/blog/yuque-export-what-you-see.html): WYSIWYG export logic that bypasses permission restrictions
 

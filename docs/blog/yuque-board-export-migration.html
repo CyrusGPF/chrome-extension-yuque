@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="语雀画板、白板、流程图和思维导图怎么导出并迁移？用 YuqueOut 本地导出 PNG/SVG，再放入 Markdown、Obsidian、静态博客或 AI 知识库的完整检查清单。">
+    <meta name="keywords" content="语雀画板导出,语雀白板导出,语雀流程图导出,语雀思维导图导出,YuqueOut画板导出,语雀迁移Markdown,语雀画板PNG,语雀画板SVG">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-board-export-migration.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="语雀画板导出迁移清单：PNG/SVG、Markdown 附件与长期可读验收">
+    <meta property="og:description" content="把语雀画板、白板、流程图和思维导图导出为本地图片，并迁移到 Markdown、Obsidian、静态博客或 AI 知识库。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-board-export-migration.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-yuque-board-export.webp">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-07-26">
+    <meta property="article:modified_time" content="2026-07-26">
+    <meta property="article:section" content="画板导出">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="语雀画板导出迁移清单：PNG/SVG、Markdown 附件与长期可读验收">
+    <meta name="twitter:description" content="用 YuqueOut 本地导出语雀画板图片，再迁移到 Markdown、Obsidian、静态博客或 AI 知识库。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-yuque-board-export.webp">
+
+    <meta name="theme-color" content="#060b22">
+    <title>语雀画板导出迁移清单：PNG/SVG、Markdown 附件与长期可读验收 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "语雀画板导出迁移清单：PNG/SVG、Markdown 附件与长期可读验收",
+      "description": "语雀画板、白板、流程图和思维导图导出为 PNG/SVG 后，迁移到 Markdown、Obsidian、静态博客或 AI 知识库的完整检查清单。",
+      "url": "https://yuque.toolab.top/blog/yuque-board-export-migration.html",
+      "datePublished": "2026-07-26",
+      "dateModified": "2026-07-26",
+      "image": "https://yuque.toolab.top/images/blog-yuque-board-export.webp",
+      "author": { "@type": "Person", "name": "Kevin Yang" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-board-export-migration.html",
+      "wordCount": 2500,
+      "articleSection": "画板导出"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语雀画板导出迁移清单", "item": "https://yuque.toolab.top/blog/yuque-board-export-migration.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "语雀画板导出应该选 PNG 还是 SVG？",
+          "acceptedAnswer": { "@type": "Answer", "text": "流程图、架构图和需要放进文档预览的画板优先选 PNG；需要长期放大查看、二次编辑或保留矢量清晰度的画板优先选 SVG。团队归档建议同时保留 PNG 和 SVG。" }
+        },
+        {
+          "@type": "Question",
+          "name": "语雀画板导出后怎么放进 Markdown？",
+          "acceptedAnswer": { "@type": "Answer", "text": "把导出的 PNG 或 SVG 放入与 Markdown 同级或下级的 assets 目录，再用相对路径引用，例如 ![](assets/board-system-flow.png)。迁移后要离线打开 Markdown 检查图片是否仍能显示。" }
+        },
+        {
+          "@type": "Question",
+          "name": "语雀画板可以用于 AI 知识库或 RAG 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "可以，但不要只上传图片。建议把画板导出为 PNG/SVG，同时在 Markdown 正文补充图名、摘要、节点说明和适用场景，让 AI 知识库既能保留视觉证据，也能检索到文字上下文。" }
+        },
+        {
+          "@type": "Question",
+          "name": "YuqueOut 导出画板会上传我的资料吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。YuqueOut 的画板导出和图片转换在浏览器本地完成，不把画板内容上传到第三方服务器。后续是否导入 Obsidian、静态博客或 AI 平台由用户自己决定。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog" target="_blank" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">语雀画板导出迁移清单</span>
+                </div>
+                <span class="blog-article-tag">画板导出</span>
+                <h1 class="blog-article-title">语雀画板导出迁移清单：PNG/SVG、Markdown 附件与长期可读验收</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        2026-07-26
+                    </span>
+                    <span class="blog-article-meta-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        10 分钟阅读
+                    </span>
+                    <span class="blog-article-meta-item">约 2500 字</span>
+                    <span class="blog-article-meta-item blog-article-author">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        Kevin Yang
+                    </span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-yuque-board-export.webp" alt="语雀画板导出迁移清单" width="1730" height="909" style="width:100%;border-radius:8px;margin-bottom:2rem;">
+                <aside class="citation-capsule" style="background:rgba(20,184,166,0.08);border-left:4px solid #14b8a6;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">直接答案：语雀画板、白板、流程图和思维导图不要硬转纯 Markdown。更稳的迁移方式是用 YuqueOut 在浏览器本地导出 PNG 或 SVG，把图片放入 Markdown 的 assets 目录，再在正文补充图名、摘要、关键节点和维护人。这样既能在 Obsidian、静态博客、Git 归档中长期预览，也能给 AI 知识库提供可检索的文字上下文。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#why">为什么画板不能当普通 Markdown 处理？</a></li>
+                        <li><a href="#formats">PNG、SVG、JPG 怎么选？</a></li>
+                        <li><a href="#workflow">从语雀画板到本地迁移包的 6 步流程</a></li>
+                        <li><a href="#markdown">Markdown 附件和相对路径怎么组织？</a></li>
+                        <li><a href="#targets">迁移到 Obsidian、静态博客和 AI 知识库的差异</a></li>
+                        <li><a href="#checklist">长期可读验收清单</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>语雀画板常被用来放流程图、产品脑图、系统架构、会议白板和项目路线图。迁移知识库时，很多团队会先导出正文 Markdown，却遗漏画板，最后得到一批“有文字、没图示”的资料包。对研发、产品、运营团队来说，这类缺口很致命：流程说明少了图，接口链路少了架构图，SOP 少了判断分支，后续接手的人只能回到语雀页面里翻原件。</p>
+
+                <p>这篇文章专门处理这个问题：如何把语雀画板导出为可长期保存的本地图片，并和 Markdown、图片本地化、静态博客发布、AI 知识库导入放到同一个迁移流程里。基础的批量导出可以先看 <a href="yuque-batch-export-tutorial.html">语雀知识库批量导出完整教程</a>；如果你的目标是整体迁移到 Markdown，再配合 <a href="yuque-to-markdown-guide.html">语雀文档批量转 Markdown 完整指南</a> 使用。</p>
+
+                <h2 id="why">为什么画板不能当普通 Markdown 处理？</h2>
+
+                <p>普通语雀文档的核心内容是标题、段落、列表、表格、代码块和图片，适合转换成 Markdown。画板不同，它本质上是一个可视化画布：节点位置、连线、颜色、缩放、图层和组合关系都依赖画布数据。把它强行拆成 Markdown 文本，通常会丢掉三类信息。</p>
+
+                <p>第一类是空间关系。流程图里的左右分支、泳道、依赖方向，本身就是含义的一部分。第二类是视觉强调。颜色、边框、分组和注释往往表示优先级、风险或负责团队。第三类是上下文密度。一个产品脑图可能在一屏里表达十几层信息，拆成纯文本后很难保留阅读顺序。</p>
+
+                <p>所以更合理的做法不是“把画板转成 Markdown”，而是“把画板作为图片资产纳入 Markdown 迁移包”。Markdown 负责承载标题、摘要、说明和链接，PNG/SVG 负责保留视觉证据。对于混合知识库，可以先阅读 <a href="yuque-export-special-docs.html">语雀表格、画板、数据表导出完全攻略</a>，了解不同文档类型该选哪条导出路径。</p>
+
+                <h2 id="formats">PNG、SVG、JPG 怎么选？</h2>
+
+                <p>画板导出最常见的选择是 PNG 和 SVG。不要只按文件大小决定格式，而要按后续用途决定。</p>
+
+                <h3>优先选 PNG 的情况</h3>
+
+                <p>如果画板要放进 README、知识库页面、静态博客文章、客服 SOP 或项目交接文档，PNG 是最稳的默认选项。它兼容几乎所有编辑器和浏览器，预览稳定，不需要额外渲染能力。流程图、产品流程、截图型白板、会议结论图，都可以优先导出 PNG。</p>
+
+                <h3>优先选 SVG 的情况</h3>
+
+                <p>如果画板主要由文本节点、线条、形状和图标组成，且未来需要放大查看或二次编辑，SVG 更合适。SVG 保留矢量清晰度，适合架构图、知识地图、复杂流程图和长期归档。缺点是部分平台对 SVG 预览支持不一致，尤其是安全策略严格的企业内部系统，可能需要同时准备 PNG 兜底。</p>
+
+                <h3>什么时候用 JPG？</h3>
+
+                <p>JPG 适合画板里包含大量照片、截图或色块，且不需要透明背景时使用。对多数知识库画板来说，JPG 不是首选，因为文字和细线在压缩后容易发虚。团队归档建议保留 PNG；需要网页性能优化时，再用站点构建工具生成 WebP 或压缩版本。</p>
+
+                <div class="info-box" style="border-left-color:#f59e0b;">
+                    <div class="info-box-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>
+                        格式建议
+                    </div>
+                    <p>单人备份：PNG 足够。团队迁移：PNG + SVG 同时保留。公开发布：页面引用压缩后的 PNG/WebP，仓库里保留 SVG 原件。AI 知识库：图片之外一定要补文字摘要。</p>
+                </div>
+
+                <h2 id="workflow">从语雀画板到本地迁移包的 6 步流程</h2>
+
+                <p>下面是一条适合团队执行的标准流程。它的目标不是最快导出，而是让迁移包能被复查、能离线打开、能继续迁移。</p>
+
+                <h3>第一步：先盘点画板所在位置</h3>
+
+                <p>不要只按知识库目录导出。先列出哪些页面是画板、哪些普通文档引用了画板、哪些画板是项目关键资料。建议给画板分三类：流程和 SOP、架构和技术方案、头脑风暴和历史会议。前两类必须完整迁移，第三类可以按业务价值选择归档。</p>
+
+                <h3>第二步：用 YuqueOut 本地导出画板</h3>
+
+                <p>安装 YuqueOut 后，在已登录语雀的浏览器里选择对应知识库或单篇画板，按目标格式导出。YuqueOut 的定位是本地优先：导出和转换发生在浏览器本地，不需要把资料上传到第三方服务。对企业内部资料，这比先上传到在线转换工具再下载更可控。</p>
+
+                <h3>第三步：统一命名</h3>
+
+                <p>建议使用可读英文或拼音 slug，而不是保留随机下载名。例如：</p>
+
+                <pre><code>assets/boards/payment-refund-flow.png
+assets/boards/payment-refund-flow.svg
+docs/payment/refund-process.md</code></pre>
+
+                <p>文件名里最好包含业务域和图的用途，避免出现 <code>image-1.png</code>、<code>board-final-final.png</code> 这种半年后没人能识别的文件。</p>
+
+                <h3>第四步：在 Markdown 里补文字上下文</h3>
+
+                <p>每张画板至少补四段文字：图名、适用场景、关键节点、更新时间。这样做有两个好处：人类读者不用打开大图也能先理解用途；AI 知识库、站内搜索和全文检索也能命中这张图。</p>
+
+                <h3>第五步：离线预览</h3>
+
+                <p>迁移包完成后，断开语雀页面依赖再打开 Markdown。重点检查图片是否是相对路径、文件是否存在、大小是否非 0、SVG 是否能被目标编辑器预览。图片检查可以复用 <a href="yuque-local-image-backup.html">语雀图片本地化备份清单</a> 的方法。</p>
+
+                <h3>第六步：记录验收结果</h3>
+
+                <p>团队迁移不要只看“导出成功”。需要记录每个知识库导出了多少个画板、多少个通过预览、多少个需要人工重画、多少个因为权限或原图失效无法完整迁移。这个清单会决定后续是否可以关闭语雀空间，或是否还要保留只读访问。</p>
+
+                <h2 id="markdown">Markdown 附件和相对路径怎么组织？</h2>
+
+                <p>画板迁移最容易出问题的地方是路径。只要路径组织混乱，迁移到 Obsidian、Git、静态博客或内部知识库后就会出现裂图。</p>
+
+                <p>推荐把 Markdown 和图片放在相对固定的结构里：</p>
+
+                <pre><code>knowledge-export/
+  product/
+    onboarding-flow.md
+    assets/
+      onboarding-flow.png
+      onboarding-flow.svg
+  engineering/
+    architecture-overview.md
+    assets/
+      architecture-overview.png</code></pre>
+
+                <p>Markdown 引用写成相对路径：</p>
+
+                <pre><code>![退款流程图](assets/payment-refund-flow.png)</code></pre>
+
+                <p>不要引用本机绝对路径，也不要继续引用语雀 CDN 地址。绝对路径换电脑就失效；语雀 CDN 地址在权限、登录态或防盗链变化后可能无法访问。长期归档的底线是：文件夹整体移动后仍能打开。</p>
+
+                <h2 id="targets">迁移到 Obsidian、静态博客和 AI 知识库的差异</h2>
+
+                <p>同一份画板导出包，进入不同目标系统时要做不同处理。</p>
+
+                <h3>迁移到 Obsidian</h3>
+
+                <p>Obsidian 适合保留本地目录和相对路径。建议把画板图片放在当前笔记同级的 assets 目录，正文里补充双链和标签。复杂知识地图可以保留 SVG，日常阅读用 PNG。完整迁移路径见 <a href="yuque-to-obsidian.html">语雀迁移到 Obsidian 完整教程</a>。</p>
+
+                <h3>迁移到静态博客</h3>
+
+                <p>静态博客更关注网页加载和 SEO。页面中可以引用压缩后的 WebP 或 PNG，同时在仓库里保留原始 SVG。正文应补充图片说明、alt 文本、FAQ 和内链，让搜索引擎和 AI 搜索能理解这张图在解释什么。公开站点迁移可以参考 <a href="yuque-to-static-blog.html">语雀迁移到静态博客页面清单</a>。</p>
+
+                <h3>迁移到 AI 知识库或 RAG</h3>
+
+                <p>AI 知识库不能只依赖图片。画板导出后，要把图中的关键节点写成文字摘要，例如“支付失败排查流程包含客户端错误、网关超时、库存锁定、退款补偿四个分支”。如果平台支持图片附件，可以同时上传图片；如果只支持文本检索，至少要在 Markdown 中保留图片路径和摘要。通用准备流程见 <a href="yuque-ai-knowledge-base-guide.html">语雀内容如何整理成 AI 知识库</a>。</p>
+
+                <h2 id="checklist">长期可读验收清单</h2>
+
+                <p>导出完成后，用下面这张清单判断是否真的可交付。</p>
+
+                <ul>
+                    <li>每张关键画板都有 PNG，重要架构图和知识地图同时保留 SVG。</li>
+                    <li>图片文件名能表达业务含义，不依赖随机下载名。</li>
+                    <li>Markdown 使用相对路径引用图片，文件夹整体移动后仍能预览。</li>
+                    <li>每张画板旁边都有文字摘要、适用场景、更新时间和维护人。</li>
+                    <li>断网或退出语雀登录后，Markdown 和图片仍能打开。</li>
+                    <li>迁移到目标平台后，至少抽查 20% 的画板预览效果。</li>
+                    <li>无法完整导出的画板有单独清单，标明原因和补救方式。</li>
+                    <li>公开发布前确认没有客户资料、内部架构细节、密钥截图或未发布路线图。</li>
+                </ul>
+
+                <h2 id="faq">常见问题</h2>
+
+                <h3>语雀画板导出应该选 PNG 还是 SVG？</h3>
+                <p>流程图、SOP 和需要快速预览的页面优先 PNG；架构图、知识地图和需要放大查看的内容优先 SVG。团队归档建议两个格式都保留，页面展示用 PNG/WebP，原件留 SVG。</p>
+
+                <h3>语雀画板导出后怎么放进 Markdown？</h3>
+                <p>把图片放进相对路径目录，例如 <code>assets/boards/</code>，然后在 Markdown 中用 <code>![图名](assets/boards/name.png)</code> 引用。不要使用本机绝对路径，也不要继续依赖语雀外链。</p>
+
+                <h3>画板迁移到 AI 知识库时需要 OCR 吗？</h3>
+                <p>如果画板文字很多，OCR 可以作为补充，但不要把 OCR 当成唯一整理方式。更可靠的做法是人工补充结构化摘要：图的用途、关键节点、判断分支、负责人和更新时间。</p>
+
+                <h3>YuqueOut 导出画板会上传资料吗？</h3>
+                <p>不会。YuqueOut 的导出和转换在浏览器本地完成，不上传画板内容。后续你把文件导入 Obsidian、静态博客、Git 或 AI 平台，是独立的用户决策。</p>
+
+                <div class="blog-cta">
+                    <h3>把语雀画板完整迁移到本地</h3>
+                    <p>免费安装 YuqueOut，将画板、白板、流程图和思维导图导出为 PNG/SVG，并保留在本地迁移包中。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog" target="_blank" class="blog-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        免费安装 YuqueOut
+                    </a>
+                </div>
+
+                <div class="blog-related">
+                    <h2>相关文章</h2>
+                    <div class="blog-related-grid">
+                        <a href="yuque-export-special-docs.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀表格、画板、数据表导出完全攻略</span>
+                            <span class="blog-related-card-excerpt">了解特殊文档类型的导出格式和本地转换逻辑</span>
+                        </a>
+                        <a href="yuque-local-image-backup.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀图片本地化备份检查清单</span>
+                            <span class="blog-related-card-excerpt">确认 Markdown、assets 和相对路径长期可用</span>
+                        </a>
+                        <a href="yuque-to-static-blog.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀迁移到静态博客</span>
+                            <span class="blog-related-card-excerpt">把公开知识库整理成可搜索、可引用页面</span>
+                        </a>
+                        <a href="yuque-ai-knowledge-base-guide.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀内容如何整理成 AI 知识库</span>
+                            <span class="blog-related-card-excerpt">为 RAG 和 AI 检索补齐文字上下文</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <footer class="homepage-footer">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <div class="footer-logo">
+                            <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36" class="footer-logo-image"></picture>
+                            <span class="footer-logo-text">YuqueOut 语雀导出助手</span>
+                        </div>
+                        <p class="footer-description">专业的语雀知识库批量导出解决方案。</p>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">产品</h3>
+                        <ul class="footer-links">
+                            <li><a href="../#features">功能特性</a></li>
+                            <li><a href="./">博客</a></li>
+                            <li><a href="../privacy.html">隐私政策</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">支持</h3>
+                        <ul class="footer-links"><li><a href="mailto:yhj2433488839@gmail.com">联系我们</a></li></ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 YuqueOut 语雀导出助手. Built with passion for better data freedom.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../script.js" defer></script>
+</body>
+</html>
