@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="语雀表格、数据表导出后怎么验收？用 YuqueOut 本地导出 Markdown 表格、CSV、Excel 和 HTML，检查合并单元格、公式、编码、图片附件和 AI 知识库导入前的可读性。">
+    <meta name="keywords" content="语雀表格导出,语雀数据表导出,YuqueOut表格导出,语雀CSV导出,语雀Markdown表格,语雀Excel导出,知识库表格迁移,AI知识库表格">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-table-export-checklist.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="语雀表格导出验收清单：Markdown、CSV、Excel 和 HTML 怎么选">
+    <meta property="og:description" content="把语雀表格和数据表导出到本地后，按用途选择 Markdown、CSV、Excel 或 HTML，并检查路径、编码、合并单元格、公式和 AI 知识库可读性。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-table-export-checklist.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-yuque-table-export-checklist.webp">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-07-26">
+    <meta property="article:modified_time" content="2026-07-26">
+    <meta property="article:section" content="表格导出">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="语雀表格导出验收清单">
+    <meta name="twitter:description" content="Markdown、CSV、Excel 和 HTML 格式选择与迁移验收。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-yuque-table-export-checklist.webp">
+
+    <meta name="theme-color" content="#060b22">
+    <title>语雀表格导出验收清单：Markdown、CSV、Excel 和 HTML 怎么选 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "语雀表格导出验收清单：Markdown、CSV、Excel 和 HTML 怎么选",
+      "description": "语雀表格、数据表和知识库表格资料导出后的格式选择与验收清单，覆盖 Markdown 表格、CSV、Excel、HTML、合并单元格、编码、公式、图片附件和 AI 知识库导入前检查。",
+      "url": "https://yuque.toolab.top/blog/yuque-table-export-checklist.html",
+      "datePublished": "2026-07-26",
+      "dateModified": "2026-07-26",
+      "image": "https://yuque.toolab.top/images/blog-yuque-table-export-checklist.webp",
+      "author": { "@type": "Person", "name": "Kevin Yang", "url": "https://yuque.toolab.top/" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-table-export-checklist.html",
+      "wordCount": 2500,
+      "articleSection": "表格导出"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语雀表格导出验收清单", "item": "https://yuque.toolab.top/blog/yuque-table-export-checklist.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "语雀表格导出应该选 Markdown、CSV 还是 Excel？",
+          "acceptedAnswer": { "@type": "Answer", "text": "写进文档、Obsidian、静态博客或 AI 知识库时优先 Markdown；要进入数据库、BI 或脚本处理时优先 CSV；要保留多工作表、样式、合并单元格和公式上下文时优先 Excel。团队归档建议保留 Excel 原件，再按用途生成 Markdown 或 CSV 副本。" }
+        },
+        {
+          "@type": "Question",
+          "name": "语雀表格导出后为什么会乱码？",
+          "acceptedAnswer": { "@type": "Answer", "text": "常见原因是 CSV 打开软件使用了错误编码，或表格中包含换行、逗号、制表符等特殊字符。验收时要用目标工具打开一次，检查中文、日期、金额、超链接和多行文本是否仍然正确。" }
+        },
+        {
+          "@type": "Question",
+          "name": "AI 知识库适合直接导入 Excel 表格吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不建议只导入 Excel。更稳妥的做法是保留 Excel 作为原始附件，同时把关键表格转成 Markdown 或结构化摘要，让检索系统能理解列名、业务含义、更新时间和使用边界。" }
+        },
+        {
+          "@type": "Question",
+          "name": "YuqueOut 导出表格会上传数据吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。YuqueOut 的表格导出和格式转换在浏览器本地完成，不把表格内容上传到第三方服务器。导出后的文件是否进入 Git、静态博客或 AI 平台由用户自己决定。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_table_export" target="_blank" rel="noopener" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">语雀表格导出验收清单</span>
+                </div>
+                <span class="blog-article-tag">表格导出</span>
+                <h1 class="blog-article-title">语雀表格导出验收清单：Markdown、CSV、Excel 和 HTML 怎么选</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">2026-07-26</span>
+                    <span class="blog-article-meta-item">10 分钟阅读</span>
+                    <span class="blog-article-meta-item">约 2500 字</span>
+                    <span class="blog-article-meta-item blog-article-author">Kevin Yang</span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-yuque-table-export-checklist.webp" alt="语雀表格导出为 Markdown CSV Excel HTML 的本地验收工作流" width="1731" height="909" loading="eager" style="width:100%;height:auto;border-radius:8px;margin-bottom:2rem;">
+
+                <aside class="citation-capsule" style="background:rgba(20,184,166,0.08);border-left:4px solid #14b8a6;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">直接答案：语雀表格导出不要只看“下载成功”。如果目标是写进文档、Obsidian、静态博客或 AI 知识库，优先导出 Markdown 表格并补充表格说明；如果目标是数据分析或批处理，优先 CSV；如果要保留多工作表、样式、合并单元格和公式上下文，保留 Excel 原件；如果要嵌入网页或留存展示效果，再生成 HTML。验收时重点检查中文编码、日期金额、合并单元格、链接、图片附件和离线可读性。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#formats">四种格式分别适合什么场景？</a></li>
+                        <li><a href="#workflow">从语雀表格到本地资料包的流程</a></li>
+                        <li><a href="#validation">导出后必须检查哪些字段？</a></li>
+                        <li><a href="#markdown">Markdown 表格怎么整理才适合迁移？</a></li>
+                        <li><a href="#ai">表格进入 AI 知识库前怎么准备？</a></li>
+                        <li><a href="#security">企业表格的权限和敏感信息边界</a></li>
+                        <li><a href="#checklist">最终验收清单</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>很多知识库迁移项目卡在表格上。普通文档导出成 Markdown 后还能读，图片可以本地化，画板可以作为 PNG 或 SVG 保存；但表格一旦出现合并单元格、日期、金额、换行文本、链接、公式或多工作表，迁移后就容易出现错位、乱码、列名丢失和含义不清。更麻烦的是，团队经常只检查文件是否存在，却没有检查表格是否还能被目标工具正确理解。</p>
+
+                <p>这篇文章把表格导出拆成两个问题：先按用途选择格式，再按验收清单确认可用。它适合准备把语雀表格迁移到 Markdown、Obsidian、静态博客、Git 归档、数据分析工具或 AI 知识库的团队。如果你还没处理特殊文档类型，可以先阅读 <a href="yuque-export-special-docs.html">语雀表格、画板、数据表导出完全攻略</a>；如果整库迁移还没开始，可以配合 <a href="yuque-to-markdown-guide.html">语雀文档批量转 Markdown 完整指南</a>。</p>
+
+                <h2 id="formats">四种格式分别适合什么场景？</h2>
+                <p>YuqueOut 支持把语雀表格导出为 Excel、CSV、Markdown 和 HTML。不要把这四种格式看成谁替代谁，它们解决的是不同阶段的问题。</p>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>格式</th><th>适合场景</th><th>验收重点</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Excel</td><td>团队归档、复杂表格、多工作表、样式保留</td><td>合并单元格、公式、筛选、日期金额格式</td></tr>
+                            <tr><td>CSV</td><td>脚本处理、数据库、BI、批量清洗</td><td>编码、逗号、换行、引号、空值</td></tr>
+                            <tr><td>Markdown</td><td>知识库迁移、Obsidian、静态博客、AI 检索</td><td>列名、行数、长文本可读性、上下文说明</td></tr>
+                            <tr><td>HTML</td><td>网页展示、样式预览、迁移前人工复核</td><td>表头、颜色、宽度、链接和页面嵌入效果</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>一个稳妥的默认策略是：保留 Excel 作为原始归档，按用途再生成 Markdown 或 CSV。如果表格要进入公开页面，先把核心信息整理成 Markdown 表格，再在页面里补一句表格说明和更新时间；如果表格要交给数据同事处理，CSV 会比 Markdown 更适合自动化流程。</p>
+
+                <h2 id="workflow">从语雀表格到本地资料包的流程</h2>
+                <p>表格导出不应该是临时下载一个文件，而应该纳入知识库迁移包。建议按下面 6 步执行。</p>
+
+                <ol class="step-list">
+                    <li><strong>先盘点表格用途。</strong>区分配置表、清单表、价格表、SOP 检查表、项目排期、客户字段和历史数据。不同用途决定是否可以公开、是否需要保留 Excel、是否需要脱敏。</li>
+                    <li><strong>用 YuqueOut 在浏览器本地导出。</strong>选择需要的格式，先抽样 5-10 个代表性表格，确认格式策略正确，再做全量迁移。</li>
+                    <li><strong>保留来源目录。</strong>不要把所有表格直接扔进一个 downloads 文件夹。表格文件名应包含知识库、业务域和表格用途，方便半年后追溯。</li>
+                    <li><strong>为 Markdown 表格补说明。</strong>每个重要表格至少写清楚用途、字段含义、更新时间、维护人和适用边界。</li>
+                    <li><strong>离线打开一次。</strong>退出语雀页面后，用目标工具打开导出文件，确认不是依赖原页面或登录态才能读。</li>
+                    <li><strong>记录失败和例外。</strong>复杂公式、异常合并单元格、超大表格和权限受限表格要单独列出来，不要混在“已完成”里。</li>
+                </ol>
+
+                <p>如果表格里还有截图、画板或附件引用，需要同时检查图片是否已经落到本地。图片和附件部分可以复用 <a href="yuque-local-image-backup.html">语雀图片本地化备份清单</a> 的验收方式。</p>
+
+                <h2 id="validation">导出后必须检查哪些字段？</h2>
+                <p>表格导出最容易出现“看起来差不多，但关键字段错了”的问题。建议至少检查下面几类字段。</p>
+
+                <h3>中文、特殊符号和多行文本</h3>
+                <p>CSV 在不同软件中打开时，编码和分隔符处理可能不同。验收时不要只用一个编辑器看文件内容，还要用最终会使用它的工具打开一次。重点看中文、emoji、英文逗号、引号、换行、制表符和空格是否被错误拆列。</p>
+
+                <h3>日期、金额和编号</h3>
+                <p>表格迁移经常把 <code>2026-07-26</code>、<code>00123</code>、手机号、订单号、价格区间识别成错误类型。CSV 进入数据工具时尤其要注意：编号是否被去掉前导零，金额是否被四舍五入，日期是否被转换成另一种地区格式。</p>
+
+                <h3>合并单元格、公式和链接</h3>
+                <p>Markdown 和 CSV 更强调结构化文本，不适合完整保留复杂视觉布局。含有合并单元格、公式、筛选、颜色和多工作表的表格，应保留 Excel 版本作为归档。Markdown 版本只承载可读摘要和关键字段，不要强行追求完全复刻。</p>
+
+                <h2 id="markdown">Markdown 表格怎么整理才适合迁移？</h2>
+                <p>Markdown 表格适合知识库迁移和 AI 检索，但前提是表格本身不要太宽、太长、太缺上下文。下面是一个更适合长期维护的写法：</p>
+
+                <pre><code>### 退款状态字段说明
+
+更新时间：2026-07-26
+维护人：客服运营组
+适用范围：售后 SOP 与 AI 客服知识库
+
+| 字段 | 含义 | 示例 | 注意事项 |
+|---|---|---|---|
+| refund_status | 退款状态 | pending | 不等同于支付状态 |
+| owner | 处理人 | support-l2 | 仅内部可见 |</code></pre>
+
+                <p>这个例子不是只有表格，而是有标题、更新时间、维护人和适用范围。对人类读者来说，它说明表格为什么存在；对搜索和 AI 知识库来说，它提供了列名之外的上下文。迁移到静态博客时，还可以把表格拆成更短的小节，避免移动端横向滚动过长。公开发布流程可参考 <a href="yuque-to-static-blog.html">语雀迁移到静态博客页面清单</a>。</p>
+
+                <h2 id="ai">表格进入 AI 知识库前怎么准备？</h2>
+                <p>AI 知识库不是数据仓库。把一个很大的 Excel 直接上传进去，通常不能保证问答效果。更稳的路线是保留原始 Excel 附件，同时把关键表格整理成 Markdown 或结构化摘要。</p>
+
+                <p>准备 AI 知识库时，建议给每个重要表格补 5 个信息：业务用途、字段解释、适用对象、更新时间、不能用于哪些场景。例如价格表不能被客服 AI 直接用于承诺折扣，内部升级表不能进入公开帮助中心，客户案例表需要先脱敏。通用 RAG 准备流程可以继续看 <a href="yuque-ai-knowledge-base-guide.html">语雀内容如何整理成 AI 知识库</a>。</p>
+
+                <p>如果表格用于客服 AI，建议把“问题 - 判断条件 - 推荐回复 - 升级路径”拆成更明确的行，而不是保留一个宽表。这样检索时更容易命中具体场景，也方便人工验证答案是否越权。</p>
+
+                <h2 id="security">企业表格的权限和敏感信息边界</h2>
+                <p>表格比普通文档更容易包含敏感信息：客户名单、合同金额、价格底线、员工信息、账号权限、故障工单、供应商报价和未发布计划。导出前先确认它属于公开、内部还是敏感资料。</p>
+
+                <p>YuqueOut 负责本地导出和格式转换，不替团队判断哪些内容可以公开或上传到 AI 平台。企业迁移时建议先在本地完成分级：公开表格可以进入静态博客或帮助中心；内部表格只进入受限知识库；敏感表格默认不进入第三方 AI 平台，除非已经完成脱敏、审批和访问控制。更完整的权限治理流程见 <a href="yuque-ai-knowledge-base-permissions.html">企业语雀导入 AI 知识库前的权限治理</a>。</p>
+
+                <h2 id="checklist">最终验收清单</h2>
+                <p>完成表格导出后，用下面这张清单判断是否可以交付。</p>
+
+                <ul>
+                    <li>每个关键表格至少保留一种原始归档格式，复杂表格优先保留 Excel。</li>
+                    <li>CSV 用目标工具打开后，中文、日期、金额、编号、逗号和换行没有错列。</li>
+                    <li>Markdown 表格有标题、用途、字段说明、更新时间和维护人。</li>
+                    <li>HTML 表格在目标页面中没有宽度溢出、表头丢失或链接失效。</li>
+                    <li>包含图片、截图或附件的表格，已确认本地资源文件存在且路径可读。</li>
+                    <li>公开发布前已移除客户资料、价格底线、内部账号、未发布路线图和个人信息。</li>
+                    <li>AI 知识库导入前已补充表格摘要，并用真实问题验证检索结果。</li>
+                    <li>失败、跳过、需要人工重做的表格已经单独记录。</li>
+                </ul>
+
+                <h2 id="faq">常见问题</h2>
+                <h3>语雀表格导出应该选 Markdown、CSV 还是 Excel？</h3>
+                <p>写进文档、Obsidian、静态博客或 AI 知识库时优先 Markdown；要进入数据库、BI 或脚本处理时优先 CSV；要保留多工作表、样式、合并单元格和公式上下文时优先 Excel。团队归档建议保留 Excel 原件，再按用途生成 Markdown 或 CSV 副本。</p>
+
+                <h3>语雀表格导出后为什么会乱码？</h3>
+                <p>常见原因是 CSV 打开软件使用了错误编码，或表格中包含换行、逗号、制表符等特殊字符。验收时要用目标工具打开一次，检查中文、日期、金额、超链接和多行文本是否仍然正确。</p>
+
+                <h3>AI 知识库适合直接导入 Excel 表格吗？</h3>
+                <p>不建议只导入 Excel。更稳妥的做法是保留 Excel 作为原始附件，同时把关键表格转成 Markdown 或结构化摘要，让检索系统能理解列名、业务含义、更新时间和使用边界。</p>
+
+                <h3>YuqueOut 导出表格会上传数据吗？</h3>
+                <p>不会。YuqueOut 的表格导出和格式转换在浏览器本地完成，不把表格内容上传到第三方服务器。导出后的文件是否进入 Git、静态博客或 AI 平台由用户自己决定。</p>
+
+                <div class="blog-cta">
+                    <h3>把语雀表格安全导出到本地</h3>
+                    <p>免费安装 YuqueOut，将语雀表格导出为 Excel、CSV、Markdown 或 HTML，并在本地完成迁移验收。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_table_export" target="_blank" rel="noopener" class="blog-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        免费安装 YuqueOut
+                    </a>
+                </div>
+
+                <div class="blog-related">
+                    <h2>相关文章</h2>
+                    <div class="blog-related-grid">
+                        <a href="yuque-export-special-docs.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀表格、画板、数据表导出完全攻略</span>
+                            <span class="blog-related-card-excerpt">了解特殊文档类型和格式选择的基础能力</span>
+                        </a>
+                        <a href="yuque-local-image-backup.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀图片本地化备份检查清单</span>
+                            <span class="blog-related-card-excerpt">检查表格里的截图和附件是否本地可读</span>
+                        </a>
+                        <a href="yuque-ai-knowledge-base-guide.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀内容如何整理成 AI 知识库</span>
+                            <span class="blog-related-card-excerpt">把表格资料变成可检索的 Markdown 和摘要</span>
+                        </a>
+                        <a href="yuque-export-troubleshooting.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀导出失败排查指南</span>
+                            <span class="blog-related-card-excerpt">处理下载中断、权限报错和单文件重试</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <footer class="homepage-footer">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <div class="footer-logo">
+                            <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36" class="footer-logo-image"></picture>
+                            <span class="footer-logo-text">YuqueOut 语雀导出助手</span>
+                        </div>
+                        <p class="footer-description">专业的语雀知识库批量导出解决方案。</p>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">产品</h3>
+                        <ul class="footer-links">
+                            <li><a href="../#features">功能特性</a></li>
+                            <li><a href="./">博客</a></li>
+                            <li><a href="../privacy.html">隐私政策</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">支持</h3>
+                        <ul class="footer-links"><li><a href="mailto:yhj2433488839@gmail.com">联系我们</a></li></ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 YuqueOut 语雀导出助手. Built with passion for better data freedom.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../script.js" defer></script>
+</body>
+</html>

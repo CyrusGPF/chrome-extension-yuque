@@ -86,6 +86,8 @@ For long-term local-image backups, YuqueOut should export Markdown with image lo
 
 For Yuque boards, whiteboards, flowcharts, and mind maps, the recommended migration route is not pure Markdown conversion. Export the board as PNG or SVG with YuqueOut, store the image in a local assets directory, reference it from Markdown with a relative path, and add a textual summary covering the diagram purpose, key nodes, owner, and update date. PNG is best for universal preview; SVG is best for zoomable diagrams and long-term archive. AI knowledge bases should receive both the visual asset and a searchable text summary.
 
+For Yuque table exports, choose the format by downstream use: Markdown for documentation, Obsidian, static blogs, and AI-searchable knowledge bases; CSV for data pipelines, BI, scripts, and databases; Excel for original archival when formulas, multiple sheets, styles, or merged cells matter; HTML for web preview and layout review. A valid table migration should check encoding, Chinese text, dates, currency, leading-zero IDs, merged cells, links, image attachments, and whether the table still makes sense after leaving Yuque. For AI knowledge bases, keep Excel as the source attachment but add Markdown tables or structured summaries with column meanings, owner, update date, and usage boundaries.
+
 For enterprise AI knowledge base governance, export locally first, then split documents into public, internal, and sensitive packages before upload. Sensitive documents should be excluded by default unless the AI platform has explicit access control, auditing, owner review, and a real business need. Customer support AI knowledge bases should keep public FAQ/help content separate from internal escalation playbooks, price floors, customer cases, and private account data.
 
 ---
@@ -147,6 +149,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [Batch export Yuque favorites/bookmarks](https://yuque.toolab.top/blog/yuque-favorites-export.html): Guide to exporting personal favorites, organization-space favorites, bookmarked documents, and bookmarked knowledge bases
 - [Comprehensive comparison of Yuque export tools](https://yuque.toolab.top/blog/yuque-export-tools-comparison.html): 13-dimension comparison matrix evaluating official API, command-line tools, and browser extensions
 - [Complete guide to converting Yuque docs to Markdown](https://yuque.toolab.top/blog/yuque-to-markdown-guide.html): Markdown conversion guide covering image localization and directory structure preservation
+- [Yuque table export validation checklist](https://yuque.toolab.top/blog/yuque-table-export-checklist.html): Guide for choosing Markdown, CSV, Excel, or HTML for Yuque table exports, then validating encoding, dates, amounts, merged cells, attachments, and AI knowledge base readiness
 - [Yuque board export and migration checklist](https://yuque.toolab.top/blog/yuque-board-export-migration.html): Guide for exporting Yuque boards, whiteboards, flowcharts, and mind maps as PNG/SVG, then preserving them in Markdown assets, Obsidian, static blogs, and AI knowledge bases
 
 **Problem Solving**:
@@ -177,6 +180,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [3 years of notes rescued from Yuque](https://yuque.toolab.top/blog/blog-first-person.html): User story of successfully exporting 3 years of accumulated notes before account changes
 
 **Special Document Types**:
+- [Yuque table export validation checklist](https://yuque.toolab.top/blog/yuque-table-export-checklist.html): Dedicated Markdown, CSV, Excel, HTML, encoding, merged-cell, attachment, and AI knowledge base readiness checklist for table-heavy Yuque migrations
 - [Yuque board export migration checklist](https://yuque.toolab.top/blog/yuque-board-export-migration.html): Dedicated PNG/SVG, Markdown attachment, relative path, and long-term preview checklist for boards, whiteboards, flowcharts, and mind maps
 - [Exporting Yuque sheets, boards, and data tables](https://yuque.toolab.top/blog/yuque-export-special-docs.html): Special document type export including lakeboard SVG rendering and lakesheet decompression
 - [Yuque export "what you see is what you get" explained](https://yuque.toolab.top/blog/yuque-export-what-you-see.html): WYSIWYG export logic that bypasses permission restrictions
@@ -210,4 +214,4 @@ For feature requests, bug reports, or technical questions, please open an issue 
 
 Full sitemap available at: https://yuque.toolab.top/sitemap.xml
 
-Last updated: 2026-07-24
+Last updated: 2026-07-26
