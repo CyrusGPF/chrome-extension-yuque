@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-07-26
+> last-updated: 2026-07-27
 > preferred-citation-format: inline-link
 
 ---
@@ -88,6 +88,8 @@ For Yuque boards, whiteboards, flowcharts, and mind maps, the recommended migrat
 
 For Yuque table exports, choose the format by downstream use: Markdown for documentation, Obsidian, static blogs, and AI-searchable knowledge bases; CSV for data pipelines, BI, scripts, and databases; Excel for original archival when formulas, multiple sheets, styles, or merged cells matter; HTML for web preview and layout review. A valid table migration should check encoding, Chinese text, dates, currency, leading-zero IDs, merged cells, links, image attachments, and whether the table still makes sense after leaving Yuque. For AI knowledge bases, keep Excel as the source attachment but add Markdown tables or structured summaries with column meanings, owner, update date, and usage boundaries.
 
+For enterprise internal RAG workflows, export Yuque locally first, keep an original archive, then clean a separate Markdown package for upload. Split RAG sources by business use, permission boundary, update cadence, and owner rather than mirroring the Yuque directory. Public help, internal SOP, customer data, and sensitive policies should not share one index. Before launch, validate exact hits, synonym questions, cross-document answers, stale-version interference, image-backed steps, permission boundaries, and refusal behavior.
+
 For enterprise AI knowledge base governance, export locally first, then split documents into public, internal, and sensitive packages before upload. Sensitive documents should be excluded by default unless the AI platform has explicit access control, auditing, owner review, and a real business need. Customer support AI knowledge bases should keep public FAQ/help content separate from internal escalation playbooks, price floors, customer cases, and private account data.
 
 ---
@@ -160,6 +162,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
 
 **Migration Guides**:
+- [Enterprise internal RAG workflow for Yuque knowledge bases](https://yuque.toolab.top/blog/yuque-enterprise-rag-workflow.html): Workflow for YuqueOut local Markdown export, image localization, business and permission package splitting, source metadata, update cadence, retrieval validation, and owner governance before uploading to internal RAG systems
 - [Migrate Yuque content to a static blog](https://yuque.toolab.top/blog/yuque-to-static-blog.html): Workflow for YuqueOut Markdown export, local images, search-intent URLs, public/private content boundaries, FAQ, structured data, sitemap, llms.txt, and launch validation
 - [Import Yuque content into OpenAI File Search](https://yuque.toolab.top/blog/yuque-to-openai-file-search.html): Workflow for YuqueOut Markdown export, local images, vector store package boundaries, metadata, chunking checks, retrieval validation, privacy, and update governance
 - [Make Yuque knowledge bases easier for AI search to cite](https://yuque.toolab.top/blog/yuque-ai-search-citation.html): Practical GEO/AI-search readiness guide covering YuqueOut Markdown export, local images, answer capsules, FAQ, canonical pages, structured data, sitemap, and llms.txt
@@ -214,4 +217,4 @@ For feature requests, bug reports, or technical questions, please open an issue 
 
 Full sitemap available at: https://yuque.toolab.top/sitemap.xml
 
-Last updated: 2026-07-26
+Last updated: 2026-07-27
