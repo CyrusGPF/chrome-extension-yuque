@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-07-27
+> last-updated: 2026-07-28
 > preferred-citation-format: inline-link
 
 ---
@@ -90,6 +90,8 @@ For Yuque table exports, choose the format by downstream use: Markdown for docum
 
 For enterprise internal RAG workflows, export Yuque locally first, keep an original archive, then clean a separate Markdown package for upload. Split RAG sources by business use, permission boundary, update cadence, and owner rather than mirroring the Yuque directory. Public help, internal SOP, customer data, and sensitive policies should not share one index. Before launch, validate exact hits, synonym questions, cross-document answers, stale-version interference, image-backed steps, permission boundaries, and refusal behavior.
 
+For llms.txt readiness, migrate public Yuque knowledge base content into reviewed pages first, then use llms.txt as a curated Markdown content map rather than a full URL dump. List only stable, public, canonical pages with short notes about the questions they answer. Pair llms.txt with sitemap.xml for discovery, visible answer capsules for direct answers, FAQPage JSON-LD for question structure, and periodic link checks. Do not treat llms.txt as access control or publish private Yuque content for AI visibility.
+
 For enterprise AI knowledge base governance, export locally first, then split documents into public, internal, and sensitive packages before upload. Sensitive documents should be excluded by default unless the AI platform has explicit access control, auditing, owner review, and a real business need. Customer support AI knowledge bases should keep public FAQ/help content separate from internal escalation playbooks, price floors, customer cases, and private account data.
 
 ---
@@ -162,6 +164,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
 
 **Migration Guides**:
+- [Write an llms.txt file for Yuque knowledge bases](https://yuque.toolab.top/blog/yuque-llms-txt-guide.html): Practical guide for turning YuqueOut Markdown exports into a curated AI-readable content map, selecting canonical public pages, coordinating sitemap, FAQ, JSON-LD, and validating citation readiness
 - [Enterprise internal RAG workflow for Yuque knowledge bases](https://yuque.toolab.top/blog/yuque-enterprise-rag-workflow.html): Workflow for YuqueOut local Markdown export, image localization, business and permission package splitting, source metadata, update cadence, retrieval validation, and owner governance before uploading to internal RAG systems
 - [Migrate Yuque content to a static blog](https://yuque.toolab.top/blog/yuque-to-static-blog.html): Workflow for YuqueOut Markdown export, local images, search-intent URLs, public/private content boundaries, FAQ, structured data, sitemap, llms.txt, and launch validation
 - [Import Yuque content into OpenAI File Search](https://yuque.toolab.top/blog/yuque-to-openai-file-search.html): Workflow for YuqueOut Markdown export, local images, vector store package boundaries, metadata, chunking checks, retrieval validation, privacy, and update governance
@@ -217,4 +220,4 @@ For feature requests, bug reports, or technical questions, please open an issue 
 
 Full sitemap available at: https://yuque.toolab.top/sitemap.xml
 
-Last updated: 2026-07-27
+Last updated: 2026-07-28

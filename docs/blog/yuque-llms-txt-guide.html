@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="语雀知识库迁移到公开站点后，llms.txt 应该怎么写？本文给出 YuqueOut Markdown 导出、页面分级、AI 引用入口、sitemap 配合和维护验收清单。">
+    <meta name="keywords" content="语雀llms.txt,YuqueOut,llms.txt,AI搜索引用,语雀导出Markdown,AI知识库,语雀知识库迁移,GEO优化,sitemap,结构化摘要">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-llms-txt-guide.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="语雀知识库 llms.txt 怎么写：YuqueOut 导出后的 AI 引用入口清单">
+    <meta property="og:description" content="把语雀公开内容整理成 AI 可读入口：先用 YuqueOut 导出 Markdown，再筛选核心页面、编写 llms.txt、配合 sitemap 和 FAQ 做引用验收。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-llms-txt-guide.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-yuque-llms-txt-guide.png">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-07-28">
+    <meta property="article:modified_time" content="2026-07-28">
+    <meta property="article:section" content="AI 搜索">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="语雀知识库 llms.txt 怎么写">
+    <meta name="twitter:description" content="YuqueOut 导出 Markdown 后，如何筛选核心页面并维护 AI 引用入口。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-yuque-llms-txt-guide.png">
+
+    <meta name="theme-color" content="#060b22">
+    <title>语雀知识库 llms.txt 怎么写：YuqueOut 导出后的 AI 引用入口清单 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "语雀知识库 llms.txt 怎么写：YuqueOut 导出后的 AI 引用入口清单",
+      "description": "面向语雀公开知识库、帮助中心和迁移博客的 llms.txt 编写指南，覆盖 YuqueOut 本地 Markdown 导出、页面筛选、分组摘要、sitemap 配合、AI 引用验收和维护节奏。",
+      "url": "https://yuque.toolab.top/blog/yuque-llms-txt-guide.html",
+      "datePublished": "2026-07-28",
+      "dateModified": "2026-07-28",
+      "image": "https://yuque.toolab.top/images/blog-yuque-llms-txt-guide.png",
+      "author": { "@type": "Person", "name": "Kevin Yang", "url": "https://yuque.toolab.top/" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-llms-txt-guide.html",
+      "wordCount": 2760,
+      "articleSection": "AI 搜索"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语雀知识库 llms.txt 怎么写", "item": "https://yuque.toolab.top/blog/yuque-llms-txt-guide.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "语雀导出的内容一定要写 llms.txt 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不是必须。llms.txt 仍是新兴约定，适合公开帮助中心、教程、产品文档和迁移指南。私密知识库不应为了 AI 引用而公开。" }
+        },
+        {
+          "@type": "Question",
+          "name": "llms.txt 可以替代 sitemap.xml 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不能。sitemap.xml 面向搜索引擎列出可索引 URL，llms.txt 更像给 AI 和代理的精选 Markdown 内容地图，两者应该配合使用。" }
+        },
+        {
+          "@type": "Question",
+          "name": "从语雀导出的每篇文章都要放进 llms.txt 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不建议全量放入。优先放核心教程、FAQ、迁移指南、故障排查和长期有效的产品事实，过期、重复、临时或敏感内容不要进入。" }
+        },
+        {
+          "@type": "Question",
+          "name": "YuqueOut 会自动把语雀内容发布到 llms.txt 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。YuqueOut 负责在浏览器本地导出 Markdown、图片和附件；llms.txt 的发布、筛选和维护由站点所有者在自己的公开站点中完成。" }
+        },
+        {
+          "@type": "Question",
+          "name": "llms.txt 发布后怎么验收？",
+          "acceptedAnswer": { "@type": "Answer", "text": "检查根路径可访问、Markdown 结构清晰、链接都是 canonical URL、与 sitemap 不冲突，并用真实 AI 搜索问题验证是否能找到正确入口和来源。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_llms_txt" target="_blank" rel="noopener" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">语雀知识库 llms.txt 怎么写</span>
+                </div>
+                <span class="blog-article-tag">AI 搜索</span>
+                <h1 class="blog-article-title">语雀知识库 llms.txt 怎么写：YuqueOut 导出后的 AI 引用入口清单</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">2026-07-28</span>
+                    <span class="blog-article-meta-item">10 分钟阅读</span>
+                    <span class="blog-article-meta-item">约 2760 字</span>
+                    <span class="blog-article-meta-item blog-article-author">Kevin Yang</span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-yuque-llms-txt-guide.png" alt="语雀知识库导出后编写 llms.txt、sitemap 和 AI 引用入口的工作流" width="1672" height="941" loading="eager" style="width:100%;height:auto;border-radius:8px;margin-bottom:2rem;">
+
+                <aside class="citation-capsule" style="background:rgba(245,158,11,0.08);border-left:4px solid #f59e0b;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">语雀知识库迁移到公开站点后，llms.txt 不要写成“全站 URL 清单”。推荐先用 YuqueOut 导出 Markdown 和本地图片，再筛选长期有效、可公开、能回答明确问题的页面；用简短摘要、分组链接、FAQ 和 sitemap 配合，给 AI 搜索与代理一个可引用的内容地图。它是辅助入口，不是权限控制，也不能替代 robots.txt 或 sitemap.xml。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#what">llms.txt 是什么，不是什么</a></li>
+                        <li><a href="#export">先把语雀内容导成可审阅素材</a></li>
+                        <li><a href="#selection">哪些页面应该进入 llms.txt</a></li>
+                        <li><a href="#template">可直接复用的 llms.txt 模板</a></li>
+                        <li><a href="#seo">和 sitemap、FAQ、JSON-LD 怎么配合</a></li>
+                        <li><a href="#validation">发布前验收清单</a></li>
+                        <li><a href="#maintenance">维护节奏和常见错误</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>越来越多团队把语雀里的公开帮助文档、产品教程和迁移指南发布到静态站点，希望搜索引擎和 AI 助手能更准确地理解这些内容。问题是：语雀目录往往服务协作，公开站点目录服务用户，AI 代理需要的又是另一种更短、更明确的入口。llms.txt 正好用于补这层“内容地图”。</p>
+
+                <p>根据 <a href="https://llmstxt.org/" target="_blank" rel="noopener">llms.txt proposal</a>，这个文件通常放在站点根路径，用 Markdown 写站点简介和关键链接。Chrome Developers 的 Lighthouse 文档也把它称为面向 LLM 和 AI agent 的新兴约定，并明确当前提供它是可选的。因此，正确态度不是迷信它能带来排名，而是把它当成低成本的 AI 引用辅助入口。</p>
+
+                <h2 id="what">llms.txt 是什么，不是什么</h2>
+                <p>llms.txt 可以理解为给 AI 读者看的精选目录：它告诉模型这个站点解决什么问题、哪些页面最重要、每个链接适合回答什么问题。它使用 Markdown，比 HTML 更少导航噪声，也比 sitemap 更适合写人类可读的上下文。</p>
+
+                <p>但它不是三个东西。第一，它不是权限控制文件；不想公开的语雀内容，不能靠“不写进 llms.txt”来保护。第二，它不是 sitemap.xml 的替代品；sitemap 更偏全量索引，llms.txt 更偏精选解释。第三，它不是广告语堆砌页；AI 如果引用摘要，夸张描述会直接伤害可信度。</p>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>文件</th><th>主要用途</th><th>语雀迁移站点里的角色</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>llms.txt</td><td>给 AI 和代理的精选 Markdown 内容地图</td><td>解释 YuqueOut、导出场景、核心教程和可引用页面。</td></tr>
+                            <tr><td>sitemap.xml</td><td>给搜索引擎发现可索引 URL</td><td>列出博客、帮助页、隐私页等 canonical URL。</td></tr>
+                            <tr><td>robots.txt</td><td>声明爬虫访问规则</td><td>处理允许或禁止抓取，不能用 llms.txt 替代。</td></tr>
+                            <tr><td>JSON-LD</td><td>给页面补充结构化语义</td><td>在文章页声明 BlogPosting、FAQPage、Breadcrumb。</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="export">先把语雀内容导成可审阅素材</h2>
+                <p>写 llms.txt 之前，不要直接复制语雀目录。第一步是把源内容变成可检查、可修改、可版本管理的本地素材。YuqueOut 适合做这个准备层：在浏览器本地导出 Markdown、本地图片、表格、画板和附件，不把文档上传到第三方服务器。</p>
+
+                <ol class="step-list">
+                    <li><strong>导出公开候选内容。</strong>从语雀帮助中心、产品教程、迁移指南、FAQ 和故障排查知识库开始，敏感知识库先排除。</li>
+                    <li><strong>优先使用 Markdown。</strong>Markdown 保留标题层级、列表、代码块和相对图片路径，方便后续整理成静态页面。</li>
+                    <li><strong>开启图片本地化。</strong>语雀图片外链离开登录环境后可能不可用，公开文章应使用站点本地图片。</li>
+                    <li><strong>保留原始导出包。</strong>原始包用于追溯，公开站点使用清洗后的副本。</li>
+                    <li><strong>建立 URL 映射。</strong>把语雀内部标题改成搜索意图明确的 slug，例如 <code>yuque-to-openai-file-search.html</code>。</li>
+                </ol>
+
+                <p>如果还没有完成迁移基础，可以先看 <a href="yuque-to-static-blog.html">语雀迁移到静态博客清单</a>；如果目标是让 AI 搜索更容易引用，再配合 <a href="yuque-ai-search-citation.html">AI 搜索引用准备指南</a> 做页面级优化。</p>
+
+                <h2 id="selection">哪些页面应该进入 llms.txt</h2>
+                <p>llms.txt 的价值在“精选”，不是“全量”。语雀团队常见误区是把每篇导出的文档都列进去，结果文件变成另一个 sitemap，AI 读完仍然不知道该优先看哪里。更好的筛选标准是：这篇页面是否能回答一个稳定问题？是否可以公开？是否有清晰标题和直接答案？是否长期有效？</p>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>建议加入</th><th>谨慎加入</th><th>不要加入</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>核心产品介绍、安装教程、批量导出教程</td><td>版本发布说明、活动页、临时公告</td><td>客户资料、合同、人事、财务和未发布路线图</td></tr>
+                            <tr><td>语雀到 Markdown、Notion、Obsidian、飞书迁移指南</td><td>重复度高的内部会议纪要</td><td>只给内部角色看的 SOP 和权限策略</td></tr>
+                            <tr><td>AI 知识库、RAG、OpenAI File Search、Dify 准备清单</td><td>依赖截图但没有文字摘要的页面</td><td>过期文档、草稿、测试页面和无负责人内容</td></tr>
+                            <tr><td>导出失败、图片裂图、权限报错等排障文章</td><td>需要频繁变动的价格或政策说明</td><td>为了关键词而拼接的低质量文章</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>对 YuqueOut 这类工具站来说，llms.txt 中最值得放的是“直接解释产品能力和边界”的页面。例如 <a href="yuque-batch-export-tutorial.html">语雀知识库批量导出教程</a>、<a href="yuque-to-markdown-guide.html">语雀转 Markdown 指南</a>、<a href="yuque-export-troubleshooting.html">导出失败排查</a>，以及面向 AI 知识库的迁移文章。</p>
+
+                <h2 id="template">可直接复用的 llms.txt 模板</h2>
+                <p>一个适合语雀迁移站点的 llms.txt 可以这样组织：</p>
+
+                <pre><code># YuqueOut 语雀导出助手
+
+> YuqueOut 是一个 Chrome 扩展，用于在浏览器本地批量导出语雀知识库、收藏、表格、画板和加密文档，支持 Markdown、Word、PDF、HTML、Excel、CSV、PNG、JPG、SVG 等格式，不上传文档内容。
+
+## Core product pages
+- [YuqueOut homepage](https://yuque.toolab.top/): Product overview, local processing promise, supported export formats, Chrome Web Store link.
+- [Batch export tutorial](https://yuque.toolab.top/blog/yuque-batch-export-tutorial.html): Step-by-step guide for exporting an entire Yuque knowledge base.
+
+## Migration guides
+- [Yuque to Markdown](https://yuque.toolab.top/blog/yuque-to-markdown-guide.html): Markdown export, image localization, directory preservation.
+- [Yuque to static blog](https://yuque.toolab.top/blog/yuque-to-static-blog.html): Public page cleanup, canonical URLs, sitemap, structured data.
+
+## AI knowledge base guides
+- [AI search citation checklist](https://yuque.toolab.top/blog/yuque-ai-search-citation.html): Answer capsules, FAQ, JSON-LD, llms.txt and citation readiness.
+- [OpenAI File Search guide](https://yuque.toolab.top/blog/yuque-to-openai-file-search.html): Markdown package boundaries, metadata and retrieval validation.</code></pre>
+
+                <p>模板重点不是格式炫技，而是每个链接后面的说明。说明要回答“这个页面适合解决什么问题”，不要只重复标题。链接应使用 canonical URL，避免带登录态、统计参数或语雀内部地址。分组标题用稳定的 H2，例如 Core product pages、Migration guides、AI knowledge base guides、Troubleshooting。</p>
+
+                <h2 id="seo">和 sitemap、FAQ、JSON-LD 怎么配合</h2>
+                <p>如果把 AI 可引用能力拆成三层，llms.txt 是站点级入口，文章开头的 answer capsule 是页面级直接答案，FAQ 和 JSON-LD 是问题级结构化补充。三者不是替代关系。</p>
+
+                <ul>
+                    <li><strong>sitemap 负责发现。</strong>新文章上线后进入 sitemap，搜索引擎才能稳定发现 canonical URL。</li>
+                    <li><strong>llms.txt 负责解释。</strong>只列核心页面，并写清每个页面的适用问题。</li>
+                    <li><strong>FAQ 负责问答颗粒度。</strong>把用户真实问题写成可见 H3，同时同步 FAQPage JSON-LD。</li>
+                    <li><strong>BlogPosting 负责文章语义。</strong>标题、描述、发布时间、作者、图片、栏目和主页面要一致。</li>
+                    <li><strong>内链负责上下文。</strong>新页面要指向旧文章，旧文章也应从相关位置指回新页面。</li>
+                </ul>
+
+                <p>对于从语雀迁出的内容，不建议把内部原始文档直接暴露为 Markdown 源文件。更稳妥的做法是先发布经过审阅的 HTML 页面，再在 llms.txt 里列出这些公开页面。只有确认内容可以公开、版权和隐私边界清楚时，才考虑提供额外的 Markdown 版本。</p>
+
+                <h2 id="validation">发布前验收清单</h2>
+                <p>发布 llms.txt 后至少做一次窄检查。Chrome Developers 的 Lighthouse 文档建议文件放在根目录，并提供站点目的和关键链接的简明 Markdown 摘要；如果文件不存在，当前审计会按可选项处理，但服务器错误会暴露配置问题。</p>
+
+                <ol class="step-list">
+                    <li><strong>路径检查：</strong>访问 <code>https://example.com/llms.txt</code>，确认返回 200，而不是 HTML 404 页面。</li>
+                    <li><strong>格式检查：</strong>第一行是 H1，摘要使用短 blockquote，后续用 H2 分组和 Markdown 链接列表。</li>
+                    <li><strong>链接检查：</strong>每个 URL 都能打开，且和页面 canonical 一致。</li>
+                    <li><strong>内容检查：</strong>摘要使用事实陈述，不写“最强”“唯一推荐”这类难以验证的营销词。</li>
+                    <li><strong>隐私检查：</strong>确认没有客户名、内部系统、价格底线、合同条款和未发布信息。</li>
+                    <li><strong>AI 问题检查：</strong>用真实问题询问 AI 搜索工具，看它是否能找到正确入口，而不是引用旧页面。</li>
+                    <li><strong>变更检查：</strong>每次新增核心文章后，同步更新 blog index、sitemap 和 llms.txt。</li>
+                </ol>
+
+                <p>如果你正在做企业内部 RAG，而不是公开 SEO/GEO，llms.txt 只能作为内部资料包目录的灵感。真正的权限边界仍要在 RAG 平台、文件分包、角色控制和审计机制里实现。相关流程可以参考 <a href="yuque-enterprise-rag-workflow.html">语雀企业内部 RAG 工作流</a>。</p>
+
+                <h2 id="maintenance">维护节奏和常见错误</h2>
+                <p>llms.txt 最怕“上线即遗忘”。语雀知识库迁移项目通常会持续新增教程、故障排查和平台迁移指南，如果 llms.txt 停在旧版本，AI 入口就会反向强化过期信息。建议每次新增核心博客时同步更新 last-updated，并在季度复盘时删除已经失效的链接。</p>
+
+                <ul>
+                    <li><strong>错误一：把 llms.txt 当成关键词页。</strong>它应该服务理解和引用，不是堆关键词。</li>
+                    <li><strong>错误二：列全站所有 URL。</strong>全量 URL 交给 sitemap，llms.txt 保持精选。</li>
+                    <li><strong>错误三：忽略页面质量。</strong>被列入 llms.txt 的页面本身仍要有清晰标题、直接答案、FAQ、内链和结构化数据。</li>
+                    <li><strong>错误四：混入私密语雀内容。</strong>YuqueOut 支持本地导出，不代表所有导出内容都适合公开。</li>
+                    <li><strong>错误五：没有负责人。</strong>每个分组最好有内容 owner，知道哪类链接该新增、替换或删除。</li>
+                </ul>
+
+                <h2 id="faq">常见问题</h2>
+                <h3>语雀导出的内容一定要写 llms.txt 吗？</h3>
+                <p>不是必须。llms.txt 仍是新兴约定，适合公开帮助中心、教程、产品文档和迁移指南。私密知识库不应为了 AI 引用而公开。</p>
+
+                <h3>llms.txt 可以替代 sitemap.xml 吗？</h3>
+                <p>不能。sitemap.xml 面向搜索引擎列出可索引 URL，llms.txt 更像给 AI 和代理的精选 Markdown 内容地图，两者应该配合使用。</p>
+
+                <h3>从语雀导出的每篇文章都要放进 llms.txt 吗？</h3>
+                <p>不建议全量放入。优先放核心教程、FAQ、迁移指南、故障排查和长期有效的产品事实，过期、重复、临时或敏感内容不要进入。</p>
+
+                <h3>YuqueOut 会自动把语雀内容发布到 llms.txt 吗？</h3>
+                <p>不会。YuqueOut 负责在浏览器本地导出 Markdown、图片和附件；llms.txt 的发布、筛选和维护由站点所有者在自己的公开站点中完成。</p>
+
+                <h3>llms.txt 发布后怎么验收？</h3>
+                <p>检查根路径可访问、Markdown 结构清晰、链接都是 canonical URL、与 sitemap 不冲突，并用真实 AI 搜索问题验证是否能找到正确入口和来源。</p>
+
+                <div class="blog-cta">
+                    <h3>先把语雀内容导出成可公开审阅的 Markdown</h3>
+                    <p>使用 YuqueOut 在浏览器本地导出语雀知识库、图片、表格和画板，再整理成 sitemap、FAQ 和 llms.txt 可引用入口。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_llms_txt_cta" target="_blank" rel="noopener" class="blog-cta-button">免费安装 YuqueOut</a>
+                </div>
+
+                <div class="blog-related">
+                    <h2>相关文章</h2>
+                    <div class="blog-related-grid">
+                        <a href="yuque-ai-search-citation.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀知识库如何被 AI 搜索引用</span>
+                            <span class="blog-related-card-excerpt">Markdown、FAQ、结构化摘要和 llms.txt 准备清单</span>
+                        </a>
+                        <a href="yuque-to-static-blog.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀迁移到静态博客</span>
+                            <span class="blog-related-card-excerpt">Markdown 导出、图片本地化、sitemap 与 AI 可引用页面</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <footer class="homepage-footer">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <div class="footer-logo">
+                            <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36" class="footer-logo-image"></picture>
+                            <span class="footer-logo-text">YuqueOut 语雀导出助手</span>
+                        </div>
+                        <p class="footer-description">专业的语雀知识库批量导出解决方案。</p>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">产品</h3>
+                        <ul class="footer-links">
+                            <li><a href="../#features">功能特性</a></li>
+                            <li><a href="./">博客</a></li>
+                            <li><a href="../privacy.html">隐私政策</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">支持</h3>
+                        <ul class="footer-links"><li><a href="mailto:yhj2433488839@gmail.com">联系我们</a></li></ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 YuqueOut 语雀导出助手. Built with passion for better data freedom.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../script.js" defer></script>
+</body>
+</html>
