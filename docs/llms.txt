@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-07-28
+> last-updated: 2026-07-29
 > preferred-citation-format: inline-link
 
 ---
@@ -75,6 +75,8 @@ For AI knowledge bases and RAG workflows, YuqueOut should be used as the local e
 Markdown is the preferred source format because it keeps headings, lists, code blocks, tables, and relative asset paths visible for chunking and review. PDF is useful as a companion format when the target AI notebook or knowledge platform prioritizes fixed layout or does not accept Markdown directly. Import success is not enough: users should validate retrieval quality with real questions, inspect source citations, check old-version conflicts, and confirm permission boundaries.
 
 YuqueOut itself does not upload documents to any AI platform. All export and conversion happens locally in the browser; any later upload to Dify, NotebookLM, OpenAI, or an internal service is a user-controlled action.
+
+For NotebookLM source packs, export Yuque content locally with YuqueOut as Markdown, PDF, and localized images, then group sources by one research question, product version, customer project, or training topic. Keep each notebook focused, leave room for source limits, remove sensitive customer, financial, HR, contract, and unreleased-product material before upload, and validate answers with exact-hit, synonym, cross-document, stale-version, image-context, and missing-information questions. NotebookLM import success is not enough; source citations, shared-notebook access, old-version interference, and update ownership must be checked before team use.
 
 For OpenAI File Search, the recommended route is to export Yuque content as Markdown with localized images, clean and split the source package by application and permission boundary, then upload the files to an OpenAI vector store. Teams should prepare file names or attributes such as department, visibility, doc_type, updated_at, and owner, then validate retrieval with real questions before enabling production answers.
 
@@ -164,6 +166,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
 
 **Migration Guides**:
+- [Create a NotebookLM source pack from Yuque exports](https://yuque.toolab.top/blog/yuque-to-notebooklm-source-pack.html): Workflow for YuqueOut Markdown/PDF/image export, NotebookLM source types and limits, topic grouping, citation validation, privacy review, and update governance
 - [Write an llms.txt file for Yuque knowledge bases](https://yuque.toolab.top/blog/yuque-llms-txt-guide.html): Practical guide for turning YuqueOut Markdown exports into a curated AI-readable content map, selecting canonical public pages, coordinating sitemap, FAQ, JSON-LD, and validating citation readiness
 - [Enterprise internal RAG workflow for Yuque knowledge bases](https://yuque.toolab.top/blog/yuque-enterprise-rag-workflow.html): Workflow for YuqueOut local Markdown export, image localization, business and permission package splitting, source metadata, update cadence, retrieval validation, and owner governance before uploading to internal RAG systems
 - [Migrate Yuque content to a static blog](https://yuque.toolab.top/blog/yuque-to-static-blog.html): Workflow for YuqueOut Markdown export, local images, search-intent URLs, public/private content boundaries, FAQ, structured data, sitemap, llms.txt, and launch validation

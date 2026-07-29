@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="语雀资料如何导入 NotebookLM？用 YuqueOut 导出 Markdown、PDF 和本地图片，按来源上限拆分 Notebook，建立引用验收和隐私检查清单。">
+    <meta name="keywords" content="语雀导入NotebookLM,NotebookLM来源包,语雀Markdown导出,YuqueOut,AI知识库,NotebookLM知识库,语雀PDF导出,引用验收">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-to-notebooklm-source-pack.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="语雀导入 NotebookLM 来源包：Markdown 导出、来源分组与引用验收清单">
+    <meta property="og:description" content="把语雀知识库整理成 NotebookLM 可引用来源：先用 YuqueOut 本地导出 Markdown/PDF，再按主题、来源数量、文件大小、权限边界分包。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-to-notebooklm-source-pack.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-notebooklm-source-pack.webp">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-07-29">
+    <meta property="article:modified_time" content="2026-07-29">
+    <meta property="article:section" content="AI Notebook">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="语雀导入 NotebookLM 来源包">
+    <meta name="twitter:description" content="Markdown 导出、来源分组与引用验收清单。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-notebooklm-source-pack.webp">
+
+    <meta name="theme-color" content="#060b22">
+    <title>语雀导入 NotebookLM 来源包：Markdown 导出、来源分组与引用验收清单 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "语雀导入 NotebookLM 来源包：Markdown 导出、来源分组与引用验收清单",
+      "description": "语雀资料导入 NotebookLM 的实操指南，覆盖 YuqueOut Markdown/PDF 导出、本地图片、来源类型、来源数量边界、主题分包、引用验收和隐私检查。",
+      "url": "https://yuque.toolab.top/blog/yuque-to-notebooklm-source-pack.html",
+      "datePublished": "2026-07-29",
+      "dateModified": "2026-07-29",
+      "image": "https://yuque.toolab.top/images/blog-notebooklm-source-pack.webp",
+      "author": { "@type": "Person", "name": "Kevin Yang", "url": "https://yuque.toolab.top/" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-to-notebooklm-source-pack.html",
+      "wordCount": 3000,
+      "articleSection": "AI Notebook"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语雀导入 NotebookLM 来源包", "item": "https://yuque.toolab.top/blog/yuque-to-notebooklm-source-pack.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "语雀知识库可以直接导入 NotebookLM 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "NotebookLM 不能直接一键读取整个语雀空间。更稳的路径是先用 YuqueOut 把语雀内容导出为 Markdown、PDF 和本地图片，再把清洗后的文件作为 NotebookLM 来源上传。" }
+        },
+        {
+          "@type": "Question",
+          "name": "导入 NotebookLM 优先用 Markdown 还是 PDF？",
+          "acceptedAnswer": { "@type": "Answer", "text": "普通语雀文档优先保留 Markdown，因为标题、列表、代码块和表格便于维护；含大量截图、制度手册或固定版式资料可以同时导出 PDF，作为上传兼容和人工复核材料。" }
+        },
+        {
+          "@type": "Question",
+          "name": "一个 NotebookLM notebook 应该放多少语雀文档？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不要按全公司知识库一次性塞入。建议一个 notebook 对应一个产品版本、客户项目、培训主题或研究问题，并留出来源数量余量，方便后续增量更新。" }
+        },
+        {
+          "@type": "Question",
+          "name": "NotebookLM 的引用准确就代表资料包合格吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不代表。除了检查引用是否指向正确来源，还要验证旧版本干扰、图片信息缺失、权限边界、缺失问题拒答和多人共享后的来源可访问性。" }
+        },
+        {
+          "@type": "Question",
+          "name": "YuqueOut 会把资料上传到 NotebookLM 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。YuqueOut 只在浏览器本地导出和转换语雀内容，不自动上传到 Google、NotebookLM 或其他 AI 平台。上传动作由用户自己完成。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_notebooklm_source_pack" target="_blank" rel="noopener" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">NotebookLM 来源包</span>
+                </div>
+                <span class="blog-article-tag">AI Notebook</span>
+                <h1 class="blog-article-title">语雀导入 NotebookLM 来源包：Markdown 导出、来源分组与引用验收清单</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">2026-07-29</span>
+                    <span class="blog-article-meta-item">10 分钟阅读</span>
+                    <span class="blog-article-meta-item">约 3000 字</span>
+                    <span class="blog-article-meta-item blog-article-author">Kevin Yang</span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-notebooklm-source-pack.webp" alt="语雀导入 NotebookLM 来源包的 Markdown、PDF 和引用验收工作流" width="1672" height="941" loading="eager" style="width:100%;height:auto;border-radius:8px;margin-bottom:2rem;">
+
+                <aside class="citation-capsule" style="background:rgba(20,184,166,0.08);border-left:4px solid #14b8a6;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">把语雀资料导入 NotebookLM，推荐先用 YuqueOut 本地导出 Markdown、PDF 和本地图片，再按“一个研究问题或一个业务主题”拆成来源包。导入后不要只看能否提问，要检查引用是否指向正确文档、旧版本是否干扰、图片信息是否缺失，以及敏感资料是否被错误上传。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#route">推荐路线：先做来源包，再建 notebook</a></li>
+                        <li><a href="#source-types">NotebookLM 支持哪些来源</a></li>
+                        <li><a href="#export-package">YuqueOut 导出来源包怎么准备</a></li>
+                        <li><a href="#split">来源分组和数量边界</a></li>
+                        <li><a href="#citation">引用验收问题怎么设计</a></li>
+                        <li><a href="#privacy">隐私、共享和更新治理</a></li>
+                        <li><a href="#checklist">上线前检查清单</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>NotebookLM 适合围绕一组来源材料做研究、提问、摘要和学习资料生成。Google 官方帮助说明，NotebookLM 可以上传 PDF、网站、YouTube 视频、音频、Google Docs、Google Slides 等来源，并在 notebook 中基于来源给出带引用的回答。对语雀团队来说，真正的难点不是“能不能上传文件”，而是如何把语雀里长期协作形成的文档整理成可控、可复核、可更新的来源包。</p>
+
+                <p>这篇文章不重复介绍“NotebookLM 是什么”，而聚焦更具体的搜索意图：已经有一批语雀知识库，如何用 YuqueOut 导出成 NotebookLM 友好的 Markdown/PDF 来源包，怎么分组，怎么验收引用，怎么避免把私密资料误传到外部 AI 平台。</p>
+
+                <h2 id="route">推荐路线：先做来源包，再建 notebook</h2>
+                <p>不要从语雀页面逐篇复制到 NotebookLM。更稳的路线是先在本地建立一个可审阅来源包：</p>
+                <ol class="step-list">
+                    <li><strong>确定问题边界。</strong>一个 notebook 对应一个产品版本、客户项目、培训主题、竞品研究或故障排查主题。</li>
+                    <li><strong>用 YuqueOut 批量导出语雀目录。</strong>普通文档导出 Markdown，含复杂排版或截图教程的文档同步保留 PDF。</li>
+                    <li><strong>开启图片本地化。</strong>把语雀图片、截图和附件保存到本地 assets 目录，避免后续丢失上下文。</li>
+                    <li><strong>清洗文件名和标题。</strong>把“最终版”“待整理”“新建文档”改成能表达主题的名称。</li>
+                    <li><strong>删除不该上传的内容。</strong>客户数据、财务、人事、合同、未发布产品计划默认剔除，除非有明确授权和业务必要。</li>
+                    <li><strong>导入 NotebookLM 后做引用验收。</strong>用真实问题检查回答、引用、旧版本干扰和拒答边界。</li>
+                </ol>
+
+                <p>如果你的目标是更通用的企业 RAG，可以先看 <a href="yuque-enterprise-rag-workflow.html">语雀企业内部 RAG 工作流</a>；如果只是要把公开文档变成 AI 搜索可引用页面，可以参考 <a href="yuque-ai-search-citation.html">AI 搜索引用准备清单</a>。</p>
+
+                <h2 id="source-types">NotebookLM 支持哪些来源</h2>
+                <p>根据 Google 官方 NotebookLM 帮助中心，NotebookLM 支持的来源类型包括 Google Docs、Google Slides、Google Sheets、图片、Word、TXT、Markdown、PDF、CSV、PowerPoint、Web URL、ePub、公开 YouTube URL、音频文件和复制粘贴文本等。官方同一页面也写明，每个来源最多可包含 500,000 words，上传文件最多 200MB，免费用户最多可包含 50 个来源。</p>
+
+                <p>这些限制会直接影响语雀来源包设计：不要把一个巨大知识库压成一个超大 PDF，也不要把所有文档散成几十上百个小来源后再临时删减。更合理的做法，是在 YuqueOut 导出后先按主题和章节整理，必要时合并过短文档，拆分过长文档。</p>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>语雀资料</th><th>建议导出</th><th>进入 NotebookLM 前检查</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>产品需求、技术方案、SOP</td><td>Markdown</td><td>标题层级、代码块、列表和更新时间是否清楚。</td></tr>
+                            <tr><td>培训手册、制度、对外材料</td><td>PDF + Markdown</td><td>PDF 便于上传复核，Markdown 便于后续修改。</td></tr>
+                            <tr><td>表格型资料</td><td>CSV / Markdown 表格</td><td>列名、口径、日期、金额和负责人是否写明。</td></tr>
+                            <tr><td>截图教程、画板、流程图</td><td>图片 + Markdown 说明</td><td>不要让关键步骤只存在于图片里。</td></tr>
+                            <tr><td>外部网页资料</td><td>优先保留原 URL 和摘要</td><td>Google 帮助说明 Web URL 通常抓取网页文本，图片和嵌入视频不应被默认视为来源内容。</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="export-package">YuqueOut 导出来源包怎么准备</h2>
+                <p>来源包不是简单的下载目录，而是一个给 AI Notebook 使用、也给人工复核使用的资料单元。建议在本地形成这样的结构：</p>
+                <pre><code>notebooklm-source-pack/
+  README.md
+  01-product-background/
+  02-user-research/
+  03-faq-and-sop/
+  04-screenshots-and-assets/
+  excluded-sensitive/
+</code></pre>
+
+                <p><code>README.md</code> 里写清楚来源包用途、导出日期、资料范围、负责人和不包含哪些敏感内容。这样后续 NotebookLM 回答异常时，团队可以先回到源包排查，而不是在 AI 对话里猜测。</p>
+
+                <p>YuqueOut 的本地优先机制适合作为这一步的准备层：先把语雀文档导出到浏览器本地，不上传到第三方服务；团队完成清洗、脱敏和分类后，再决定哪些文件上传到 NotebookLM。若资料中图片较多，可以先按 <a href="yuque-local-image-backup.html">语雀图片本地化备份清单</a> 检查相对路径和断网预览。</p>
+
+                <h2 id="split">来源分组和数量边界</h2>
+                <p>NotebookLM 的优势是围绕来源材料回答，但来源越混杂，答案越难复核。建议按以下边界拆 notebook：</p>
+                <ul>
+                    <li><strong>一个产品版本：</strong>需求、设计稿说明、发布说明、用户反馈和已知问题放在一起。</li>
+                    <li><strong>一个客户项目：</strong>方案、会议纪要、交付清单、风险记录和验收口径放在一起。</li>
+                    <li><strong>一个培训主题：</strong>讲义、操作步骤、FAQ、案例和考核题放在一起。</li>
+                    <li><strong>一个研究问题：</strong>竞品材料、内部讨论、调研笔记和结论草稿放在一起。</li>
+                </ul>
+
+                <p>如果一个主题超过来源数量或文件大小边界，先拆成多个 notebook，而不是硬塞。比如“客服知识库”可以拆成“公开 FAQ”“退款售后”“企业账号权限”“常见故障排查”。这也方便把内部升级话术和公开帮助内容分开，避免 NotebookLM 在回答里混用不该给用户看的材料。</p>
+
+                <h2 id="citation">引用验收问题怎么设计</h2>
+                <p>NotebookLM 会基于来源回答并提供引用，但这不等于每个回答都可上线。导入语雀来源包后，至少用五类问题验收：</p>
+                <ol class="step-list">
+                    <li><strong>精确命中问题。</strong>问一个答案只存在于某篇 SOP 的问题，检查引用是否指向这篇文档。</li>
+                    <li><strong>同义词问题。</strong>把语雀原文里的“开票”换成“发票抬头”“票据信息”，看是否仍能命中正确来源。</li>
+                    <li><strong>跨文档问题。</strong>问一个需要结合两个来源的问题，确认回答不会只引用其中一半。</li>
+                    <li><strong>旧版本干扰问题。</strong>故意问历史流程，确认回答不会把废弃文档当成当前规则。</li>
+                    <li><strong>图片上下文问题。</strong>问截图或流程图中的关键步骤，确认 Markdown 文字说明足够，不会只依赖图片视觉信息。</li>
+                    <li><strong>缺失问题。</strong>问资料包里没有的内容，确认 NotebookLM 会承认缺失，而不是编造。</li>
+                </ol>
+
+                <p>验收失败时，优先修源文件：补标题、补摘要、删旧稿、拆长文、给截图写文字说明。不要只靠提示词要求“请严格依据资料回答”。当来源包质量低时，提示词很难长期弥补结构问题。</p>
+
+                <h2 id="privacy">隐私、共享和更新治理</h2>
+                <p>YuqueOut 不会把语雀资料上传到 NotebookLM；它只负责在本地导出。真正的风险点发生在用户把导出的文件上传到外部平台时。因此团队使用 NotebookLM 前，应先定义三条规则：</p>
+                <ul>
+                    <li><strong>谁能决定上传：</strong>客户资料、人事财务、合同、未公开产品计划必须有负责人审批。</li>
+                    <li><strong>谁能共享 notebook：</strong>共享前检查来源列表，不要因为一个 notebook 里混入敏感资料而扩大访问范围。</li>
+                    <li><strong>如何更新：</strong>语雀更新后重新导出源包，更新 NotebookLM 来源，并记录导出日期和资料版本。</li>
+                </ul>
+
+                <p>Google Workspace 的 NotebookLM 产品页说明，用户上传的来源保持私有，除非用户选择共享 notebook；但这不应替代团队内部权限治理。更稳的做法是沿用 <a href="yuque-ai-knowledge-base-permissions.html">企业语雀导入 AI 知识库前的权限治理清单</a>，先分公开、内部、敏感，再决定能否上传。</p>
+
+                <h2 id="checklist">上线前检查清单</h2>
+                <ul>
+                    <li>来源包有 README，写明用途、范围、导出日期和负责人。</li>
+                    <li>文件名能表达主题，没有 final、new、test、未命名文档。</li>
+                    <li>Markdown 标题层级完整，图片使用本地相对路径。</li>
+                    <li>PDF 资料可人工打开复核，关键截图有文字说明。</li>
+                    <li>每个 notebook 对应一个主题，不混入跨部门或跨权限资料。</li>
+                    <li>已用真实问题检查引用、同义词、跨文档、旧版本、缺失问题。</li>
+                    <li>共享前复核来源列表，确认没有客户、人事、财务、合同或未发布内容误传。</li>
+                    <li>保留 YuqueOut 导出的本地原始包，便于后续回滚和重新上传。</li>
+                </ul>
+
+                <h2 id="faq">常见问题</h2>
+                <h3>语雀知识库可以直接导入 NotebookLM 吗？</h3>
+                <p>NotebookLM 不能直接一键读取整个语雀空间。更稳的路径是先用 YuqueOut 把语雀内容导出为 Markdown、PDF 和本地图片，再把清洗后的文件作为 NotebookLM 来源上传。</p>
+
+                <h3>导入 NotebookLM 优先用 Markdown 还是 PDF？</h3>
+                <p>普通语雀文档优先保留 Markdown，因为标题、列表、代码块和表格便于维护；含大量截图、制度手册或固定版式资料可以同时导出 PDF，作为上传兼容和人工复核材料。</p>
+
+                <h3>一个 NotebookLM notebook 应该放多少语雀文档？</h3>
+                <p>不要按全公司知识库一次性塞入。建议一个 notebook 对应一个产品版本、客户项目、培训主题或研究问题，并留出来源数量余量，方便后续增量更新。</p>
+
+                <h3>NotebookLM 的引用准确就代表资料包合格吗？</h3>
+                <p>不代表。除了检查引用是否指向正确来源，还要验证旧版本干扰、图片信息缺失、权限边界、缺失问题拒答和多人共享后的来源可访问性。</p>
+
+                <h3>YuqueOut 会把资料上传到 NotebookLM 吗？</h3>
+                <p>不会。YuqueOut 只在浏览器本地导出和转换语雀内容，不自动上传到 Google、NotebookLM 或其他 AI 平台。上传动作由用户自己完成。</p>
+
+                <div class="blog-cta">
+                    <h3>先导出语雀，再整理 NotebookLM 来源包</h3>
+                    <p>用 YuqueOut 批量导出 Markdown、PDF、本地图片和附件，在本地完成清洗、分组、脱敏和验收后，再决定上传到 NotebookLM。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_notebooklm_source_pack_cta" target="_blank" rel="noopener" class="blog-cta-button">安装 YuqueOut</a>
+                </div>
+
+                <div class="related-articles">
+                    <h2>相关文章</h2>
+                    <ul>
+                        <li><a href="yuque-to-gemini-notebook.html">语雀导入 NotebookLM / Gemini 生态 AI Notebook</a></li>
+                        <li><a href="yuque-ai-knowledge-base-guide.html">语雀内容如何整理成 AI 知识库</a></li>
+                        <li><a href="yuque-to-openai-file-search.html">语雀导入 OpenAI File Search</a></li>
+                        <li><a href="yuque-ai-knowledge-base-permissions.html">企业语雀导入 AI 知识库前的权限治理</a></li>
+                    </ul>
+                </div>
+
+                <p style="font-size:0.85rem;color:rgba(255,255,255,0.55);">参考来源：Google NotebookLM Help - <a href="https://support.google.com/notebooklm/answer/16215270" target="_blank" rel="noopener">Add or discover new sources for your notebook</a>；Google Workspace - <a href="https://workspace.google.com/products/notebooklm/" target="_blank" rel="noopener">NotebookLM product overview</a>。</p>
+            </div>
+        </article>
+
+        <footer class="homepage-footer">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <div class="footer-logo">
+                            <picture><img src="../images/icon-36x36.png" alt="YuqueOut" class="footer-logo-image" width="36" height="36" loading="lazy"></picture>
+                            <span class="footer-logo-text">YuqueOut 语雀导出助手</span>
+                        </div>
+                        <p class="footer-description">专业的语雀知识库批量导出解决方案。为隐私而设计，为效率而生。</p>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">产品</h3>
+                        <ul class="footer-links">
+                            <li><a href="../#features">功能特性</a></li>
+                            <li><a href="./">博客</a></li>
+                            <li><a href="../#privacy">隐私保护</a></li>
+                            <li><a href="../privacy.html">隐私政策</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">支持</h3>
+                        <ul class="footer-links">
+                            <li><a href="mailto:yhj2433488839@gmail.com">联系我们</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 YuqueOut 语雀导出助手. Built with passion for better data freedom.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../script.js" defer></script>
+</body>
+</html>
