@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="语雀里有客户、财务、人事、合同和密钥资料时，如何安全导出和交接？本文给出 YuqueOut 本地备份、敏感资料分级、脱敏、责任人和验收清单。">
+    <meta name="keywords" content="语雀敏感资料导出,语雀本地备份,YuqueOut,企业知识库安全,语雀脱敏,语雀权限交接,敏感文档分级,知识库治理">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-sensitive-docs-export-governance.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="语雀敏感资料导出前怎么分级：YuqueOut 本地备份、脱敏与权限交接清单">
+    <meta property="og:description" content="客户、财务、人事、合同和密钥资料不要直接混入普通备份。先用 YuqueOut 本地导出，再按敏感等级、用途和责任人拆包验收。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-sensitive-docs-export-governance.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-yuque-sensitive-docs-governance.png">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-07-30">
+    <meta property="article:modified_time" content="2026-07-30">
+    <meta property="article:section" content="数据安全">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="语雀敏感资料导出前怎么分级">
+    <meta name="twitter:description" content="YuqueOut 本地备份、脱敏与权限交接清单。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-yuque-sensitive-docs-governance.png">
+
+    <meta name="theme-color" content="#060b22">
+    <title>语雀敏感资料导出前怎么分级：YuqueOut 本地备份、脱敏与权限交接清单 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "语雀敏感资料导出前怎么分级：YuqueOut 本地备份、脱敏与权限交接清单",
+      "description": "企业语雀敏感资料导出治理指南，覆盖 YuqueOut 本地备份、公开/内部/受限/高敏分级、脱敏、权限交接、AI 知识库导入边界和验收问题。",
+      "url": "https://yuque.toolab.top/blog/yuque-sensitive-docs-export-governance.html",
+      "datePublished": "2026-07-30",
+      "dateModified": "2026-07-30",
+      "image": "https://yuque.toolab.top/images/blog-yuque-sensitive-docs-governance.png",
+      "author": { "@type": "Person", "name": "Kevin Yang", "url": "https://yuque.toolab.top/" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-sensitive-docs-export-governance.html",
+      "wordCount": 2900,
+      "articleSection": "数据安全"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语雀敏感资料导出分级", "item": "https://yuque.toolab.top/blog/yuque-sensitive-docs-export-governance.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "语雀敏感资料可以直接批量导出吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "可以导出用户在浏览器中有权限访问的资料，但不建议把敏感资料和普通资料混在同一个备份包里。应先按公开、内部、受限、高敏分级，再决定存放位置、访问人员和后续用途。" }
+        },
+        {
+          "@type": "Question",
+          "name": "YuqueOut 会上传企业文档做处理吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。YuqueOut 的导出和转换发生在浏览器本地，不把语雀文档上传到第三方服务器。导出后的文件是否进入云盘、AI 知识库或内部系统，由用户自己控制。" }
+        },
+        {
+          "@type": "Question",
+          "name": "敏感语雀文档导出后优先保存什么格式？",
+          "acceptedAnswer": { "@type": "Answer", "text": "建议保留一份原始归档包，再在副本中使用 Markdown、本地图片和必要的 PDF 做清洗。Markdown 便于检索、脱敏和版本管理，PDF 适合保留固定版式或合同制度类资料。" }
+        },
+        {
+          "@type": "Question",
+          "name": "哪些语雀资料不应该进入 AI 知识库？",
+          "acceptedAnswer": { "@type": "Answer", "text": "客户隐私、合同原文、财务明细、人事资料、密钥、生产账号、未发布路线图和无法确认授权范围的截图，默认不应进入普通 AI 知识库。确需导入时要有审批、脱敏、权限隔离和审计。" }
+        },
+        {
+          "@type": "Question",
+          "name": "离职交接时如何验收语雀备份？",
+          "acceptedAnswer": { "@type": "Answer", "text": "验收时检查目录完整性、本地图片是否可打开、加密文档是否有授权处理记录、敏感资料是否单独封存、接收人是否确认权限范围，并保留导出日期、负责人和校验清单。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_sensitive_docs_governance" target="_blank" rel="noopener" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">敏感资料导出分级</span>
+                </div>
+                <span class="blog-article-tag">数据安全</span>
+                <h1 class="blog-article-title">语雀敏感资料导出前怎么分级：YuqueOut 本地备份、脱敏与权限交接清单</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">2026-07-30</span>
+                    <span class="blog-article-meta-item">10 分钟阅读</span>
+                    <span class="blog-article-meta-item">约 2900 字</span>
+                    <span class="blog-article-meta-item blog-article-author">Kevin Yang</span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-yuque-sensitive-docs-governance.png" alt="语雀敏感资料导出分级、本地备份、脱敏和权限交接工作流" width="1672" height="941" loading="eager" style="width:100%;height:auto;border-radius:8px;margin-bottom:2rem;">
+
+                <aside class="citation-capsule" style="background:rgba(34,197,94,0.08);border-left:4px solid #22c55e;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">语雀里有客户、财务、人事、合同、密钥或未发布计划时，不要把整个知识库直接打包进普通网盘或 AI 知识库。更稳的做法是先用 YuqueOut 本地导出，再按公开、内部、受限、高敏四级分包，保留原始归档，清洗副本，明确接收人和用途，最后用目录、图片、加密文档和权限问题逐项验收。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#why">为什么敏感资料导出要先治理</a></li>
+                        <li><a href="#inventory">先做导出清单和原始归档</a></li>
+                        <li><a href="#levels">四级敏感资料分级模型</a></li>
+                        <li><a href="#redaction">脱敏和清洗重点</a></li>
+                        <li><a href="#handoff">权限交接怎么做</a></li>
+                        <li><a href="#ai">进入 AI 知识库前的边界</a></li>
+                        <li><a href="#acceptance">验收检查清单</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>很多团队把语雀当成项目记忆库：客户方案、会议纪要、研发排障、人事制度、财务说明、销售话术和账号配置都在里面。平时这些内容被语雀空间、知识库、成员角色、加密文档和浏览器登录状态隔开；一旦导出到本地、网盘、Git 仓库或 AI 知识库，原来的权限边界就不一定还存在。</p>
+
+                <p>所以敏感资料导出的核心不是“能不能导出”，而是“导出后谁能看、放在哪里、用于什么、怎么确认没有越权扩散”。YuqueOut 适合承担本地导出层：它把用户在浏览器中可访问的语雀内容导出到本地，不自动上传第三方服务。真正的治理动作应该发生在导出包离开浏览器之后。</p>
+
+                <h2 id="why">为什么敏感资料导出要先治理</h2>
+                <p>语雀在线协作时，权限变化往往由空间管理员处理；导出后，文件变成普通 Markdown、PDF、图片、表格或压缩包，任何拥有文件的人都可能复制、转发、上传和再加工。没有分级的导出包会带来几个典型风险：</p>
+                <ul>
+                    <li><strong>范围扩大。</strong>原本只给项目组看的客户纪要，被放进全员可访问的共享盘。</li>
+                    <li><strong>上下文丢失。</strong>文档标题叫“价格策略最终版”，但导出后没人知道适用客户、时间和审批人。</li>
+                    <li><strong>图片漏检。</strong>截图里的手机号、邮箱、内网地址、Token、聊天记录比正文更容易被忽略。</li>
+                    <li><strong>AI 放大。</strong>敏感资料进入 AI 知识库后，用户可能通过概括问题间接问出不该看的内容。</li>
+                    <li><strong>交接失控。</strong>离职、部门调整、外包协作时，只交付压缩包，没有责任人和验收记录。</li>
+                </ul>
+
+                <h2 id="inventory">先做导出清单和原始归档</h2>
+                <p>导出前先列清单，而不是打开插件后直接全选。建议把语雀资料按知识库、团队空间、收藏夹和高风险目录列出来，标注负责人、用途、最近更新时间和预计接收人。</p>
+                <ol class="step-list">
+                    <li><strong>确定范围。</strong>先导出本次迁移、备份或交接需要的目录，不把全公司知识库当默认范围。</li>
+                    <li><strong>用 YuqueOut 本地导出。</strong>普通文档优先 Markdown，图片开启本地化；需要固定版式的制度、合同、培训材料可以同步保留 PDF。</li>
+                    <li><strong>保留原始包。</strong>导出后先保存只读原始包，记录导出日期、导出账号和语雀目录范围。</li>
+                    <li><strong>在副本里清洗。</strong>脱敏、删除、改名、重组目录都在副本中完成，避免把原始证据链改乱。</li>
+                    <li><strong>分开普通备份和敏感备份。</strong>公开帮助文档、内部 SOP、高敏资料不要落在同一个压缩包里。</li>
+                </ol>
+
+                <p>如果你的语雀资料里有大量图片，先按 <a href="yuque-local-image-backup.html">语雀图片本地化备份清单</a> 做断网预览和相对路径检查；如果有团队空间资料，可以参考 <a href="yuque-team-space-export.html">语雀团队空间知识库完整导出支持</a>。</p>
+
+                <h2 id="levels">四级敏感资料分级模型</h2>
+                <p>分级不需要一开始就做成复杂合规系统。对多数团队，四级模型足够落地：</p>
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>级别</th><th>典型内容</th><th>导出后处理建议</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>公开</td><td>帮助中心、公开 FAQ、产品教程、招聘页文案</td><td><span class="check">可进入公开站点</span>，仍需检查图片、过期版本和来源链接。</td></tr>
+                            <tr><td>内部</td><td>SOP、研发规范、内部培训、销售话术</td><td><span class="partial">内部可共享</span>，要求账号访问、目录负责人和更新时间。</td></tr>
+                            <tr><td>受限</td><td>客户项目、报价策略、经营复盘、供应商资料</td><td><span class="partial">按项目或部门授权</span>，导出包单独存放，不进全员知识库。</td></tr>
+                            <tr><td>高敏</td><td>合同原文、财务、人事、密钥、生产账号、未发布路线图</td><td><span class="cross">默认不扩散</span>，确需交接时走审批、加密存储和接收确认。</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>加密语雀文档不要因为“已经能导出”就自动降级。正确做法是把它们默认归入受限或高敏，单独记录密码验证、导出目的和接收人。具体导出流程可参考 <a href="yuque-encrypted-docs-export.html">语雀加密文档导出指南</a>。</p>
+
+                <h2 id="redaction">脱敏和清洗重点</h2>
+                <p>脱敏不是把客户名字替换成“某客户”就结束。语雀资料常见的风险字段分散在正文、表格、图片、附件和代码块中。清洗副本时至少检查：</p>
+                <ul>
+                    <li><strong>客户和个人信息：</strong>姓名、手机号、邮箱、地址、身份证明、聊天截图、工单截图。</li>
+                    <li><strong>商业信息：</strong>合同金额、折扣、价格底线、回款计划、供应商报价、未公开合作。</li>
+                    <li><strong>账号和技术凭据：</strong>API Key、Token、Cookie、生产账号、内网域名、数据库连接串。</li>
+                    <li><strong>人事和财务：</strong>薪酬、绩效、晋升、离职、预算、报销、成本和利润测算。</li>
+                    <li><strong>未发布计划：</strong>路线图、融资、组织调整、产品灰度、客户定制需求。</li>
+                    <li><strong>隐藏在图片里的内容：</strong>浏览器地址栏、侧边栏、文件名、聊天窗口和后台数据。</li>
+                </ul>
+
+                <p>Markdown 适合做批量搜索和版本审阅，但图片仍要人工抽查。对于表格型资料，导出后还要检查日期、金额、编号、前导零和合并单元格是否被误改，相关方法可以参考 <a href="yuque-table-export-checklist.html">语雀表格导出验收清单</a>。</p>
+
+                <h2 id="handoff">权限交接怎么做</h2>
+                <p>敏感资料导出经常发生在离职交接、部门调整、项目归档和系统迁移阶段。交接不是“把 zip 发过去”，而是要写清楚责任链：</p>
+                <ol class="step-list">
+                    <li><strong>导出人：</strong>负责说明导出账号、导出范围、导出日期和是否包含加密文档。</li>
+                    <li><strong>资料负责人：</strong>判断每个包的敏感等级、保留期限和允许用途。</li>
+                    <li><strong>接收人：</strong>确认接收目录、访问权限、是否允许再分享和是否需要上传到其他系统。</li>
+                    <li><strong>复核人：</strong>抽查目录完整性、本地图片、脱敏结果和高敏资料隔离状态。</li>
+                    <li><strong>更新人：</strong>决定语雀继续作为源文档时，后续多久重新导出和复核一次。</li>
+                </ol>
+
+                <p>交接包里建议放一个 <code>README.md</code>：写清楚资料范围、排除内容、敏感等级、负责人、接收人、导出时间、校验方式和下次复核时间。这样三个月后再有人接手，不需要从聊天记录里猜这包文件为什么存在。</p>
+
+                <h2 id="ai">进入 AI 知识库前的边界</h2>
+                <p>敏感语雀资料最容易在“做 AI 知识库”时被误用。AI 应用通常需要把文档上传、切分、索引和检索，导入成功不等于权限安全。建议遵守三条原则：</p>
+                <ul>
+                    <li><strong>公开资料才进入公开助手。</strong>公开 FAQ、教程、排障说明可以进入面向用户的 AI 帮助中心。</li>
+                    <li><strong>内部资料按业务分包。</strong>研发、客服、销售、管理层的资料不要混入同一个索引。</li>
+                    <li><strong>受限和高敏默认排除。</strong>除非 AI 平台有明确权限控制、审计、责任人审批和业务必要，不要上传合同、人事、财务和密钥资料。</li>
+                </ul>
+
+                <p>如果目标是企业内部 RAG，可以沿用 <a href="yuque-enterprise-rag-workflow.html">语雀企业内部 RAG 工作流</a>中的权限分包和检索验收；如果已经在做 AI 知识库权限设计，可以继续看 <a href="yuque-ai-knowledge-base-permissions.html">企业语雀导入 AI 知识库前的权限治理清单</a>。</p>
+
+                <h2 id="acceptance">验收检查清单</h2>
+                <p>交付前不要只看“文件数量对了”。建议至少完成以下验收：</p>
+                <ul>
+                    <li>目录能对应回语雀原知识库、空间或收藏夹范围。</li>
+                    <li>Markdown 可打开，标题层级、代码块、表格和链接没有明显错乱。</li>
+                    <li>图片和附件已本地化，断网后仍能预览关键截图。</li>
+                    <li>公开、内部、受限、高敏资料没有混在一个压缩包里。</li>
+                    <li>高敏资料有单独存放位置、加密方式、接收人和删除/保留期限。</li>
+                    <li>清洗副本中不再包含客户隐私、密钥、合同金额等不该扩散字段。</li>
+                    <li>准备进入 AI 知识库的包已经通过真实问题、敏感关键词和拒答边界测试。</li>
+                    <li>README 写明导出日期、负责人、用途、排除范围和下次复核时间。</li>
+                </ul>
+
+                <h2 id="faq">常见问题</h2>
+                <h3>语雀敏感资料可以直接批量导出吗？</h3>
+                <p>可以导出用户在浏览器中有权限访问的资料，但不建议把敏感资料和普通资料混在同一个备份包里。应先按公开、内部、受限、高敏分级，再决定存放位置、访问人员和后续用途。</p>
+
+                <h3>YuqueOut 会上传企业文档做处理吗？</h3>
+                <p>不会。YuqueOut 的导出和转换发生在浏览器本地，不把语雀文档上传到第三方服务器。导出后的文件是否进入云盘、AI 知识库或内部系统，由用户自己控制。</p>
+
+                <h3>敏感语雀文档导出后优先保存什么格式？</h3>
+                <p>建议保留一份原始归档包，再在副本中使用 Markdown、本地图片和必要的 PDF 做清洗。Markdown 便于检索、脱敏和版本管理，PDF 适合保留固定版式或合同制度类资料。</p>
+
+                <h3>哪些语雀资料不应该进入 AI 知识库？</h3>
+                <p>客户隐私、合同原文、财务明细、人事资料、密钥、生产账号、未发布路线图和无法确认授权范围的截图，默认不应进入普通 AI 知识库。确需导入时要有审批、脱敏、权限隔离和审计。</p>
+
+                <h3>离职交接时如何验收语雀备份？</h3>
+                <p>验收时检查目录完整性、本地图片是否可打开、加密文档是否有授权处理记录、敏感资料是否单独封存、接收人是否确认权限范围，并保留导出日期、负责人和校验清单。</p>
+
+                <div class="blog-cta">
+                    <h3>先把语雀资料安全导出到本地</h3>
+                    <p>用 YuqueOut 批量导出语雀知识库，完成本地归档、图片本地化、敏感资料分级和交接验收。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_sensitive_docs_governance_cta" target="_blank" rel="noopener" class="blog-cta-button">免费安装 YuqueOut</a>
+                </div>
+
+                <div class="blog-related">
+                    <h2>相关文章</h2>
+                    <div class="blog-related-grid">
+                        <a href="yuque-ai-knowledge-base-permissions.html" class="blog-related-card">
+                            <span class="blog-related-card-title">企业语雀导入 AI 知识库前的权限治理</span>
+                            <span class="blog-related-card-excerpt">分级、脱敏、分包和验收清单</span>
+                        </a>
+                        <a href="yuque-encrypted-docs-export.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀加密文档怎么导出</span>
+                            <span class="blog-related-card-excerpt">密码验证与本地备份流程</span>
+                        </a>
+                        <a href="yuque-local-image-backup.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀图片本地化备份</span>
+                            <span class="blog-related-card-excerpt">断网预览、相对路径和长期可读</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <footer class="homepage-footer">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <div class="footer-logo">
+                            <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36" class="footer-logo-image"></picture>
+                            <span class="footer-logo-text">YuqueOut 语雀导出助手</span>
+                        </div>
+                        <p class="footer-description">专业的语雀知识库批量导出解决方案。</p>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">产品</h3>
+                        <ul class="footer-links">
+                            <li><a href="../#features">功能特性</a></li>
+                            <li><a href="./">博客</a></li>
+                            <li><a href="../privacy.html">隐私政策</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">支持</h3>
+                        <ul class="footer-links"><li><a href="mailto:yhj2433488839@gmail.com">联系我们</a></li></ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 YuqueOut 语雀导出助手. Built with passion for better data freedom.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../script.js" defer></script>
+</body>
+</html>

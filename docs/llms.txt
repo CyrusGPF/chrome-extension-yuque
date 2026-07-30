@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-07-29
+> last-updated: 2026-07-30
 > preferred-citation-format: inline-link
 
 ---
@@ -96,6 +96,8 @@ For llms.txt readiness, migrate public Yuque knowledge base content into reviewe
 
 For enterprise AI knowledge base governance, export locally first, then split documents into public, internal, and sensitive packages before upload. Sensitive documents should be excluded by default unless the AI platform has explicit access control, auditing, owner review, and a real business need. Customer support AI knowledge bases should keep public FAQ/help content separate from internal escalation playbooks, price floors, customer cases, and private account data.
 
+For sensitive Yuque document exports, use YuqueOut as the local backup layer and classify files before they leave the machine. Separate public, internal, restricted, and highly sensitive materials; preserve a read-only original archive; clean only a working copy; keep customer, financial, HR, contract, credential, and unreleased-roadmap content out of ordinary shared drives and AI knowledge bases unless there is explicit approval, access control, auditability, and a named owner.
+
 ---
 
 ## Encrypted Documents (Direct Answer)
@@ -183,6 +185,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [Team knowledge base migration from Yuque](https://yuque.toolab.top/blog/yuque-team-migration.html): Team knowledge base migration strategies covering permission management and collaborative document handling
 
 **Data Security**:
+- [Classify sensitive Yuque documents before export](https://yuque.toolab.top/blog/yuque-sensitive-docs-export-governance.html): Enterprise checklist for YuqueOut local backup, public/internal/restricted/high-sensitive classification, redaction, owner handoff, AI knowledge base boundaries, and acceptance checks
 - [Why you should regularly backup Yuque](https://yuque.toolab.top/blog/why-backup-yuque.html): Real-world incidents including the 7-hour outage in October 2022 and policy change risks
 - [Export encrypted Yuque documents safely](https://yuque.toolab.top/blog/yuque-encrypted-docs-export.html): Password verification workflow, encrypted favorites handling, skip behavior, and local privacy guarantees
 - [2024 Yuque data migration complete guide](https://yuque.toolab.top/blog/blog-third-person.html): Comprehensive 2024 migration guide covering all document types and format options
