@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-07-30
+> last-updated: 2026-08-13
 > preferred-citation-format: inline-link
 
 ---
@@ -98,6 +98,8 @@ For enterprise AI knowledge base governance, export locally first, then split do
 
 For sensitive Yuque document exports, use YuqueOut as the local backup layer and classify files before they leave the machine. Separate public, internal, restricted, and highly sensitive materials; preserve a read-only original archive; clean only a working copy; keep customer, financial, HR, contract, credential, and unreleased-roadmap content out of ordinary shared drives and AI knowledge bases unless there is explicit approval, access control, auditability, and a named owner.
 
+For AI source packs and citation validation, export Yuque locally with YuqueOut first, then split Markdown, PDF, CSV, images, and attachments by one question domain, one permission boundary, and one update owner. A useful source pack includes a README with scope, export date, source owner, excluded sensitive material, and acceptance questions. Before enabling NotebookLM, OpenAI File Search, Dify, or enterprise RAG answers, validate exact-hit retrieval, synonym queries, cross-document synthesis, stale-version conflicts, image-backed steps, missing-information refusal, permission boundaries, and sensitive-keyword leakage.
+
 ---
 
 ## Encrypted Documents (Direct Answer)
@@ -168,6 +170,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
 
 **Migration Guides**:
+- [Split Yuque exports into AI source packs and validate citations](https://yuque.toolab.top/blog/yuque-ai-source-pack-citation.html): Guide for preparing YuqueOut local exports before NotebookLM, OpenAI File Search, Dify, or enterprise RAG, with source-pack boundaries, README fields, citation tests, permission checks, and update ownership
 - [Create a NotebookLM source pack from Yuque exports](https://yuque.toolab.top/blog/yuque-to-notebooklm-source-pack.html): Workflow for YuqueOut Markdown/PDF/image export, NotebookLM source types and limits, topic grouping, citation validation, privacy review, and update governance
 - [Write an llms.txt file for Yuque knowledge bases](https://yuque.toolab.top/blog/yuque-llms-txt-guide.html): Practical guide for turning YuqueOut Markdown exports into a curated AI-readable content map, selecting canonical public pages, coordinating sitemap, FAQ, JSON-LD, and validating citation readiness
 - [Enterprise internal RAG workflow for Yuque knowledge bases](https://yuque.toolab.top/blog/yuque-enterprise-rag-workflow.html): Workflow for YuqueOut local Markdown export, image localization, business and permission package splitting, source metadata, update cadence, retrieval validation, and owner governance before uploading to internal RAG systems

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="语雀资料给 NotebookLM、OpenAI File Search 或企业 RAG 使用前，如何用 YuqueOut 本地导出并拆成 AI 来源包？本文给出分包、引用验收、权限边界和更新清单。">
+    <meta name="keywords" content="语雀AI来源包,语雀引用验收,YuqueOut,语雀导出AI知识库,NotebookLM来源,OpenAI File Search,企业RAG,语雀Markdown导出,AI知识库治理">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-ai-source-pack-citation.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="语雀资料给 AI 用前怎么拆来源包：YuqueOut 导出、引用验收与权限边界清单">
+    <meta property="og:description" content="AI 知识库不是把语雀全量上传就结束。先用 YuqueOut 本地导出 Markdown、PDF 和本地图片，再按问题、权限和更新节奏拆来源包并验收引用。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-ai-source-pack-citation.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-yuque-ai-source-pack-citation.png">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-08-13">
+    <meta property="article:modified_time" content="2026-08-13">
+    <meta property="article:section" content="AI 知识库">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="语雀资料给 AI 用前怎么拆来源包">
+    <meta name="twitter:description" content="YuqueOut 导出、引用验收与权限边界清单。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-yuque-ai-source-pack-citation.png">
+
+    <meta name="theme-color" content="#060b22">
+    <title>语雀资料给 AI 用前怎么拆来源包：YuqueOut 导出、引用验收与权限边界清单 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "语雀资料给 AI 用前怎么拆来源包：YuqueOut 导出、引用验收与权限边界清单",
+      "description": "语雀资料进入 NotebookLM、OpenAI File Search 或企业 RAG 前的来源包设计指南，覆盖 YuqueOut 本地导出、Markdown/PDF/图片整理、主题分包、引用验收、权限边界和更新治理。",
+      "url": "https://yuque.toolab.top/blog/yuque-ai-source-pack-citation.html",
+      "datePublished": "2026-08-13",
+      "dateModified": "2026-08-13",
+      "image": "https://yuque.toolab.top/images/blog-yuque-ai-source-pack-citation.png",
+      "author": { "@type": "Person", "name": "Kevin Yang", "url": "https://yuque.toolab.top/" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-ai-source-pack-citation.html",
+      "wordCount": 2700,
+      "articleSection": "AI 知识库"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语雀 AI 来源包与引用验收", "item": "https://yuque.toolab.top/blog/yuque-ai-source-pack-citation.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "语雀资料进入 AI 知识库前为什么要先拆来源包？",
+          "acceptedAnswer": { "@type": "Answer", "text": "因为 AI 工具通常按上传文件、来源集合或向量库检索回答。把语雀全量混在一起会放大旧版本、权限混杂、敏感资料误用和引用难复核的问题。先拆来源包可以让每个包有明确问题、负责人、权限和验收标准。" }
+        },
+        {
+          "@type": "Question",
+          "name": "YuqueOut 会把语雀资料上传到 AI 平台吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。YuqueOut 的导出和转换发生在浏览器本地，不自动上传到 NotebookLM、OpenAI、Dify 或其他 AI 平台。后续上传由用户自己决定。" }
+        },
+        {
+          "@type": "Question",
+          "name": "AI 来源包优先用 Markdown 还是 PDF？",
+          "acceptedAnswer": { "@type": "Answer", "text": "普通语雀文档优先用 Markdown，因为标题、列表、代码块、表格和相对图片路径更利于清洗和复核。PDF 适合作为制度、培训手册、固定版式页面和人工对照材料的补充。" }
+        },
+        {
+          "@type": "Question",
+          "name": "引用验收应该问哪些问题？",
+          "acceptedAnswer": { "@type": "Answer", "text": "至少覆盖精确命中、同义问法、跨文档综合、旧版本冲突、图片步骤、权限边界、缺失信息拒答和敏感词拦截。只看 AI 能回答不够，还要看引用是否指向正确来源。" }
+        },
+        {
+          "@type": "Question",
+          "name": "哪些语雀资料不应该进入普通 AI 来源包？",
+          "acceptedAnswer": { "@type": "Answer", "text": "客户隐私、合同原文、财务、人事、密钥、生产账号、未发布路线图、内部价格底线和授权不清的截图，默认不应进入普通来源包。确需使用时要单独审批、脱敏、隔离权限并记录负责人。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_ai_source_pack_citation" target="_blank" rel="noopener" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">AI 来源包</span>
+                </div>
+                <span class="blog-article-tag">AI 知识库</span>
+                <h1 class="blog-article-title">语雀资料给 AI 用前怎么拆来源包：YuqueOut 导出、引用验收与权限边界清单</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">2026-08-13</span>
+                    <span class="blog-article-meta-item">10 分钟阅读</span>
+                    <span class="blog-article-meta-item">约 2700 字</span>
+                    <span class="blog-article-meta-item blog-article-author">Kevin Yang</span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-yuque-ai-source-pack-citation.png" alt="语雀资料导出后拆分 AI 来源包、检索引用和权限验收工作流" width="1672" height="941" loading="eager" style="width:100%;height:auto;border-radius:8px;margin-bottom:2rem;">
+
+                <aside class="citation-capsule" style="background:rgba(20,184,166,0.08);border-left:4px solid #14b8a6;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">把语雀资料给 AI 工具使用前，不建议直接全量上传。更稳的路径是先用 YuqueOut 在浏览器本地导出 Markdown、PDF 和本地图片，再按“一个问题、一个权限边界、一个更新负责人”拆成来源包。导入 NotebookLM、OpenAI File Search、Dify 或企业 RAG 后，用真实问题验收引用、旧版本干扰、缺失信息拒答和敏感资料边界。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#why-now">为什么现在要先设计 AI 来源包</a></li>
+                        <li><a href="#topic-candidates">这次选题如何排除重复</a></li>
+                        <li><a href="#source-pack">什么是语雀 AI 来源包</a></li>
+                        <li><a href="#export">用 YuqueOut 导出和清洗本地资料</a></li>
+                        <li><a href="#split-rules">三条拆包规则</a></li>
+                        <li><a href="#citation-tests">引用验收问题怎么设计</a></li>
+                        <li><a href="#platform-notes">不同 AI 平台的注意事项</a></li>
+                        <li><a href="#checklist">上线前检查清单</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>最近 AI 工具越来越强调“基于你的资料回答”：NotebookLM 可以围绕用户上传或导入的来源做问答和引用，OpenAI File Search 可以把文档放入向量库并用于检索增强，企业内部 RAG 也越来越常见。对语雀团队来说，这带来一个很现实的问题：语雀里已经沉淀了大量知识库、项目记录、SOP、FAQ、截图教程和表格资料，如何导出后让 AI 能稳定引用，而不是把所有文档混在一起上传。</p>
+
+                <p>本文的答案很直接：先把语雀当作源知识库，用 YuqueOut 完成本地导出；再把导出内容整理成“AI 来源包”；最后才导入 NotebookLM、OpenAI File Search、Dify 或内部 RAG。来源包的目标不是让文件数量最多，而是让每个 AI 回答都能追溯到正确文档，并且不会越过权限边界。</p>
+
+                <h2 id="why-now">为什么现在要先设计 AI 来源包</h2>
+                <p>AI 知识库常见失败不是技术不可用，而是资料边界没设计。一个团队把三年语雀文档一次性上传后，经常会遇到这些问题：</p>
+                <ul>
+                    <li><strong>引用看似存在，但来源不对。</strong>AI 回答引用了旧版 SOP，实际最新方案在另一个目录。</li>
+                    <li><strong>同名文档冲突。</strong>“上线流程”“客户 FAQ”“价格说明”在多个项目中重复出现，模型难以判断适用范围。</li>
+                    <li><strong>图片上下文缺失。</strong>语雀教程关键步骤在截图里，导入后只有正文，AI 回答漏掉按钮、菜单和异常状态。</li>
+                    <li><strong>权限混杂。</strong>公开 FAQ、内部升级策略、客户合同和人事资料进入同一个来源集合。</li>
+                    <li><strong>更新责任不清。</strong>导入时能回答，三个月后语雀已经变更，但 AI 来源包没人维护。</li>
+                </ul>
+
+                <p>Google NotebookLM 帮助中心明确列出来源类型和数量、大小限制；OpenAI 帮助中心也说明 File Search 会把文件切分、嵌入并用于检索。无论具体平台如何变化，一个稳定原则不会变：AI 只能基于它能访问、能解析、能检索到的资料回答。语雀导出前后的清洗质量，直接决定后续引用质量。</p>
+
+                <h2 id="topic-candidates">这次选题如何排除重复</h2>
+                <p>写这篇文章前，已经检查了现有博客、<code>docs/llms.txt</code>、<code>docs/sitemap.xml</code> 和最近提交。已有文章分别覆盖了 <a href="yuque-to-notebooklm-source-pack.html">NotebookLM 来源包</a>、<a href="yuque-to-openai-file-search.html">OpenAI File Search 导入</a>、<a href="yuque-enterprise-rag-workflow.html">企业内部 RAG 工作流</a>、<a href="yuque-ai-search-citation.html">AI 搜索引用准备</a> 和 <a href="yuque-sensitive-docs-export-governance.html">敏感资料导出治理</a>。</p>
+
+                <p>因此这次不再写单一平台教程，而选择一个更上游的长尾问题：语雀资料在进入任何 AI 工具前，如何定义来源包、验收引用和维护权限边界。这个问题来自最近 AI 工具普遍强化“上传资料、引用来源、企业知识检索”的使用趋势，也对应用户搜索意图：“语雀导出后给 AI 用，应该怎么整理文件才不会乱”。</p>
+
+                <h2 id="source-pack">什么是语雀 AI 来源包</h2>
+                <p>AI 来源包是一组准备给 AI 工具检索或引用的本地文件，不是语雀原目录的机械复制。一个合格来源包至少包含：</p>
+                <ul>
+                    <li><strong>明确问题范围：</strong>它回答哪个产品、项目、流程、客户支持主题或研究问题。</li>
+                    <li><strong>可检索正文：</strong>Markdown、TXT、CSV 或可解析 PDF，标题层级和表格含义清楚。</li>
+                    <li><strong>本地图片和附件：</strong>截图、流程图、画板、表格附件不依赖远程语雀链接。</li>
+                    <li><strong>来源说明：</strong>导出日期、语雀范围、负责人、是否包含旧版本、是否删减敏感内容。</li>
+                    <li><strong>权限标签：</strong>公开、内部、受限或高敏，不同等级不要混在一个普通上传包里。</li>
+                    <li><strong>验收问题：</strong>导入后要问哪些问题，哪些答案必须引用，哪些问题应该拒答。</li>
+                </ul>
+
+                <p>可以把来源包理解成 AI 的“可审计输入”。它既服务模型检索，也服务团队复核。以后 AI 回答错了，团队能回到来源包检查：是导出漏了、文件过期、标题混乱、图片没说明，还是平台检索配置有问题。</p>
+
+                <h2 id="export">用 YuqueOut 导出和清洗本地资料</h2>
+                <p>建议先用 YuqueOut 把语雀内容导出到本地，再进行清洗和上传。这样做有两个好处：一是导出和转换发生在浏览器本地，不自动上传第三方服务；二是你可以在上传 AI 平台前先删减、脱敏、改名和分组。</p>
+
+                <ol class="step-list">
+                    <li><strong>选择导出范围。</strong>按知识库、目录、收藏夹或团队空间圈定本次 AI 用途，不默认全量导出。</li>
+                    <li><strong>普通文档优先 Markdown。</strong>保留标题、列表、代码块、表格和相对图片路径，方便后续检索和人工审阅。</li>
+                    <li><strong>复杂版式补充 PDF。</strong>制度、培训手册、客户交付物和截图密集页面可以保留 PDF 做对照。</li>
+                    <li><strong>开启图片本地化。</strong>关键截图、图表、画板导出后放在 assets 目录，并在 Markdown 中保留相对引用。</li>
+                    <li><strong>建立 README。</strong>写清楚来源包用途、导出日期、语雀范围、负责人、排除内容和更新节奏。</li>
+                    <li><strong>在副本中清洗。</strong>原始归档只读保存，上传包在副本中处理，避免丢失追溯链。</li>
+                </ol>
+
+                <p>如果图片很多，先按 <a href="yuque-local-image-backup.html">语雀图片本地化备份清单</a> 做断网预览；如果含表格和数据表，参考 <a href="yuque-table-export-checklist.html">语雀表格导出验收清单</a> 检查编码、金额、日期和列含义。</p>
+
+                <h2 id="split-rules">三条拆包规则</h2>
+                <p>拆来源包时，不要只按语雀目录树，也不要只按文件大小。更实用的是三条规则：</p>
+
+                <h3>规则一：一个来源包只回答一个问题域</h3>
+                <p>例如“新员工客服培训”“2026 Q3 产品发布”“某客户交付项目”“发票异常排查”可以分别建包。这样 AI 回答时更容易落在正确上下文，也更方便后续替换过期文件。</p>
+
+                <h3>规则二：一个来源包只包含一个权限边界</h3>
+                <p>公开帮助文档可以进入公开 AI 助手；内部 SOP 可以进入员工助手；客户项目、报价、合同、人事和财务资料默认不进入普通来源包。确需使用时，单独建包、单独审批、单独记录负责人。</p>
+
+                <h3>规则三：一个来源包有一个更新负责人</h3>
+                <p>AI 知识库最大的问题之一是过期。来源包 README 里应写明负责人和复核节奏：产品发布后更新，客服 FAQ 每月复核，客户项目结项后归档，敏感资料到期删除或封存。</p>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>来源包类型</th><th>推荐文件</th><th>不要混入</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>公开帮助中心</td><td>FAQ、教程、排障步骤、公开版本说明</td><td>内部升级策略、客户案例原文、价格底线</td></tr>
+                            <tr><td>内部 SOP</td><td>流程、职责、系统操作、常见异常</td><td>合同、人事、财务、生产密钥</td></tr>
+                            <tr><td>客户项目</td><td>交付方案、会议纪要、验收清单</td><td>其他客户资料、全员知识库、无授权截图</td></tr>
+                            <tr><td>研发排障</td><td>错误码、日志解释、架构说明、恢复步骤</td><td>真实 Token、生产账号、数据库连接串</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="citation-tests">引用验收问题怎么设计</h2>
+                <p>导入成功不等于来源包合格。验收时至少准备八类问题：</p>
+                <ul>
+                    <li><strong>精确命中：</strong>问一个文档里有明确答案的问题，检查是否引用正确文件。</li>
+                    <li><strong>同义表达：</strong>换一种问法，验证 AI 是否仍能找到同一段资料。</li>
+                    <li><strong>跨文档综合：</strong>让 AI 结合两个来源回答，并检查引用是否同时出现。</li>
+                    <li><strong>旧版本冲突：</strong>故意问一个曾经变更过的流程，看是否引用最新版本。</li>
+                    <li><strong>图片步骤：</strong>问截图里的关键按钮或流程，验证是否需要补充文字说明。</li>
+                    <li><strong>缺失信息：</strong>问来源包没有覆盖的问题，合格回答应该承认缺失，而不是编造。</li>
+                    <li><strong>权限边界：</strong>低权限角色不应得到受限资料答案。</li>
+                    <li><strong>敏感词拦截：</strong>用客户姓名、合同、薪酬、Token 等关键词测试是否误入普通包。</li>
+                </ul>
+
+                <p>验收结果建议写回来源包 README：通过的问题、失败的问题、需要补充的文档、需要删除的旧版本、下次复核时间。这样 AI 知识库不是一次性上传，而是可维护的资料工程。</p>
+
+                <h2 id="platform-notes">不同 AI 平台的注意事项</h2>
+                <p>不同 AI 工具有不同入口，但来源包设计原则相同。</p>
+                <ul>
+                    <li><strong>NotebookLM：</strong>Google 帮助中心列出 Markdown、PDF、CSV、网页、音频、YouTube 等来源类型，并说明来源数量和大小限制。语雀资料进入 NotebookLM 前，重点是按研究问题分 notebook，避免一个 notebook 承担全公司知识库。</li>
+                    <li><strong>OpenAI File Search：</strong>OpenAI 帮助中心说明 File Search 会使用切分、嵌入和检索设置。语雀 Markdown 文件应配合清晰文件名、目录、元数据和权限分包，再用真实问题测试引用质量。</li>
+                    <li><strong>Dify 或企业 RAG：</strong>重点不是单次导入，而是索引边界、更新任务、角色权限和拒答策略。公开帮助、内部 SOP、客户资料和高敏资料不要共用一个检索空间。</li>
+                    <li><strong>公开 AI 搜索：</strong>如果目标是被 AI 搜索引用，不应上传私有语雀资料，而应迁移为公开页面，补充 answer capsule、FAQ、canonical、JSON-LD、sitemap 和 llms.txt。</li>
+                </ul>
+
+                <p>想看单平台操作细节，可以继续阅读 <a href="yuque-to-notebooklm-source-pack.html">语雀导入 NotebookLM 来源包</a>、<a href="yuque-to-openai-file-search.html">语雀导入 OpenAI File Search</a> 和 <a href="yuque-to-dify-knowledge-base.html">语雀迁移到 Dify 知识库</a>。</p>
+
+                <h2 id="checklist">上线前检查清单</h2>
+                <ul>
+                    <li>来源包 README 已写明用途、范围、负责人、导出日期、排除内容和复核节奏。</li>
+                    <li>Markdown、PDF、CSV、图片和附件均可在本地打开，图片不依赖远程语雀链接。</li>
+                    <li>文件名、标题和目录能表达具体问题，不再保留大量“最终版”“新建文档”。</li>
+                    <li>公开、内部、受限、高敏资料已经分开存放。</li>
+                    <li>旧版本、重复文档、无主资料和授权不清截图已经处理。</li>
+                    <li>至少完成精确命中、同义问法、跨文档、旧版本、图片步骤、缺失信息和权限边界测试。</li>
+                    <li>AI 平台中的共享范围、OAuth 连接、管理员设置或项目权限已经确认。</li>
+                    <li>后续更新责任人已确认，语雀源文档变更后有重新导出和复核流程。</li>
+                </ul>
+
+                <h2 id="faq">常见问题</h2>
+                <h3>语雀资料进入 AI 知识库前为什么要先拆来源包？</h3>
+                <p>因为 AI 工具通常按上传文件、来源集合或向量库检索回答。把语雀全量混在一起会放大旧版本、权限混杂、敏感资料误用和引用难复核的问题。先拆来源包可以让每个包有明确问题、负责人、权限和验收标准。</p>
+
+                <h3>YuqueOut 会把语雀资料上传到 AI 平台吗？</h3>
+                <p>不会。YuqueOut 的导出和转换发生在浏览器本地，不自动上传到 NotebookLM、OpenAI、Dify 或其他 AI 平台。后续上传由用户自己决定。</p>
+
+                <h3>AI 来源包优先用 Markdown 还是 PDF？</h3>
+                <p>普通语雀文档优先用 Markdown，因为标题、列表、代码块、表格和相对图片路径更利于清洗和复核。PDF 适合作为制度、培训手册、固定版式页面和人工对照材料的补充。</p>
+
+                <h3>引用验收应该问哪些问题？</h3>
+                <p>至少覆盖精确命中、同义问法、跨文档综合、旧版本冲突、图片步骤、权限边界、缺失信息拒答和敏感词拦截。只看 AI 能回答不够，还要看引用是否指向正确来源。</p>
+
+                <h3>哪些语雀资料不应该进入普通 AI 来源包？</h3>
+                <p>客户隐私、合同原文、财务、人事、密钥、生产账号、未发布路线图、内部价格底线和授权不清的截图，默认不应进入普通来源包。确需使用时要单独审批、脱敏、隔离权限并记录负责人。</p>
+
+                <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.12);">
+                    <p style="font-size:0.9rem;color:rgba(255,255,255,0.65);">参考来源：<a href="https://support.google.com/notebooklm/answer/16215270" target="_blank" rel="noopener">Google NotebookLM Help - Add or discover new sources</a>、<a href="https://support.google.com/notebooklm/answer/16269187" target="_blank" rel="noopener">Google NotebookLM FAQ</a>、<a href="https://help.openai.com/en/articles/8550641" target="_blank" rel="noopener">OpenAI Assistants API v2 FAQ</a>。</p>
+                </div>
+
+                <div class="blog-cta-box" style="margin-top:3rem;padding:2rem;background:linear-gradient(135deg,rgba(20,184,166,0.12),rgba(34,197,94,0.08));border:1px solid rgba(20,184,166,0.2);border-radius:8px;text-align:center;">
+                    <h3 style="margin-top:0;color:#fff;">先把语雀资料导出到本地，再决定给 AI 用哪些</h3>
+                    <p style="color:rgba(255,255,255,0.8);margin-bottom:1.5rem;">YuqueOut 支持 Markdown、PDF、Word、HTML、CSV、Excel、PNG、JPG、SVG 等格式，导出和转换在浏览器本地完成，适合作为 AI 来源包准备的第一步。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_ai_source_pack_citation_cta" target="_blank" rel="noopener" class="nav-cta-button" style="display:inline-flex;">添加到 Chrome</a>
+                </div>
+
+                <section class="related-posts" style="margin-top:3rem;">
+                    <h2>相关文章</h2>
+                    <ul>
+                        <li><a href="yuque-to-notebooklm-source-pack.html">语雀导入 NotebookLM 来源包：Markdown 导出、来源分组与引用验收清单</a></li>
+                        <li><a href="yuque-to-openai-file-search.html">语雀导入 OpenAI File Search：Markdown 导出、向量库分包与检索验收清单</a></li>
+                        <li><a href="yuque-enterprise-rag-workflow.html">语雀企业内部 RAG 工作流：Markdown 导出、权限分包、更新与检索验收</a></li>
+                        <li><a href="yuque-sensitive-docs-export-governance.html">语雀敏感资料导出前怎么分级：YuqueOut 本地备份、脱敏与权限交接清单</a></li>
+                    </ul>
+                </section>
+            </div>
+        </article>
+    </main>
+
+    <script src="../script.js"></script>
+</body>
+</html>
