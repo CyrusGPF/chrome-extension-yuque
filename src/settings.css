@@ -464,7 +464,8 @@ body::before {
 }
 
 .performance-tree-status-pending,
-.performance-tree-status-in_progress {
+.performance-tree-status-in_progress,
+.performance-tree-status-deferred {
   color: var(--accent);
   background: rgba(6, 214, 160, 0.12);
 }

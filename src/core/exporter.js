@@ -1,4 +1,4 @@
-import { exportState, resetExportState, saveState } from './state.js';
+import { exportState, resetExportState, saveState, waitForStateReady } from './state.js';
 import { sendLog, sendProgress, sendComplete, sendError } from './messaging.js';
 import { checkAuth, fetchAllBooks, fetchBookDocs, buildDocListFromApiDocs, exportDocAsync, resetThrottle, fetchBookmarks, fetchOrgBookmarks, fetchBookDocsWithPasswordCheck, verifyBookPassword, verifyDocPassword, fetchBookToc, fetchDocContent } from './yuque.js';
 import { lakeToMarkdown } from './lake-converter.js';
@@ -9,59 +9,218 @@ import { delay, sanitizePathComponent, sanitizePathSegments, guessImageExt } fro
 import { refreshAbortController, abortActiveTasks } from './task-controller.js';
 import { EXPORT_FORMATS, DEFAULT_SETTINGS, DOC_TYPES, DOC_TYPE_EXPORT_OPTIONS, SMART_EXPORT_KEY, BOOKMARKS_VIRTUAL_BOOK_ID, BOOKMARKS_VIRTUAL_BOOK_NAME, BOOKMARKS_LOOSE_DOCS_FOLDER, SUPPORTED_DOC_TYPES } from './constants.js';
 
+let activeRunToken = null;
+let alarmListenerRegistered = false;
+const DEFERRED_RETRY_DELAYS = [45000, 90000, 180000, 300000];
+const MAX_DEFER_COUNT = 4;
+const MAX_HARD_INTERRUPTS = 3;
+const DEFERRED_RETRY_ALARM = 'yuqueout-deferred-retry';
+
+class DeferredExportError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'DeferredExportError';
+  }
+}
+
+async function saveStateSafely() {
+  try {
+    await saveState();
+    return true;
+  } catch (error) {
+    sendLog(`保存任务状态失败: ${error.message}`);
+    return false;
+  }
+}
+
+function isRunnerActive() {
+  return Boolean(activeRunToken);
+}
+
+function startExportRunner() {
+  if (activeRunToken) return activeRunToken;
+  const runToken = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  activeRunToken = runToken;
+  exportFiles(runToken).finally(() => {
+    if (activeRunToken === runToken) activeRunToken = null;
+  });
+  return runToken;
+}
+
+function isCurrentRun(runToken) {
+  return Boolean(runToken) && activeRunToken === runToken;
+}
+
 export function registerRuntimeHandlers() {
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    switch (message.action) {
-      case 'checkAuth':
-        handleCheckAuth(sendResponse);
-        return true;
-      case 'getBooks':
-        handleGetBooks(sendResponse);
-        return true;
-      case 'getFileInfo':
-        handleGetFileInfo(message.data, sendResponse);
-        return true;
-      case 'startExport':
-        handleStartExport(message.data, sendResponse);
-        return true;
-      case 'togglePause':
-        handleTogglePause(message.data);
-        return false;
-      case 'getUiState':
-        sendResponse({ success: true, data: exportState });
-        return false;
-      case 'retryFailedFiles':
-        handleRetryFailedFiles(sendResponse);
-        return true;
-      case 'resetExport':
-        handleResetExport(sendResponse);
-        return true;
-      case 'reExportFile':
-        handleReExportFile(message.data, sendResponse);
-        return true;
-      case 'verifyPassword':
-        handleVerifyPassword(message.data, sendResponse);
-        return true;
-      case 'skipEncrypted':
-        handleSkipEncrypted(message.data, sendResponse);
-        return true;
-      case 'getPageDocInfo':
-        handleGetPageDocInfo(sender, sendResponse);
-        return true;
-      case 'quickExport':
-        handleQuickExport(message.data, sendResponse);
-        return true;
-      default:
-        return false;
+    dispatchRuntimeMessage(message, sender, sendResponse);
+    return true;
+  });
+  registerAlarmHandler();
+}
+
+function registerAlarmHandler() {
+  if (alarmListenerRegistered || !chrome?.alarms?.onAlarm) return;
+  alarmListenerRegistered = true;
+  chrome.alarms.onAlarm.addListener(async (alarm) => {
+    if (alarm.name !== DEFERRED_RETRY_ALARM) return;
+    await waitForStateReady();
+    if (exportState.isExporting && !exportState.isPaused) {
+      startExportRunner();
     }
   });
+}
+
+async function dispatchRuntimeMessage(message, sender, sendResponse) {
+  try {
+    await waitForStateReady();
+    switch (message.action) {
+      case 'checkAuth':
+        await handleCheckAuth(sendResponse);
+        return;
+      case 'getBooks':
+        await handleGetBooks(sendResponse);
+        return;
+      case 'getFileInfo':
+        await handleGetFileInfo(message.data, sendResponse);
+        return;
+      case 'startExport':
+        await handleStartExport(message.data, sendResponse);
+        return;
+      case 'togglePause':
+        await handleTogglePause(message.data, sendResponse);
+        return;
+      case 'getUiState':
+        sendResponse({ success: true, data: exportState });
+        return;
+      case 'retryFailedFiles':
+        await handleRetryFailedFiles(sendResponse);
+        return;
+      case 'resetExport':
+        await handleResetExport(sendResponse);
+        return;
+      case 'reExportFile':
+        await handleReExportFile(message.data, sendResponse);
+        return;
+      case 'verifyPassword':
+        await handleVerifyPassword(message.data, sendResponse);
+        return;
+      case 'skipEncrypted':
+        await handleSkipEncrypted(message.data, sendResponse);
+        return;
+      case 'getPageDocInfo':
+        await handleGetPageDocInfo(sender, sendResponse);
+        return;
+      case 'quickExport':
+        await handleQuickExport(message.data, sendResponse);
+        return;
+      default:
+        sendResponse({ success: false, error: '未知操作' });
+    }
+  } catch (error) {
+    sendResponse({ success: false, error: error.message });
+  }
 }
 
 export async function maybeResumeExport() {
   if (exportState.isExporting && !exportState.isPaused) {
     sendLog('检测到中断的导出任务，正在尝试恢复...');
-    exportFiles();
+    prepareInterruptedFilesForResume();
+    await saveStateSafely();
+    startExportRunner();
   }
+}
+
+function prepareInterruptedFilesForResume() {
+  const now = Date.now();
+  let interruptedCount = 0;
+  (exportState.fileList || []).forEach(file => {
+    if (file.status !== 'in_progress') return;
+    interruptedCount += 1;
+    markInterruptedFile(file, now);
+  });
+  if (interruptedCount > 0) {
+    sendLog(`检测到 ${interruptedCount} 个中断文件，已加入恢复队列。`);
+  }
+}
+
+function markInterruptedFile(file, now = Date.now()) {
+  const hardInterruptCount = Number(file.hardInterruptCount || 0) + 1;
+  file.hardInterruptCount = hardInterruptCount;
+  file.endTime = now;
+  file.duration = file.startTime ? now - file.startTime : 0;
+  if (hardInterruptCount >= MAX_HARD_INTERRUPTS) {
+    file.status = 'failed';
+    file.error = `连续中断 ${hardInterruptCount} 次，已跳过`;
+  } else {
+    file.status = 'deferred';
+    file.nextRetryAt = now;
+    file.error = `后台中断，准备第 ${hardInterruptCount + 1} 次恢复`;
+  }
+}
+
+function normalizeDeferredFiles(now = Date.now()) {
+  for (const file of exportState.fileList || []) {
+    if (file.status === 'in_progress') {
+      markInterruptedFile(file, now);
+    }
+    if (file.status === 'deferred' && (!file.nextRetryAt || file.nextRetryAt <= now)) {
+      file.status = 'pending';
+      file.nextRetryAt = 0;
+    }
+  }
+}
+
+function getNextDeferredRetryAt(now = Date.now()) {
+  const retryTimes = (exportState.fileList || [])
+    .filter(file => file.status === 'deferred' && Number(file.nextRetryAt) > now)
+    .map(file => Number(file.nextRetryAt));
+  return retryTimes.length ? Math.min(...retryTimes) : 0;
+}
+
+function scheduleDeferredRetry(nextRetryAt) {
+  if (!chrome?.alarms) return;
+  if (!nextRetryAt) {
+    chrome.alarms.clear?.(DEFERRED_RETRY_ALARM);
+    return;
+  }
+  const when = Math.max(Date.now() + 1000, nextRetryAt);
+  chrome.alarms.create(DEFERRED_RETRY_ALARM, { when });
+}
+
+function deferFile(file, reason) {
+  const deferCount = Number(file.deferCount || 0) + 1;
+  file.deferCount = deferCount;
+  file.endTime = Date.now();
+  file.duration = file.startTime ? file.endTime - file.startTime : 0;
+  if (deferCount > MAX_DEFER_COUNT) {
+    file.status = 'failed';
+    file.error = `${reason}; 已超过延后重试上限`;
+    file.nextRetryAt = 0;
+    return false;
+  }
+  const delayMs = DEFERRED_RETRY_DELAYS[Math.min(deferCount - 1, DEFERRED_RETRY_DELAYS.length - 1)];
+  file.status = 'deferred';
+  file.nextRetryAt = Date.now() + delayMs;
+  file.error = reason;
+  sendLog(`  ${file.title} 仍在生成中，${Math.round(delayMs / 1000)} 秒后重试，继续处理后续文件。`);
+  return true;
+}
+
+function resetRetryMetadata(file) {
+  delete file.nextRetryAt;
+  delete file.error;
+  file.deferCount = 0;
+  file.hardInterruptCount = 0;
+}
+
+function findNextRunnableIndex(startIndex = 0, now = Date.now()) {
+  normalizeDeferredFiles(now);
+  const files = exportState.fileList || [];
+  const safeStart = Math.max(0, Math.min(Number(startIndex) || 0, files.length));
+  const nextFromCursor = files.findIndex((file, index) => index >= safeStart && file.status === 'pending');
+  if (nextFromCursor >= 0) return nextFromCursor;
+  return files.findIndex(file => file.status === 'pending');
 }
 
 async function handleCheckAuth(sendResponse) {
@@ -69,7 +228,7 @@ async function handleCheckAuth(sendResponse) {
     const authInfo = await checkAuth();
     if (authInfo.isLoggedIn) {
       exportState.userInfo = authInfo;
-      await saveState();
+      await saveStateSafely();
     }
     sendResponse({ success: true, data: authInfo });
   } catch (error) {
@@ -89,7 +248,7 @@ async function handleGetBooks(sendResponse) {
     sendLog('正在获取知识库列表...');
     const books = await fetchAllBooks();
     exportState.bookList = books;
-    await saveState();
+    await saveStateSafely();
     const bookmarkCount = books.filter(b => b._isBookmark).length;
     const repoCount = books.length - bookmarkCount;
     const parts = [];
@@ -184,7 +343,7 @@ async function handleGetFileInfo(data, sendResponse) {
         exportState.totalFiles = 0;
         exportState.folderCount = 0;
         exportState.currentFileIndex = 0;
-        await saveState();
+        await saveStateSafely();
         sendLog(`未发现可直接导出的文档，先处理 ${exportState.encryptedItems.length} 个加密项。`);
         sendResponse({ success: true, data: exportState });
         chrome.runtime.sendMessage({
@@ -202,7 +361,7 @@ async function handleGetFileInfo(data, sendResponse) {
     exportState.folderCount = totalFolders;
     exportState.currentFileIndex = 0;
 
-    await saveState();
+    await saveStateSafely();
     sendLog(`成功获取 ${allFiles.length} 个文档，${totalFolders} 个文件夹。`);
     sendResponse({ success: true, data: exportState });
   } catch (error) {
@@ -221,6 +380,14 @@ async function handleStartExport(data, sendResponse) {
   }
 
   try {
+    if (exportState.isExporting || isRunnerActive()) {
+      if (!isRunnerActive() && !exportState.isPaused) {
+        startExportRunner();
+      }
+      sendResponse({ success: true, alreadyRunning: true, data: exportState });
+      return;
+    }
+
     const authInfo = await checkAuth();
     if (!authInfo.isLoggedIn) throw new Error('登录态已过期');
 
@@ -236,6 +403,7 @@ async function handleStartExport(data, sendResponse) {
     exportState.currentFileIndex = 0;
     exportState.exportType = data?.exportType || 'smart';
     exportState.subfolder = settings.subfolder ?? DEFAULT_SETTINGS.subfolder;
+    exportState.requestInterval = Number(settings.requestInterval) || DEFAULT_SETTINGS.requestInterval;
     exportState.downloadImages = settings.downloadImages !== false;
     exportState.imageConcurrency = settings.imageConcurrency || DEFAULT_SETTINGS.imageConcurrency;
     exportState.docExportFormat = settings.docExportFormat || DEFAULT_SETTINGS.docExportFormat;
@@ -250,22 +418,23 @@ async function handleStartExport(data, sendResponse) {
     exportState.fileList.forEach(file => {
       if (file.status !== 'success') {
         file.status = 'pending';
+        resetRetryMetadata(file);
       }
     });
 
     refreshAbortController();
     resetThrottle();
 
-    await saveState();
-    sendResponse({ success: true });
-    exportFiles();
+    await saveStateSafely();
+    sendResponse({ success: true, data: exportState });
+    startExportRunner();
   } catch (error) {
     sendResponse({ success: false, error: error.message });
   }
 }
 
 async function handleRetryFailedFiles(sendResponse) {
-  if (exportState.isExporting) {
+  if (exportState.isExporting || isRunnerActive()) {
     sendResponse({ success: false, error: '当前有任务正在运行，请先暂停或重置。' });
     return;
   }
@@ -281,19 +450,23 @@ async function handleRetryFailedFiles(sendResponse) {
     if (!authInfo.isLoggedIn) throw new Error('登录态已过期');
 
     const settings = await chrome.storage.local.get([
-      'subfolder', 'exportType', 'downloadImages', 'imageConcurrency',
+      'subfolder', 'exportType', 'requestInterval', 'downloadImages', 'imageConcurrency',
       'docExportFormat', 'sheetExportFormat', 'boardExportFormat', 'tableExportFormat',
       'markdownMode', 'sheetMode'
     ]);
 
     exportState.fileList.forEach(file => {
-      if (file.status === 'failed') file.status = 'pending';
+      if (file.status === 'failed') {
+        file.status = 'pending';
+        resetRetryMetadata(file);
+      }
     });
 
     exportState.isExporting = true;
     exportState.isPaused = false;
     exportState.currentFileIndex = 0;
     exportState.subfolder = settings.subfolder ?? DEFAULT_SETTINGS.subfolder;
+    exportState.requestInterval = Number(settings.requestInterval) || DEFAULT_SETTINGS.requestInterval;
     exportState.exportType = settings.exportType || 'smart';
     exportState.docExportFormat = settings.docExportFormat || DEFAULT_SETTINGS.docExportFormat;
     exportState.sheetExportFormat = settings.sheetExportFormat || DEFAULT_SETTINGS.sheetExportFormat;
@@ -306,9 +479,9 @@ async function handleRetryFailedFiles(sendResponse) {
     refreshAbortController();
     resetThrottle();
 
-    await saveState();
-    sendResponse({ success: true });
-    exportFiles();
+    await saveStateSafely();
+    sendResponse({ success: true, data: exportState });
+    startExportRunner();
   } catch (error) {
     sendResponse({ success: false, error: error.message });
   }
@@ -317,12 +490,19 @@ async function handleRetryFailedFiles(sendResponse) {
 async function handleResetExport(sendResponse) {
   abortActiveTasks();
   refreshAbortController();
+  activeRunToken = null;
+  scheduleDeferredRetry(0);
   resetExportState();
-  await saveState();
+  await saveStateSafely();
   sendResponse({ success: true, data: exportState });
 }
 
 async function handleReExportFile(data, sendResponse) {
+  if (exportState.isExporting || isRunnerActive()) {
+    sendResponse({ success: false, error: '当前有任务正在运行，请先暂停或重置。' });
+    return;
+  }
+
   const { fileIndex } = data;
   const file = exportState.fileList?.[fileIndex];
   if (!file) {
@@ -335,12 +515,13 @@ async function handleReExportFile(data, sendResponse) {
     if (!authInfo.isLoggedIn) throw new Error('登录态已过期');
 
     const settings = await chrome.storage.local.get([
-      'subfolder', 'downloadImages', 'imageConcurrency',
+      'subfolder', 'requestInterval', 'downloadImages', 'imageConcurrency',
       'docExportFormat', 'sheetExportFormat', 'boardExportFormat', 'tableExportFormat',
       'markdownMode', 'sheetMode'
     ]);
 
     exportState.subfolder = settings.subfolder ?? DEFAULT_SETTINGS.subfolder;
+    exportState.requestInterval = Number(settings.requestInterval) || DEFAULT_SETTINGS.requestInterval;
     exportState.downloadImages = settings.downloadImages !== false;
     exportState.imageConcurrency = settings.imageConcurrency || DEFAULT_SETTINGS.imageConcurrency;
     exportState.docExportFormat = settings.docExportFormat || DEFAULT_SETTINGS.docExportFormat;
@@ -355,7 +536,8 @@ async function handleReExportFile(data, sendResponse) {
 
     file.status = 'in_progress';
     file.startTime = Date.now();
-    await saveState();
+    resetRetryMetadata(file);
+    await saveStateSafely();
 
     const docType = file.docType || DOC_TYPES.DOC;
     const perTypeFormat = getPerTypeFormat(docType);
@@ -382,6 +564,9 @@ async function handleReExportFile(data, sendResponse) {
       await exportViaLakeContent(file, format, perTypeFormat);
     } else {
       const result = await exportDocAsync(file.id, docType, perTypeFormat);
+      if (result.deferred) {
+        throw new Error('导出仍在生成中，请稍后重试。');
+      }
       const savedPath = buildFilePath(file, format.extension);
       if (result.directUrl) {
         await downloadUrlToDisk(result.url, savedPath);
@@ -398,61 +583,73 @@ async function handleReExportFile(data, sendResponse) {
     file.localPath = buildFilePath(file, format.extension);
     file.endTime = Date.now();
     file.duration = file.endTime - file.startTime;
-    await saveState();
+    await saveStateSafely();
     sendResponse({ success: true, title: file.title });
   } catch (error) {
     file.status = 'failed';
     file.endTime = Date.now();
     file.duration = file.endTime - file.startTime;
-    await saveState();
+    await saveStateSafely();
     sendResponse({ success: false, error: error.message });
   }
 }
 
-async function handleTogglePause(data) {
+async function handleTogglePause(data, sendResponse) {
   if (!exportState.isExporting) {
     sendLog('没有正在进行的任务，忽略暂停/继续指令。');
+    sendResponse({ success: true, data: exportState });
     return;
   }
   exportState.isPaused = data?.isPaused ?? false;
   sendLog(exportState.isPaused ? '导出已暂停。' : '导出已继续。');
-  await saveState();
+  await saveStateSafely();
+  if (!exportState.isPaused) {
+    startExportRunner();
+  }
+  sendResponse({ success: true, data: exportState });
 }
 
-async function exportFiles() {
+async function exportFiles(runToken) {
   try {
     const filesToProcess = exportState.fileList;
     const totalCount = filesToProcess.length;
-    let lastPeriodicSaveAt = 0;
-    for (let i = exportState.currentFileIndex; i < totalCount; i++) {
+    normalizeDeferredFiles();
+
+    let i = findNextRunnableIndex(exportState.currentFileIndex);
+    while (i >= 0) {
+      if (!isCurrentRun(runToken)) return;
       if (!exportState.isExporting) {
         sendLog('导出流程已被取消。');
         return;
       }
 
       await waitIfPaused();
+      if (!isCurrentRun(runToken)) return;
 
       const file = filesToProcess[i];
       exportState.currentFileIndex = i;
 
-      if (file.status !== 'pending') continue;
+      if (file.status !== 'pending') {
+        exportState.currentFileIndex = Math.min(i + 1, totalCount);
+        i = findNextRunnableIndex(exportState.currentFileIndex);
+        continue;
+      }
 
       file.status = 'in_progress';
       file.startTime = Date.now();
       file.retryCount = 0;
-      if (Date.now() - lastPeriodicSaveAt >= 3000) {
-        await saveState();
-        lastPeriodicSaveAt = Date.now();
-      }
-      sendLog(`(进度 ${i + 1}/${totalCount}) 处理 ${file.title}...`);
+      await saveStateSafely();
+      sendLog('(进度 ' + (i + 1) + '/' + totalCount + ') 处理 ' + file.title + '...');
 
       const MAX_RETRIES = 2;
       let success = false;
+      let deferred = false;
 
       for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
         try {
+          if (!isCurrentRun(runToken)) return;
           if (attempt > 0) {
-            sendLog(`重试第 ${attempt} 次: ${file.title}`);
+            sendLog('重试第 ' + attempt + ' 次: ' + file.title);
             await delay(2000 * attempt);
           }
 
@@ -462,9 +659,9 @@ async function exportFiles() {
           const docType = file.docType || DOC_TYPES.DOC;
           const perTypeFormat = getPerTypeFormat(docType);
           const format = EXPORT_FORMATS[perTypeFormat];
-          if (!format) throw new Error(`未知导出格式: ${perTypeFormat}`);
+          if (!format) throw new Error('未知导出格式: ' + perTypeFormat);
 
-          sendLog(`  类型: ${docType} → ${format.label}`);
+          sendLog('  类型: ' + docType + ' → ' + format.label);
 
           // Determine conversion path
           const isSheet = docType === DOC_TYPES.SHEET;
@@ -493,6 +690,9 @@ async function exportFiles() {
             // Use async export API — with fallback to local conversion on failure
             try {
               const result = await exportDocAsync(file.id, docType, perTypeFormat);
+              if (result.deferred) {
+                throw new DeferredExportError(result.message || '导出仍在生成中');
+              }
               const savedPath = buildFilePath(file, format.extension);
 
               if (result.directUrl) {
@@ -501,14 +701,17 @@ async function exportFiles() {
                 const mdText = await result.blob.text();
                 const { localizedMd, imageCount } = await localizeMarkdownImages(mdText, file);
                 await saveContentToDisk(localizedMd, file, format.extension, 'text/markdown');
-                if (imageCount > 0) sendLog(`  图片本地化: ${imageCount} 张`);
+                if (imageCount > 0) sendLog('  图片本地化: ' + imageCount + ' 张');
               } else if (result.blob) {
                 await saveBlobToDisk(result.blob, savedPath);
               }
             } catch (apiErr) {
+              if (apiErr instanceof DeferredExportError) {
+                throw apiErr;
+              }
               // Fallback: if export API fails and we have slug, try local conversion
               if (file.slug && (file.bookSourceId || file.bookId)) {
-                sendLog(`  官方导出失败，自动切换本地转换: ${apiErr.message}`);
+                sendLog('  官方导出失败，自动切换本地转换: ' + apiErr.message);
                 if (isSheet) {
                   await exportViaSheetContent(file, perTypeFormat);
                 } else {
@@ -521,11 +724,13 @@ async function exportFiles() {
             }
           }
 
+          if (!isCurrentRun(runToken)) return;
+          resetRetryMetadata(file);
           file.status = 'success';
           file.localPath = buildFilePath(file, format.extension);
           file.endTime = Date.now();
           file.duration = file.endTime - file.startTime;
-          sendLog(`导出完成: ${file.title} (耗时 ${(file.duration / 1000).toFixed(2)}s)`);
+          sendLog('导出完成: ' + file.title + ' (耗时 ' + (file.duration / 1000).toFixed(2) + 's)');
           sendProgress();
 
           success = true;
@@ -535,26 +740,31 @@ async function exportFiles() {
             sendLog('检测到中止信号，结束导出流程。');
             return;
           }
-          sendLog(`导出失败: ${file.title} -> ${error.message}`);
+          if (error instanceof DeferredExportError) {
+            deferred = deferFile(file, error.message);
+            if (!deferred) {
+              sendLog('已将 ' + file.title + ' 标记为失败。');
+            }
+            break;
+          }
+          sendLog('导出失败: ' + file.title + ' -> ' + error.message);
         }
       }
 
-      if (!success) {
+      if (!success && !deferred && file.status !== 'failed') {
         file.status = 'failed';
         file.endTime = Date.now();
         file.duration = file.endTime - file.startTime;
-        sendLog(`已将 ${file.title} 标记为失败。`);
+        sendLog('已将 ' + file.title + ' 标记为失败。');
       }
 
-      // Save state every 10 files to reduce IO, always save on failure
-      if (!success || i % 10 === 0 || Date.now() - lastPeriodicSaveAt >= 5000) {
-        await saveState();
-        lastPeriodicSaveAt = Date.now();
-      }
+      exportState.currentFileIndex = Math.min(i + 1, totalCount);
+      await saveStateSafely();
 
       // Throttle between documents
       const interval = exportState.requestInterval || DEFAULT_SETTINGS.requestInterval;
       await delay(interval + Math.random() * 500);
+      i = findNextRunnableIndex(exportState.currentFileIndex);
     }
 
     if (!exportState.isExporting) {
@@ -562,24 +772,36 @@ async function exportFiles() {
       return;
     }
 
+    const nextRetryAt = getNextDeferredRetryAt();
+    if (nextRetryAt) {
+      exportState.currentFileIndex = totalCount;
+      scheduleDeferredRetry(nextRetryAt);
+      await saveStateSafely();
+      const waitSeconds = Math.max(1, Math.ceil((nextRetryAt - Date.now()) / 1000));
+      sendLog('当前没有可立即处理的文件，等待 ' + waitSeconds + ' 秒后重试延后文件。');
+      return;
+    }
+
     exportState.isExporting = false;
-    await saveState();
+    exportState.currentFileIndex = totalCount;
+    scheduleDeferredRetry(0);
+    await saveStateSafely();
 
     const failedCount = exportState.fileList.filter(f => f.status === 'failed').length;
     const successCount = exportState.fileList.filter(f => f.status === 'success').length;
 
-    sendLog(`导出完成！成功: ${successCount}, 失败: ${failedCount}`);
+    sendLog('导出完成！成功: ' + successCount + ', 失败: ' + failedCount);
 
     // Notify about encrypted items that need password
     const encryptedItems = exportState.encryptedItems || [];
     if (encryptedItems.length > 0) {
       const settings = await chrome.storage.local.get(['skipEncryptedBookmarks']);
       if (settings.skipEncryptedBookmarks) {
-        sendLog(`已跳过 ${encryptedItems.length} 个加密项（设置中已开启"跳过加密内容"）。`);
+        sendLog('已跳过 ' + encryptedItems.length + ' 个加密项（设置中已开启"跳过加密内容"）。');
         exportState.encryptedItems = [];
-        await saveState();
+        await saveStateSafely();
       } else {
-        sendLog(`还有 ${encryptedItems.length} 个加密项需要输入密码后下载。`);
+        sendLog('还有 ' + encryptedItems.length + ' 个加密项需要输入密码后下载。');
         chrome.runtime.sendMessage({
             action: 'showPasswordDialog',
             data: { encryptedItems }
@@ -594,8 +816,8 @@ async function exportFiles() {
       return;
     }
     exportState.isExporting = false;
-    await saveState();
-    sendLog(`导出流程发生异常: ${error.message}`);
+    await saveStateSafely();
+    sendLog('导出流程发生异常: ' + error.message);
     sendError(error.message);
   }
 }
@@ -1135,7 +1357,7 @@ async function handleVerifyPassword(data, sendResponse) {
         );
       }
 
-      await saveState();
+      await saveStateSafely();
       sendLog(`知识库「${data.bookName}」密码验证成功，新增 ${files.length} 篇文档。`);
       sendResponse({ success: true, newFiles: files.length, remaining: exportState.encryptedItems?.length || 0 });
     } else {
@@ -1170,7 +1392,7 @@ async function handleVerifyPassword(data, sendResponse) {
         isBookmark: data.isBookmark !== false,
       });
       exportState.totalFiles = exportState.fileList.length;
-      await saveState();
+      await saveStateSafely();
 
       sendLog(`文档「${data.title}」密码验证成功。`);
       sendResponse({ success: true, newFiles: 1, remaining: exportState.encryptedItems?.length || 0 });
@@ -1189,7 +1411,7 @@ async function handleSkipEncrypted(data, sendResponse) {
     exportState.encryptedItems = exportState.encryptedItems.filter(
       item => !(item.id === data.id && item.type === data.type)
     );
-    await saveState();
+    await saveStateSafely();
   }
   sendResponse({ success: true, remaining: exportState.encryptedItems?.length || 0 });
 }
@@ -1370,11 +1592,12 @@ async function handleQuickExport(data, sendResponse) {
       } else {
         await saveText(markdown, 'text/markdown');
       }
-    } else {
-      const result = await exportDocAsync(docInfo.id, docType, perTypeFormat);
-      if (result.directUrl) await downloadUrlToDisk(result.url, savedPath);
-      else if (result.blob) await saveBlobToDisk(result.blob, savedPath);
-    }
+	    } else {
+	      const result = await exportDocAsync(docInfo.id, docType, perTypeFormat);
+	      if (result.deferred) throw new Error('导出仍在生成中，请稍后重试。');
+	      if (result.directUrl) await downloadUrlToDisk(result.url, savedPath);
+	      else if (result.blob) await saveBlobToDisk(result.blob, savedPath);
+	    }
 
     sendResponse({ success: true, title: actualTitle, format: perTypeFormat });
   } catch (error) {

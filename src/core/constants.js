@@ -84,7 +84,7 @@ export const DEFAULT_SETTINGS = {
   sheetMode: 'local',            // 'local' = 本地引擎, 'api' = 官方导出API（仅xlsx，仅有权限的文档）
 };
 
-export const EXPORT_POLL_MAX = 60;
+export const EXPORT_POLL_MAX = 3;
 export const EXPORT_POLL_INTERVAL = 3000;
 
 // Bookmarks (收藏) virtual book

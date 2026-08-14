@@ -6,6 +6,26 @@ import JSEncrypt from 'jsencrypt';
 
 const throttle = new RequestThrottle(500);
 
+function delayWithAbort(ms) {
+  const signal = getAbortSignal();
+  if (signal.aborted) {
+    throw createAbortError();
+  }
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(resolve, ms);
+    signal.addEventListener('abort', () => {
+      clearTimeout(timer);
+      reject(createAbortError());
+    }, { once: true });
+  });
+}
+
+function createAbortError() {
+  const error = new Error('Aborted');
+  error.name = 'AbortError';
+  return error;
+}
+
 /**
  * Check login status and return user info.
  * Uses /api/mine (internal API, cookie-based).
@@ -605,6 +625,7 @@ export async function exportDocAsync(docId, docType, exportFormat) {
         'Referer': 'https://www.yuque.com/',
       },
       credentials: 'include',
+      signal: getAbortSignal(),
       body: JSON.stringify(body),
     });
   } catch (fetchErr) {
@@ -632,6 +653,7 @@ export async function exportDocAsync(docId, docType, exportFormat) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json;charset=utf-8', 'x-requested-with': 'XMLHttpRequest', 'x-csrf-token': csrfToken || '', 'Referer': 'https://www.yuque.com/' },
         credentials: 'include',
+        signal: getAbortSignal(),
         body: JSON.stringify(retryBody),
       });
       if (retryResp.ok) {
@@ -668,7 +690,7 @@ export async function exportDocAsync(docId, docType, exportFormat) {
 
   // Step 3: Poll for completion
   for (let i = 0; i < EXPORT_POLL_MAX; i++) {
-    await new Promise(r => setTimeout(r, EXPORT_POLL_INTERVAL));
+    await delayWithAbort(EXPORT_POLL_INTERVAL);
 
     let pollResp;
     try {
@@ -681,9 +703,13 @@ export async function exportDocAsync(docId, docType, exportFormat) {
           'Referer': 'https://www.yuque.com/',
         },
         credentials: 'include',
+        signal: getAbortSignal(),
         body: JSON.stringify(body),
       });
-    } catch { continue; }
+    } catch (error) {
+      if (error.name === 'AbortError') throw error;
+      continue;
+    }
 
     if (!pollResp.ok) continue;
     const pollResult = await pollResp.json();
@@ -697,7 +723,7 @@ export async function exportDocAsync(docId, docType, exportFormat) {
     // state might be 'processing' — continue polling
   }
 
-  throw new Error('导出超时: 轮询次数已达上限');
+  return { deferred: true, message: '导出仍在生成中' };
 }
 
 /**

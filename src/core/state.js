@@ -9,6 +9,7 @@ function createInitialState() {
     fileList: [],       // { id, slug, title, bookId, bookName, folderPath, status, localPath, ... }
     exportType: 'md',
     subfolder: '',
+    requestInterval: 500,
     downloadImages: true,
     logs: [],
     // User info
@@ -19,6 +20,7 @@ function createInitialState() {
 }
 
 const exportState = createInitialState();
+let stateReadyPromise = null;
 
 function overwriteState(nextState) {
   Object.keys(exportState).forEach(key => { delete exportState[key]; });
@@ -32,20 +34,21 @@ export function resetExportState() {
 
 export { exportState };
 
+function buildSerializableExportState() {
+  const { fileList, bookList, ...rest } = exportState;
+  return { ...rest };
+}
+
 export async function saveState() {
-  const payload = { exportState };
-  if (exportState.fileList && exportState.fileList.length > 0) {
-    Object.assign(payload, {
-      fileInfo: {
-        totalFiles: exportState.totalFiles,
-        folderCount: exportState.folderCount || 0,
-        fileList: exportState.fileList,
-        bookList: exportState.bookList || []
-      },
+  const payload = {
+    exportState: buildSerializableExportState(),
+    fileInfo: {
       totalFiles: exportState.totalFiles,
-      folderCount: exportState.folderCount || 0
-    });
-  }
+      folderCount: exportState.folderCount || 0,
+      fileList: exportState.fileList || [],
+      bookList: exportState.bookList || []
+    }
+  };
   await chrome.storage.local.set(payload);
 }
 
@@ -53,13 +56,21 @@ export async function loadState() {
   try {
     const result = await chrome.storage.local.get(['exportState', 'fileInfo']);
     if (result.exportState) {
-      overwriteState({ ...createInitialState(), ...result.exportState });
-      if ((!exportState.fileList || !exportState.fileList.length) && result.fileInfo) {
-        exportState.fileList = result.fileInfo.fileList || [];
-        exportState.totalFiles = result.fileInfo.totalFiles || 0;
-        exportState.folderCount = result.fileInfo.folderCount || 0;
-        exportState.bookList = result.fileInfo.bookList || [];
-      }
+      const fileInfo = result.fileInfo || {};
+      const fileList = Array.isArray(fileInfo.fileList)
+        ? fileInfo.fileList
+        : (Array.isArray(result.exportState.fileList) ? result.exportState.fileList : []);
+      const bookList = Array.isArray(fileInfo.bookList)
+        ? fileInfo.bookList
+        : (Array.isArray(result.exportState.bookList) ? result.exportState.bookList : []);
+      overwriteState({
+        ...createInitialState(),
+        ...result.exportState,
+        fileList,
+        bookList,
+        totalFiles: fileInfo.totalFiles ?? result.exportState.totalFiles ?? fileList.length,
+        folderCount: fileInfo.folderCount ?? result.exportState.folderCount ?? 0
+      });
       return { restored: true };
     }
     if (result.fileInfo) {
@@ -72,4 +83,15 @@ export async function loadState() {
   } catch (error) {
     return { restored: false, error };
   }
+}
+
+export function initState() {
+  if (!stateReadyPromise) {
+    stateReadyPromise = loadState();
+  }
+  return stateReadyPromise;
+}
+
+export function waitForStateReady() {
+  return stateReadyPromise || initState();
 }

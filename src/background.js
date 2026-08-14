@@ -1,10 +1,11 @@
 import { registerRuntimeHandlers, maybeResumeExport } from './core/exporter.js';
 import { initDownloadHooks } from './core/downloads.js';
-import { loadState } from './core/state.js';
+import { initState } from './core/state.js';
 import { sendLog } from './core/messaging.js';
 
 initDownloadHooks();
 registerRuntimeHandlers();
+const stateReady = initState();
 
 // Override Referer for Yuque CDN image requests
 chrome.declarativeNetRequest.updateDynamicRules({
@@ -57,7 +58,7 @@ chrome.declarativeNetRequest.updateDynamicRules({
 });
 
 (async function bootstrap() {
-  const { restored, error } = await loadState();
+  const { restored, error } = await stateReady;
   if (restored) {
     sendLog('已从存储中恢复任务状态。');
   } else if (error) {

@@ -474,6 +474,7 @@ function statusLabel(status) {
       return i18n('filterFailed');
     case 'pending':
     case 'in_progress':
+    case 'deferred':
       return i18n('filterPending');
     default:
       return status || '-';

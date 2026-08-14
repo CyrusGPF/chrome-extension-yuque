@@ -6,6 +6,7 @@ const downloadFilenameOverrides = new Map();
 const activeDownloadTargets = new Map();
 const activeDownloadWaiters = new Map();
 let hooksInitialized = false;
+const DOWNLOAD_WAIT_TIMEOUT = 5 * 60 * 1000;
 
 function enqueuePendingDownload(url, filename) {
   const queue = pendingDownloadUrlMap.get(url) || [];
@@ -53,17 +54,12 @@ function handleDownloadChanged(delta) {
   if (!target && !waiter) return;
 
   if (delta.error?.current || delta.state?.current === 'interrupted' || delta.state?.current === 'complete') {
-    if (waiter) {
-      if (delta.error?.current || delta.state?.current === 'interrupted') {
-        waiter.reject(new Error(delta.error?.current || '下载被中断'));
-      } else {
-        waiter.resolve();
-      }
-      activeDownloadWaiters.delete(delta.id);
-    }
-
-    activeDownloadTargets.delete(delta.id);
-    downloadFilenameOverrides.delete(delta.id);
+    settleDownloadWaiter(
+      delta.id,
+      delta.error?.current || delta.state?.current === 'interrupted'
+        ? new Error(delta.error?.current || '下载被中断')
+        : null
+    );
   }
 }
 
@@ -115,6 +111,33 @@ function download(url, filename) {
   enqueuePendingDownload(url, normalizedFilename);
 
   return new Promise((resolve, reject) => {
+    let settled = false;
+    let downloadId = null;
+    const timer = setTimeout(() => {
+      if (downloadId !== null) {
+        settleDownloadWaiter(downloadId, new Error('下载等待超时'));
+      } else if (!settled) {
+        settled = true;
+        removeQueuedDownload(url, normalizedFilename);
+        reject(new Error('下载启动超时'));
+      }
+    }, DOWNLOAD_WAIT_TIMEOUT);
+
+    const waiter = {
+      resolve: () => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        resolve();
+      },
+      reject: (error) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        reject(error);
+      }
+    };
+
     chrome.downloads.download({
       url,
       filename: normalizedFilename,
@@ -122,12 +145,48 @@ function download(url, filename) {
       conflictAction: 'uniquify'
     }, (id) => {
       if (chrome.runtime.lastError) {
+        clearTimeout(timer);
+        settled = true;
         removeQueuedDownload(url, normalizedFilename);
         reject(new Error(chrome.runtime.lastError.message));
+      } else if (typeof id !== 'number') {
+        clearTimeout(timer);
+        settled = true;
+        removeQueuedDownload(url, normalizedFilename);
+        reject(new Error('下载启动失败'));
       } else {
-        activeDownloadWaiters.set(id, { resolve, reject });
+        downloadId = id;
+        activeDownloadWaiters.set(id, waiter);
+        reconnectDownloadState(id);
       }
     });
+  });
+}
+
+function settleDownloadWaiter(id, error = null) {
+  const waiter = activeDownloadWaiters.get(id);
+  if (waiter) {
+    if (error) waiter.reject(error);
+    else waiter.resolve();
+    activeDownloadWaiters.delete(id);
+  }
+  activeDownloadTargets.delete(id);
+  downloadFilenameOverrides.delete(id);
+}
+
+function reconnectDownloadState(id) {
+  chrome.downloads.search({ id }, (items) => {
+    if (chrome.runtime.lastError) {
+      settleDownloadWaiter(id, new Error(chrome.runtime.lastError.message));
+      return;
+    }
+    const item = items?.[0];
+    if (!item) return;
+    if (item.error || item.state === 'interrupted') {
+      settleDownloadWaiter(id, new Error(item.error || '下载被中断'));
+    } else if (item.state === 'complete') {
+      settleDownloadWaiter(id);
+    }
   });
 }
 
