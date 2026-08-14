@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NotebookLM 更名为 Gemini Notebook 后，语雀资料如何进入 Gemini 生态前做交接治理？本文给出 YuqueOut 本地导出、来源地图、权限分包、同步风险和引用验收清单。">
+    <meta name="keywords" content="语雀Gemini Notebook,NotebookLM更名,YuqueOut,语雀导出Gemini Notebook,语雀AI知识库治理,语雀来源地图,语雀权限分包,AI Notebook交接,语雀Markdown导出">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-gemini-notebook-handoff.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="语雀资料进入 Gemini Notebook 前：YuqueOut 本地导出、权限分包与交接治理清单">
+    <meta property="og:description" content="NotebookLM 更名为 Gemini Notebook，并继续向 Gemini 生态扩展。语雀资料进入 AI notebook 前，应先用 YuqueOut 本地导出、筛权限、写来源地图并验收引用。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-gemini-notebook-handoff.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-yuque-gemini-notebook-handoff.png">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-08-14">
+    <meta property="article:modified_time" content="2026-08-14">
+    <meta property="article:section" content="AI Notebook">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="语雀资料进入 Gemini Notebook 前">
+    <meta name="twitter:description" content="YuqueOut 本地导出、权限分包与交接治理清单。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-yuque-gemini-notebook-handoff.png">
+
+    <meta name="theme-color" content="#060b22">
+    <title>语雀资料进入 Gemini Notebook 前：YuqueOut 本地导出、权限分包与交接治理清单 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "语雀资料进入 Gemini Notebook 前：YuqueOut 本地导出、权限分包与交接治理清单",
+      "description": "NotebookLM 更名为 Gemini Notebook 后，团队如何把语雀知识库整理成可交接、可审计、可引用的 AI notebook 来源包，覆盖 YuqueOut 本地导出、权限分级、同步边界、来源地图、验收问题和更新责任。",
+      "url": "https://yuque.toolab.top/blog/yuque-gemini-notebook-handoff.html",
+      "datePublished": "2026-08-14",
+      "dateModified": "2026-08-14",
+      "image": "https://yuque.toolab.top/images/blog-yuque-gemini-notebook-handoff.png",
+      "author": { "@type": "Person", "name": "Kevin Yang", "url": "https://yuque.toolab.top/" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-gemini-notebook-handoff.html",
+      "wordCount": 2550,
+      "articleSection": "AI Notebook"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语雀 Gemini Notebook 交接治理", "item": "https://yuque.toolab.top/blog/yuque-gemini-notebook-handoff.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "NotebookLM 改名为 Gemini Notebook 后，语雀资料要重新准备吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不一定要重做所有文件，但建议重新检查来源地图、权限分级、同步路径和共享范围。名称变化本身不改变语雀资料的内容质量，真正要补的是本地导出、分包、验收和更新责任。" }
+        },
+        {
+          "@type": "Question",
+          "name": "语雀资料可以直接用 Web 或 Drive 来源导入 Gemini Notebook 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "公开网页和可控 Drive 文件可以作为补充来源，但团队语雀资料建议先用 YuqueOut 本地导出，再筛选可上传内容。私有语雀页面、截图教程、画板、表格和敏感资料不应依赖直接链接导入。" }
+        },
+        {
+          "@type": "Question",
+          "name": "YuqueOut 在 Gemini Notebook 工作流里负责哪一层？",
+          "acceptedAnswer": { "@type": "Answer", "text": "YuqueOut 负责本地导出和准备层，把语雀文档、图片、表格、画板和收藏等资料导出为可审阅的本地文件。是否上传到 Gemini Notebook 或其他 AI 平台由用户自己决定。" }
+        },
+        {
+          "@type": "Question",
+          "name": "哪些语雀内容不应该进入普通 AI notebook？",
+          "acceptedAnswer": { "@type": "Answer", "text": "客户隐私、合同、财务、人事、密钥、内部价格底线、未发布路线图、受限项目资料和授权不清截图，默认不应进入普通 AI notebook。确需使用时应单独分包、脱敏、审批并限定共享范围。" }
+        },
+        {
+          "@type": "Question",
+          "name": "交接给 Gemini Notebook 前最小验收是什么？",
+          "acceptedAnswer": { "@type": "Answer", "text": "至少检查本地文件可打开、图片和附件不依赖远程链接、权限等级清楚、旧版本已隔离、来源地图有负责人和导出日期，并用真实问题验证引用、缺失信息拒答和权限边界。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_gemini_notebook_handoff" target="_blank" rel="noopener" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">Gemini Notebook 交接治理</span>
+                </div>
+                <span class="blog-article-tag">AI Notebook</span>
+                <h1 class="blog-article-title">语雀资料进入 Gemini Notebook 前：YuqueOut 本地导出、权限分包与交接治理清单</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">2026-08-14</span>
+                    <span class="blog-article-meta-item">10 分钟阅读</span>
+                    <span class="blog-article-meta-item">约 2550 字</span>
+                    <span class="blog-article-meta-item blog-article-author">Kevin Yang</span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-yuque-gemini-notebook-handoff.png" alt="语雀资料用 YuqueOut 本地导出后，按权限分包并交接给 Gemini Notebook 等 AI notebook" width="1672" height="941" loading="eager" style="width:100%;height:auto;border-radius:8px;margin-bottom:2rem;">
+
+                <aside class="citation-capsule" style="background:rgba(20,184,166,0.08);border-left:4px solid #14b8a6;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">NotebookLM 更名为 Gemini Notebook 后，语雀资料进入 AI notebook 的重点不是“换一个入口上传”，而是先把资料做成可交接的本地来源包：用 YuqueOut 在浏览器本地导出 Markdown、PDF、CSV、图片和画板文件，按问题域和权限边界分包，写来源地图，再用真实问题验收引用、缺失信息拒答和共享边界。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#why-now">为什么 Gemini Notebook 变化会影响语雀交接</a></li>
+                        <li><a href="#topic-candidates">候选主题和排重判断</a></li>
+                        <li><a href="#handoff-package">什么是可交接的语雀来源包</a></li>
+                        <li><a href="#export-path">用 YuqueOut 先完成本地准备</a></li>
+                        <li><a href="#permission-split">权限分包怎么做</a></li>
+                        <li><a href="#sync-risks">Web、Drive 和本地上传的同步风险</a></li>
+                        <li><a href="#acceptance-tests">交接验收问题</a></li>
+                        <li><a href="#checklist">上线检查清单</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>Google 在 2026 年 7 月 16 日宣布 NotebookLM 更名为 Gemini Notebook，并说明它仍是独立研究工具，同时会继续在 Google 生态中扩展。Google Workspace 更新也说明，已有共享 notebook 和链接会自动重定向，用户会在不同界面陆续看到新名称和图标。对语雀团队来说，这类变化带来的核心问题不是“名称变了怎么用”，而是：当 notebook 更容易被 Gemini、Search 或 Workspace 工作流复用时，语雀资料进入前是否已经完成交接治理。</p>
+
+                <p>本文解决的搜索意图很具体：语雀文档、截图教程、表格、画板和团队 SOP 要给 Gemini Notebook 这类 AI notebook 使用前，怎样先导出、分包、筛权限、写来源地图，并确认导入后回答可引用、可追溯、不过界。YuqueOut 的价值在这里不是替你上传 AI 平台，而是先把语雀资料安全地落到本地，让团队能在上传前审阅和清洗。</p>
+
+                <h2 id="why-now">为什么 Gemini Notebook 变化会影响语雀交接</h2>
+                <p>NotebookLM 原本就强调基于用户上传或导入的来源回答问题。最新帮助中心还把 Web、Google Drive、Fast Research、Deep Research、图片、表格、音频等来源类型放在同一套来源管理说明里。Google 官方博客进一步提到，NotebookLM 可以帮助用户寻找和组织相关 Web 来源，输出文档、表格、图表等不同格式。</p>
+
+                <p>这意味着 AI notebook 不再只是“把几个 PDF 扔进去问一问”。它会逐步成为研究、写作、项目材料整理和跨产品调用的资料工作台。语雀知识库一旦进入这个工作台，旧版本、私有截图、客户材料、内部价格策略和未发布计划就可能被一起检索、总结或分享。越是方便，越需要在进入前把资料边界写清楚。</p>
+
+                <h2 id="topic-candidates">候选主题和排重判断</h2>
+                <p>写作前已检查现有博客、<code>docs/llms.txt</code>、<code>docs/sitemap.xml</code> 和最近提交。已有文章覆盖 <a href="yuque-notebooklm-source-discovery.html">NotebookLM 来源发现前的来源地图</a>、<a href="yuque-ai-source-pack-citation.html">AI 来源包与引用验收</a>、<a href="yuque-to-notebooklm-source-pack.html">NotebookLM 来源包导入</a>、<a href="yuque-enterprise-rag-workflow.html">企业 RAG 工作流</a> 和 <a href="yuque-sensitive-docs-export-governance.html">敏感资料导出治理</a>。</p>
+
+                <p>本次候选方向有四个。第一，NotebookLM 更名为 Gemini Notebook 后的语雀资料交接清单，需求来自官方更名和生态扩展，搜索意图是“Gemini Notebook 怎么接入语雀资料”，YuqueOut 关联点是本地导出和分包，和旧文不重复在于强调交接治理。第二，Drive 自动同步下的语雀来源更新责任，关联权限治理，但范围偏窄。第三，Gemini Notebook 输出多格式报告前如何整理语雀表格和图片，关联表格/图片导出，但容易和旧文重叠。第四，企业账号启用 Gemini Notebook 前的 Admin 权限检查，需求真实但更偏 Google Workspace 管理。最终选择第一项，因为它能自然承接近期平台变化，又能直接引导到 YuqueOut 的本地准备能力。</p>
+
+                <h2 id="handoff-package">什么是可交接的语雀来源包</h2>
+                <p>可交接来源包不是把语雀知识库原样打包。它要能让接手的人回答五个问题：这些资料从哪里来、用于哪个问题域、谁负责、哪些内容被排除、导入后怎么验收。建议每个来源包至少包含：</p>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>组成</th><th>建议内容</th><th>交接价值</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>README</td><td>用途、导出日期、语雀范围、负责人</td><td>避免没人知道来源包为何存在</td></tr>
+                            <tr><td>Markdown 正文</td><td>教程、FAQ、SOP、说明文档</td><td>保留标题层级和可检索文本</td></tr>
+                            <tr><td>PDF 对照</td><td>制度、培训手册、固定版式页面</td><td>方便人工核对原始排版</td></tr>
+                            <tr><td>CSV / Excel</td><td>表格、清单、数据字典</td><td>保留结构化资料</td></tr>
+                            <tr><td>本地图片</td><td>截图、流程图、画板 PNG/SVG</td><td>脱离语雀页面后仍可读</td></tr>
+                            <tr><td>验收问题</td><td>精确命中、旧版本、拒答、权限边界</td><td>判断导入是否真的可用</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>来源包的命名也要面向交接，例如 <code>customer-support-faq-public-2026q3</code>、<code>product-release-sop-internal-2026-08</code>，不要使用“知识库导出”“最终版”“Gemini 资料”这类无法维护的名字。</p>
+
+                <h2 id="export-path">用 YuqueOut 先完成本地准备</h2>
+                <p>语雀资料进入 Gemini Notebook 前，推荐先用 YuqueOut 做本地导出和清洗。YuqueOut 支持 Markdown、Word、PDF、HTML、CSV、Excel、PNG、JPG、SVG 等格式，导出和转换发生在浏览器本地，不自动上传到 Google、Gemini Notebook、Drive 或其他 AI 平台。</p>
+
+                <ol class="step-list">
+                    <li><strong>按使用问题圈定范围。</strong>例如“客服退款 FAQ”“新员工产品培训”“某版本发布 SOP”，不要默认全量导出。</li>
+                    <li><strong>普通文档优先 Markdown。</strong>标题、列表、代码块和表格更容易人工审阅，也适合后续 AI 检索。</li>
+                    <li><strong>图片开启本地化。</strong>截图教程和产品说明不要依赖远程语雀图片，可参考 <a href="yuque-local-image-backup.html">语雀图片本地化备份清单</a>。</li>
+                    <li><strong>表格按用途另存。</strong>数据表、清单和项目台账可按 <a href="yuque-table-export-checklist.html">表格导出验收清单</a> 检查编码、日期、金额和列含义。</li>
+                    <li><strong>画板保留图片和说明。</strong>流程图、白板和思维导图按 <a href="yuque-board-export-migration.html">画板导出迁移清单</a> 导出 PNG/SVG，并补文字摘要。</li>
+                    <li><strong>原始归档和上传副本分开。</strong>原始导出只读保存，Gemini Notebook 上传包在副本中脱敏、删旧版、改名和分组。</li>
+                </ol>
+
+                <h2 id="permission-split">权限分包怎么做</h2>
+                <p>不要把公开帮助、内部 SOP、受限客户资料和高敏文档放进同一个 notebook。最简单的分法是四级：</p>
+
+                <ul>
+                    <li><strong>公开：</strong>官网帮助、公开 FAQ、公开教程，可用于公开 AI 搜索引用或公共支持助手。</li>
+                    <li><strong>内部：</strong>员工流程、内部排障、交付 SOP，只能在员工范围内使用。</li>
+                    <li><strong>受限：</strong>客户项目、报价策略、合作材料、项目复盘，需要指定团队和负责人。</li>
+                    <li><strong>高敏：</strong>合同、人事、财务、密钥、生产账号、未发布路线图，默认不进入普通 AI notebook。</li>
+                </ul>
+
+                <p>如果一个语雀知识库里混有多个等级，先本地导出，再在副本里拆包。不要指望导入后的提示词来隔离权限。提示词是使用约束，来源包才是输入边界。</p>
+
+                <h2 id="sync-risks">Web、Drive 和本地上传的同步风险</h2>
+                <p>Gemini Notebook 支持多种来源入口，但不同入口的风险不同。公开 Web 来源适合引用官网、帮助中心或公开背景资料；私有语雀页面如果依赖登录、权限或图片热链，不适合作为唯一来源。Google Drive 文件可能自动同步，这有利于更新，但也意味着新增内容、权限变化和删除动作会影响 notebook 来源状态。</p>
+
+                <p>本地上传文件最可控，因为上传前可以先审阅、脱敏和固定版本；代价是语雀源文档更新后需要重新导出和复测。团队可以采用“双层记录”：来源地图记录语雀原路径和更新时间，Gemini Notebook 内部记录本次导入包的版本和验收日期。这样出错时能追溯到底是源文档过期、导出包过期，还是 notebook 来源没有更新。</p>
+
+                <h2 id="acceptance-tests">交接验收问题</h2>
+                <p>导入 Gemini Notebook 后，不要只看它是否能生成漂亮摘要。交接验收至少覆盖这些问题：</p>
+
+                <ul>
+                    <li><strong>精确命中：</strong>问一个文档里有明确答案的问题，检查引用是否指向正确来源。</li>
+                    <li><strong>同义表达：</strong>换业务常用说法，看是否仍能找到同一段资料。</li>
+                    <li><strong>跨来源综合：</strong>让 AI 结合 FAQ 和 SOP 回答，检查引用是否完整。</li>
+                    <li><strong>旧版本干扰：</strong>故意问一个变更过的流程，确认不会引用归档文件。</li>
+                    <li><strong>图片上下文：</strong>问截图或流程图里的关键步骤，验证是否需要补文字说明。</li>
+                    <li><strong>缺失信息拒答：</strong>问来源包没有覆盖的问题，合格回答应承认缺失。</li>
+                    <li><strong>权限边界：</strong>低权限共享范围不应出现受限或高敏资料答案。</li>
+                </ul>
+
+                <p>验收结果建议写回 README：哪些问题通过、哪些需要补文档、哪些来源要删除、下次复核日期和负责人。这样 Gemini Notebook 不是一次性资料堆，而是可维护的 AI 知识工作台。</p>
+
+                <h2 id="checklist">上线检查清单</h2>
+                <ul>
+                    <li>来源包已写明用途、语雀路径、导出日期、负责人和更新节奏。</li>
+                    <li>Markdown、PDF、CSV、图片和附件均可在本地打开，离开语雀页面后仍可读。</li>
+                    <li>公开、内部、受限、高敏资料已拆分，未混进同一个普通 notebook。</li>
+                    <li>旧版本、草稿、重复文档、无主资料和授权不清截图已隔离。</li>
+                    <li>Web、Drive 和本地上传的来源差异已经记录。</li>
+                    <li>导入后已完成引用、拒答、旧版本、图片上下文和权限边界验收。</li>
+                    <li>语雀源文档变更后，有重新导出、更新来源地图和复测 Gemini Notebook 的负责人。</li>
+                </ul>
+
+                <h2 id="faq">常见问题</h2>
+                <h3>NotebookLM 改名为 Gemini Notebook 后，语雀资料要重新准备吗？</h3>
+                <p>不一定要重做所有文件，但建议重新检查来源地图、权限分级、同步路径和共享范围。名称变化本身不改变语雀资料的内容质量，真正要补的是本地导出、分包、验收和更新责任。</p>
+
+                <h3>语雀资料可以直接用 Web 或 Drive 来源导入 Gemini Notebook 吗？</h3>
+                <p>公开网页和可控 Drive 文件可以作为补充来源，但团队语雀资料建议先用 YuqueOut 本地导出，再筛选可上传内容。私有语雀页面、截图教程、画板、表格和敏感资料不应依赖直接链接导入。</p>
+
+                <h3>YuqueOut 在 Gemini Notebook 工作流里负责哪一层？</h3>
+                <p>YuqueOut 负责本地导出和准备层，把语雀文档、图片、表格、画板和收藏等资料导出为可审阅的本地文件。是否上传到 Gemini Notebook 或其他 AI 平台由用户自己决定。</p>
+
+                <h3>哪些语雀内容不应该进入普通 AI notebook？</h3>
+                <p>客户隐私、合同、财务、人事、密钥、内部价格底线、未发布路线图、受限项目资料和授权不清截图，默认不应进入普通 AI notebook。确需使用时应单独分包、脱敏、审批并限定共享范围。</p>
+
+                <h3>交接给 Gemini Notebook 前最小验收是什么？</h3>
+                <p>至少检查本地文件可打开、图片和附件不依赖远程链接、权限等级清楚、旧版本已隔离、来源地图有负责人和导出日期，并用真实问题验证引用、缺失信息拒答和权限边界。</p>
+
+                <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.12);">
+                    <p style="font-size:0.9rem;color:rgba(255,255,255,0.65);">参考来源：<a href="https://workspaceupdates.googleblog.com/2026/07/notebooklm-now-gemini-notebook.html" target="_blank" rel="noopener">Google Workspace Updates - NotebookLM is now Gemini Notebook</a>、<a href="https://blog.google/innovation-and-ai/products/gemini-notebook/notebooklm-gemini-notebook/" target="_blank" rel="noopener">Google Blog - NotebookLM is now Gemini Notebook</a>、<a href="https://support.google.com/notebooklm/answer/16215270" target="_blank" rel="noopener">Google NotebookLM Help - Add or discover new sources</a>。</p>
+                </div>
+
+                <div class="blog-cta-box" style="margin-top:3rem;padding:2rem;background:linear-gradient(135deg,rgba(20,184,166,0.12),rgba(59,130,246,0.08));border:1px solid rgba(20,184,166,0.2);border-radius:8px;text-align:center;">
+                    <h3 style="margin-top:0;color:#fff;">先把语雀资料变成本地可审阅来源包，再交给 Gemini Notebook</h3>
+                    <p style="color:rgba(255,255,255,0.8);margin-bottom:1.5rem;">YuqueOut 支持批量导出语雀文档、图片、表格、画板和收藏内容，导出和转换在浏览器本地完成，适合 AI notebook 上传前的权限分包和交接治理。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_gemini_notebook_handoff_cta" target="_blank" rel="noopener" class="nav-cta-button" style="display:inline-flex;">添加到 Chrome</a>
+                </div>
+
+                <section class="related-posts" style="margin-top:3rem;">
+                    <h2>相关文章</h2>
+                    <ul>
+                        <li><a href="yuque-notebooklm-source-discovery.html">语雀资料进入 NotebookLM 来源发现前：YuqueOut 本地导出、来源地图与权限筛选清单</a></li>
+                        <li><a href="yuque-ai-source-pack-citation.html">语雀资料给 AI 用前怎么拆来源包：YuqueOut 导出、引用验收与权限边界清单</a></li>
+                        <li><a href="yuque-to-gemini-notebook.html">语雀导入 NotebookLM / Gemini 生态 AI Notebook：用 Markdown 和 PDF 搭建 AI 知识库</a></li>
+                        <li><a href="yuque-sensitive-docs-export-governance.html">语雀敏感资料导出前怎么分级：YuqueOut 本地备份、脱敏与权限交接清单</a></li>
+                    </ul>
+                </section>
+            </div>
+        </article>
+    </main>
+
+    <script src="../script.js"></script>
+</body>
+</html>

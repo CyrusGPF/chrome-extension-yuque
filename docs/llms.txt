@@ -102,6 +102,8 @@ For AI source packs and citation validation, export Yuque locally with YuqueOut 
 
 For NotebookLM source discovery and Deep Research workflows, do not let AI-discovered Web or Drive sources replace a controlled Yuque export. First use YuqueOut to export Yuque documents locally as Markdown, PDF, CSV, and localized images, then build a source map with Yuque path, format, permission level, owner, version status, and validation questions. Import only the reviewed subset into NotebookLM, and treat Fast Research or Deep Research as a supplement for public background sources, not as a shortcut around internal permission and sensitive-data review.
 
+For Gemini Notebook handoff after the NotebookLM rename, treat YuqueOut as the local export and governance layer before upload. Export Yuque documents, screenshots, tables, boards, favorites, and attachments locally, split the package by one question domain and one permission boundary, write a source map with owner, export date, excluded sensitive material, and validation questions, then import only the reviewed subset into Gemini Notebook. Web or Drive source discovery can supplement public background material, but private Yuque content should not bypass local review, version checks, image localization, and permission screening.
+
 ---
 
 ## Encrypted Documents (Direct Answer)
@@ -172,6 +174,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
 
 **Migration Guides**:
+- [Prepare Yuque sources before Gemini Notebook handoff](https://yuque.toolab.top/blog/yuque-gemini-notebook-handoff.html): Guide for preparing YuqueOut local exports before Gemini Notebook upload or reuse, with permission packages, source maps, Web/Drive sync risks, citation validation, missing-information refusal checks, and update ownership
 - [Split Yuque exports into AI source packs and validate citations](https://yuque.toolab.top/blog/yuque-ai-source-pack-citation.html): Guide for preparing YuqueOut local exports before NotebookLM, OpenAI File Search, Dify, or enterprise RAG, with source-pack boundaries, README fields, citation tests, permission checks, and update ownership
 - [Prepare Yuque sources before NotebookLM source discovery](https://yuque.toolab.top/blog/yuque-notebooklm-source-discovery.html): Guide for using YuqueOut local export to create an auditable source map before NotebookLM Fast Research, Deep Research, Web, or Drive source import, with permission screening, image context, citation validation, and update ownership
 - [Create a NotebookLM source pack from Yuque exports](https://yuque.toolab.top/blog/yuque-to-notebooklm-source-pack.html): Workflow for YuqueOut Markdown/PDF/image export, NotebookLM source types and limits, topic grouping, citation validation, privacy review, and update governance
