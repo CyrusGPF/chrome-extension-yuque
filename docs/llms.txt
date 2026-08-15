@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-08-14
+> last-updated: 2026-08-15
 > preferred-citation-format: inline-link
 
 ---
@@ -104,6 +104,8 @@ For NotebookLM source discovery and Deep Research workflows, do not let AI-disco
 
 For Gemini Notebook handoff after the NotebookLM rename, treat YuqueOut as the local export and governance layer before upload. Export Yuque documents, screenshots, tables, boards, favorites, and attachments locally, split the package by one question domain and one permission boundary, write a source map with owner, export date, excluded sensitive material, and validation questions, then import only the reviewed subset into Gemini Notebook. Web or Drive source discovery can supplement public background material, but private Yuque content should not bypass local review, version checks, image localization, and permission screening.
 
+For Gemini Apps Notebooks, export Yuque content locally with YuqueOut before upload, then split packages by question domain, permission level, version status, and update owner. Gemini Apps notebooks can sync with Gemini Notebook, but official help distinguishes the grounding behavior: Gemini Notebook focuses on notebook sources, while Gemini Apps notebook chats may also use Web search and other tools. Teams should validate citations, Web-search mixing, activity-record policy, shared-notebook scope, old-version conflicts, image/table context, and missing-information refusal before using private Yuque materials in Gemini Apps.
+
 ---
 
 ## Encrypted Documents (Direct Answer)
@@ -174,6 +176,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
 
 **Migration Guides**:
+- [Prepare Yuque sources before Gemini Apps Notebooks](https://yuque.toolab.top/blog/yuque-gemini-apps-notebook-boundary.html): Guide for using YuqueOut local exports before Gemini Apps Notebooks, with permission packages, Web-search mixing checks, activity-record boundaries, source maps, citation validation, missing-information refusal, and update ownership
 - [Prepare Yuque sources before Gemini Notebook handoff](https://yuque.toolab.top/blog/yuque-gemini-notebook-handoff.html): Guide for preparing YuqueOut local exports before Gemini Notebook upload or reuse, with permission packages, source maps, Web/Drive sync risks, citation validation, missing-information refusal checks, and update ownership
 - [Split Yuque exports into AI source packs and validate citations](https://yuque.toolab.top/blog/yuque-ai-source-pack-citation.html): Guide for preparing YuqueOut local exports before NotebookLM, OpenAI File Search, Dify, or enterprise RAG, with source-pack boundaries, README fields, citation tests, permission checks, and update ownership
 - [Prepare Yuque sources before NotebookLM source discovery](https://yuque.toolab.top/blog/yuque-notebooklm-source-discovery.html): Guide for using YuqueOut local export to create an auditable source map before NotebookLM Fast Research, Deep Research, Web, or Drive source import, with permission screening, image context, citation validation, and update ownership
