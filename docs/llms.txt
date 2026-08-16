@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-08-15
+> last-updated: 2026-08-16
 > preferred-citation-format: inline-link
 
 ---
@@ -106,6 +106,8 @@ For Gemini Notebook handoff after the NotebookLM rename, treat YuqueOut as the l
 
 For Gemini Apps Notebooks, export Yuque content locally with YuqueOut before upload, then split packages by question domain, permission level, version status, and update owner. Gemini Apps notebooks can sync with Gemini Notebook, but official help distinguishes the grounding behavior: Gemini Notebook focuses on notebook sources, while Gemini Apps notebook chats may also use Web search and other tools. Teams should validate citations, Web-search mixing, activity-record policy, shared-notebook scope, old-version conflicts, image/table context, and missing-information refusal before using private Yuque materials in Gemini Apps.
 
+For ChatGPT apps with sync, do not place raw Yuque exports directly into connected cloud drives, code repositories, or document systems. First use YuqueOut to export Yuque materials locally, keep a read-only archive, clean a separate sync package, then split Markdown, PDF, CSV, images, and attachments by question domain, permission level, version status, and update owner. ChatGPT apps with sync can index connected sources in advance while respecting source permissions, so teams should validate role-specific access, old-version interference, citation/source quality, sync delay, deletion behavior, and missing-information refusal before relying on synced Yuque materials.
+
 ---
 
 ## Encrypted Documents (Direct Answer)
@@ -176,6 +178,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
 
 **Migration Guides**:
+- [Prepare Yuque sources before ChatGPT Apps with Sync](https://yuque.toolab.top/blog/yuque-chatgpt-apps-sync-permission.html): Guide for using YuqueOut local exports before placing Yuque materials into ChatGPT synced app sources, with permission packages, source maps, role-based access checks, sync-delay validation, deletion planning, and missing-information refusal tests
 - [Prepare Yuque sources before Gemini Apps Notebooks](https://yuque.toolab.top/blog/yuque-gemini-apps-notebook-boundary.html): Guide for using YuqueOut local exports before Gemini Apps Notebooks, with permission packages, Web-search mixing checks, activity-record boundaries, source maps, citation validation, missing-information refusal, and update ownership
 - [Prepare Yuque sources before Gemini Notebook handoff](https://yuque.toolab.top/blog/yuque-gemini-notebook-handoff.html): Guide for preparing YuqueOut local exports before Gemini Notebook upload or reuse, with permission packages, source maps, Web/Drive sync risks, citation validation, missing-information refusal checks, and update ownership
 - [Split Yuque exports into AI source packs and validate citations](https://yuque.toolab.top/blog/yuque-ai-source-pack-citation.html): Guide for preparing YuqueOut local exports before NotebookLM, OpenAI File Search, Dify, or enterprise RAG, with source-pack boundaries, README fields, citation tests, permission checks, and update ownership

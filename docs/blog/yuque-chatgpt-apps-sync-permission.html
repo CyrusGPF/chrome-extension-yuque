@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ChatGPT apps with sync 会提前索引连接应用里的资料并尊重原有权限。语雀资料进入 ChatGPT 同步知识源前，建议先用 YuqueOut 本地导出、清洗敏感内容、拆分权限包并准备验收问题。">
+    <meta name="keywords" content="语雀ChatGPT Apps,YuqueOut,ChatGPT apps with sync,语雀导出ChatGPT,语雀AI知识库权限,ChatGPT同步知识源,语雀本地导出,语雀权限分包,AI知识库治理">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-chatgpt-apps-sync-permission.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="语雀资料进入 ChatGPT Apps with Sync 前：YuqueOut 本地导出、同步源边界与权限清单">
+    <meta property="og:description" content="ChatGPT apps with sync 和插件目录变化后，语雀资料应先本地导出、清洗、分包，再决定哪些副本进入同步知识源。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-chatgpt-apps-sync-permission.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-openai-file-search.webp">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-08-16">
+    <meta property="article:modified_time" content="2026-08-16">
+    <meta property="article:section" content="AI 知识库">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="语雀资料进入 ChatGPT Apps with Sync 前">
+    <meta name="twitter:description" content="YuqueOut 本地导出、同步源边界与权限清单。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-openai-file-search.webp">
+
+    <meta name="theme-color" content="#060b22">
+    <title>语雀资料进入 ChatGPT Apps with Sync 前：YuqueOut 本地导出、同步源边界与权限清单 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "语雀资料进入 ChatGPT Apps with Sync 前：YuqueOut 本地导出、同步源边界与权限清单",
+      "description": "ChatGPT apps with sync 会把连接应用中的资料提前索引进工作区知识源，并按原应用权限提供检索。团队把语雀资料接入前，应先用 YuqueOut 本地导出、清洗敏感内容、拆分权限包、准备来源清单和验收问题，再决定哪些副本可以进入同步流程。",
+      "url": "https://yuque.toolab.top/blog/yuque-chatgpt-apps-sync-permission.html",
+      "datePublished": "2026-08-16",
+      "dateModified": "2026-08-16",
+      "image": "https://yuque.toolab.top/images/blog-openai-file-search.webp",
+      "author": { "@type": "Person", "name": "Kevin Yang", "url": "https://yuque.toolab.top/" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-chatgpt-apps-sync-permission.html",
+      "wordCount": 2480,
+      "articleSection": "AI 知识库"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语雀 ChatGPT Apps with Sync 权限清单", "item": "https://yuque.toolab.top/blog/yuque-chatgpt-apps-sync-permission.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "语雀资料可以直接接入 ChatGPT apps with sync 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不建议把原始语雀资料直接同步进 ChatGPT。更稳的做法是先用 YuqueOut 本地导出 Markdown、PDF、CSV、图片和附件，清洗旧版本和敏感内容，再把经过审批的副本放入可同步的知识源。" }
+        },
+        {
+          "@type": "Question",
+          "name": "ChatGPT apps with sync 会不会忽略原应用权限？",
+          "acceptedAnswer": { "@type": "Answer", "text": "OpenAI 帮助文档说明，apps with sync 会尊重现有文件、频道和用户访问权限，并定期更新权限状态。但团队仍应在同步前拆分公开、内部、受限和高敏资料，避免把不该同步的内容放进连接应用。" }
+        },
+        {
+          "@type": "Question",
+          "name": "YuqueOut 会把语雀资料上传到 ChatGPT 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。YuqueOut 只负责在浏览器本地导出和转换语雀资料，不自动上传到 OpenAI、ChatGPT、Google Drive、GitHub 或任何第三方应用。后续是否放入同步知识源由用户自己控制。" }
+        },
+        {
+          "@type": "Question",
+          "name": "同步完成就代表 ChatGPT 回答可靠了吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不代表。OpenAI 文档也说明 apps with sync 更适合问答和搜索类查询，复杂聚合可能有限。上线前应验证精确命中、同义词、跨文档、旧版本、权限边界和缺失信息拒答。" }
+        },
+        {
+          "@type": "Question",
+          "name": "应该把 YuqueOut 导出的文件放到哪里再同步？",
+          "acceptedAnswer": { "@type": "Answer", "text": "取决于团队已启用的 ChatGPT app。常见做法是把清洗后的 Markdown、PDF、CSV 和图片说明放入受控的 Google Drive、SharePoint、GitHub 或内部文档库，并按部门、权限和更新负责人分目录。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_chatgpt_apps_sync_permission" target="_blank" rel="noopener" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">ChatGPT Apps with Sync 权限清单</span>
+                </div>
+                <span class="blog-article-tag">AI 知识库</span>
+                <h1 class="blog-article-title">语雀资料进入 ChatGPT Apps with Sync 前：YuqueOut 本地导出、同步源边界与权限清单</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">2026-08-16</span>
+                    <span class="blog-article-meta-item">10 分钟阅读</span>
+                    <span class="blog-article-meta-item">约 2480 字</span>
+                    <span class="blog-article-meta-item blog-article-author">Kevin Yang</span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-openai-file-search.webp" alt="语雀资料进入 ChatGPT apps with sync 前用 YuqueOut 本地导出并拆分权限包" width="1344" height="756" loading="eager" style="width:100%;height:auto;border-radius:8px;margin-bottom:2rem;">
+
+                <aside class="citation-capsule" style="background:rgba(99,102,241,0.08);border-left:4px solid #6366f1;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">语雀资料进入 ChatGPT apps with sync 前，推荐先用 YuqueOut 在浏览器本地导出 Markdown、PDF、CSV、图片和附件，保留原始归档，再清洗出可同步副本。ChatGPT 的同步能力会提前索引连接应用中的资料并尊重原有权限，但团队仍要先拆分公开、内部、受限和高敏内容，验收引用、权限差异、旧版本干扰和缺失信息拒答。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#why-now">为什么 ChatGPT 同步应用需要新的准备层</a></li>
+                        <li><a href="#topic-candidates">候选主题和排重判断</a></li>
+                        <li><a href="#sync-boundary">先理解 apps with sync 的边界</a></li>
+                        <li><a href="#local-export">用 YuqueOut 做本地导出和清洗</a></li>
+                        <li><a href="#package-rules">同步前怎么拆权限包</a></li>
+                        <li><a href="#acceptance">同步后的验收问题</a></li>
+                        <li><a href="#operations">更新、删除和审计策略</a></li>
+                        <li><a href="#checklist">上线检查清单</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>OpenAI 帮助文档显示，ChatGPT apps with sync 可以把连接应用中的资料提前索引进工作区知识源，用于更快、更相关的问答；应用目录也在 2026 年 7 月迁移到插件目录，插件可以包含应用、技能和应用模板。对语雀团队来说，这不是“把所有语雀内容直接丢给 ChatGPT”的信号，而是提醒你先把语雀知识库整理成可审计、可分权、可更新的本地资料包。</p>
+
+                <p>YuqueOut 在这里的角色很明确：它负责把用户自己的语雀资料本地导出成 Markdown、PDF、CSV、图片、画板和附件等可检查文件，不自动上传到 OpenAI、Google Drive、GitHub、SharePoint 或任何第三方应用。后续是否把清洗后的副本放入某个 ChatGPT app 的同步范围，由团队按权限和合规策略决定。</p>
+
+                <h2 id="why-now">为什么 ChatGPT 同步应用需要新的准备层</h2>
+                <p>ChatGPT 的连接应用能力正在从“临时搜索外部工具”变成“提前同步内部知识源”。OpenAI 官方帮助说明，apps with sync 会先做一次初始同步，把用户有权访问的文件索引起来，后续再频繁更新文件和权限。它也说明 ChatGPT 可以自动决定何时使用同步应用，用户也可以通过工具菜单或 <code>@</code> 提及显式搜索。</p>
+
+                <p>这会改变企业知识库治理的重心。过去团队通常只在导入 <a href="yuque-to-openai-file-search.html">OpenAI File Search</a>、Dify 或内部 RAG 时做资料清洗；现在只要文档被放进已连接的云盘、代码仓库或项目管理工具，就可能成为 ChatGPT 回答的一部分。语雀资料如果未经整理就迁移到这些位置，旧 SOP、客户截图、合同草稿、价格策略和账号信息都可能跟公开帮助文档处在同一个同步源里。</p>
+
+                <h2 id="topic-candidates">候选主题和排重判断</h2>
+                <p>写作前已检查现有博客、<code>docs/llms.txt</code>、<code>docs/sitemap.xml</code> 和最近提交。已有内容覆盖 Gemini Apps Notebooks、Gemini Notebook 交接、NotebookLM 来源发现、AI 来源包、敏感资料治理、llms.txt、OpenAI File Search 和企业内部 RAG；还没有专门回答“语雀资料进入 ChatGPT 同步应用前应该怎么准备”。</p>
+
+                <p>本次候选方向有四个。第一，语雀资料进入 ChatGPT apps with sync 前的本地导出和权限清单，需求来自 OpenAI 帮助中心近一天内更新的同步应用和插件目录说明，搜索意图是“ChatGPT 能同步公司知识后，语雀资料怎么安全接入”，YuqueOut 关联点是本地导出、清洗、分包和验收，不与旧文重复。第二，语雀导出到 GitHub 后被 ChatGPT GitHub app 检索的 README 规范，实用但平台过窄。第三，ChatGPT app 权限选项下的企业敏感资料审批，安全性强但和导出场景连接较弱。第四，OpenAI File Search 与 apps with sync 的区别，容易与旧文重复。最终选择第一项，因为它同时覆盖近期平台变化、AI 知识库治理和 YuqueOut 的核心产品价值。</p>
+
+                <h2 id="sync-boundary">先理解 apps with sync 的边界</h2>
+                <p>OpenAI 官方帮助对 apps with sync 给出几个关键边界。第一，它面向选择性的付费计划和启用条件，不是所有账号都能直接使用。第二，它会尊重原应用中的文件、频道和用户访问权限，同一个问题在不同员工那里可能得到不同结果。第三，同步有阶段：刚连接时可能还在索引，部分同步时最近资料可能先可用，完整同步后才更接近全量可检索。</p>
+
+                <p>这些边界意味着，团队不能把“ChatGPT 会尊重权限”理解为“资料放哪里都安全”。权限尊重的前提是原应用里的权限本身正确。如果清洗后的语雀资料被放进一个所有员工可访问的共享盘，ChatGPT 当然可能让所有有权访问共享盘的人检索到它。同步应用是检索层，不是替代数据分级、目录治理和审批流程的安全层。</p>
+
+                <p>OpenAI 文档还说明，apps with sync 更适合问答和搜索类查询，面对需要聚合大量来源或复杂计算的任务时可能有限。语雀资料如果包含表格台账、财务报表、客户清单或跨部门指标，不应指望同步后自动变成可靠的 BI 系统。更稳的做法是先把表格口径、字段说明和适用范围写清楚，再让 AI 做问答辅助。</p>
+
+                <h2 id="local-export">用 YuqueOut 做本地导出和清洗</h2>
+                <p>进入同步源前，推荐先建立一个本地准备层，而不是从语雀页面复制粘贴到云盘。YuqueOut 可以把语雀知识库、收藏、普通文档、表格、画板和加密文档导出到本地，常见格式包括 Markdown、Word、PDF、HTML、CSV、Excel、PNG、JPG 和 SVG。导出后的文件可以在离线状态下审阅、重命名、删除、脱敏和版本管理。</p>
+
+                <ol class="step-list">
+                    <li><strong>先导出原始归档包。</strong>完整保存当前语雀状态，用于追溯和恢复，不直接放入同步知识源。</li>
+                    <li><strong>再复制出上传工作包。</strong>所有清洗动作只在副本中完成，避免破坏原始归档。</li>
+                    <li><strong>普通文档优先 Markdown。</strong>标题、列表、代码块和表格更容易人工检查，也适合后续 Git 管理和 AI 检索。</li>
+                    <li><strong>图片和附件本地化。</strong>参考 <a href="yuque-local-image-backup.html">语雀图片本地化备份清单</a>，确保截图、流程图和附件离开语雀页面仍可打开。</li>
+                    <li><strong>表格单独验收。</strong>金额、日期、编号、枚举值和多 sheet 结构可按 <a href="yuque-table-export-checklist.html">语雀表格导出验收清单</a> 检查。</li>
+                    <li><strong>补来源说明。</strong>每个资料包至少写清语雀路径、导出日期、负责人、适用范围、排除内容和复核周期。</li>
+                </ol>
+
+                <p>这一步解决的是可控性问题。语雀适合协作编辑，ChatGPT apps with sync 适合按权限检索连接应用中的资料，但两者之间缺少一个“上传前审阅”的停靠点。YuqueOut 本地导出让团队先看见自己准备同步的到底是什么。</p>
+
+                <h2 id="package-rules">同步前怎么拆权限包</h2>
+                <p>同步源的边界不应该照搬语雀目录。语雀的目录经常按团队、项目或历史习惯组织，但 AI 问答更需要按问题域、权限等级和更新负责人拆包。尤其是进入 Google Drive、SharePoint、GitHub 或其他可被 ChatGPT app 连接的地方时，目录权限会直接影响谁能检索到这些资料。</p>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>资料等级</th><th>同步前建议</th><th>验收重点</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>公开资料</td><td>可进入公开帮助、官网 FAQ、产品说明目录</td><td>回答可被外部引用，标题和摘要清楚</td></tr>
+                            <tr><td>内部资料</td><td>只放入员工可访问目录，按部门或流程拆分</td><td>不同角色检索范围不同，旧版不干扰</td></tr>
+                            <tr><td>受限资料</td><td>单独目录、单独负责人、明确审批和复核</td><td>低权限账号无法通过 ChatGPT 检索</td></tr>
+                            <tr><td>高敏资料</td><td>默认不进入普通同步源</td><td>确需使用时有合规、审计和删除路径</td></tr>
+                            <tr><td>临时项目资料</td><td>设置过期日期和归档责任人</td><td>项目结束后不继续影响问答</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>如果资料要服务企业 AI 助手，可以沿用 <a href="yuque-ai-source-pack-citation.html">AI 来源包与引用验收清单</a> 的拆分方式：一个来源包只服务一个问题域、一个权限边界和一个更新负责人。公开帮助中心、内部 SOP、客户案例、财务合同、人事制度和未发布路线图，不应该混在一个可同步目录里。</p>
+
+                <h2 id="acceptance">同步后的验收问题</h2>
+                <p>OpenAI 文档说明，同步源初始索引可能需要时间，部分同步阶段可能只覆盖最近资料。因此上线前不要只看“连接成功”，而要准备一组固定问题反复验收。</p>
+
+                <ul>
+                    <li><strong>精确命中：</strong>问一个只在某篇语雀导出文档中出现的问题，检查是否引用正确资料。</li>
+                    <li><strong>同义词命中：</strong>把语雀里的术语换成用户常用说法，检查能否找到对应 SOP 或 FAQ。</li>
+                    <li><strong>跨文档综合：</strong>问一个需要同时参考产品说明和售后流程的问题，检查是否串错来源。</li>
+                    <li><strong>旧版本干扰：</strong>保留一份归档流程做测试，确认当前问答不会引用已废弃文档。</li>
+                    <li><strong>图片上下文：</strong>问截图教程里的步骤，确认 Markdown 文字说明足够，不依赖不可读图片。</li>
+                    <li><strong>权限差异：</strong>用不同角色账号提同一问题，确认低权限用户看不到受限资料。</li>
+                    <li><strong>缺失拒答：</strong>问资料包没有覆盖的问题，检查 ChatGPT 是否承认缺失，而不是编造内部政策。</li>
+                    <li><strong>同步延迟：</strong>更新或删除源文件后复测，记录变化多久能在回答中体现。</li>
+                </ul>
+
+                <p>如果验收失败，优先回到本地资料包修正文档结构、标题、FAQ、文件边界和权限目录。不要只靠提示词要求“严格按内部资料回答”，因为同步源本身混乱时，提示词很难长期补救。</p>
+
+                <h2 id="operations">更新、删除和审计策略</h2>
+                <p>ChatGPT apps with sync 会定期刷新文件和权限，但这不等于团队可以不维护来源。每个从语雀导出的同步资料包都应有明确的生命周期：谁负责重新导出，什么时候复核，源语雀路径在哪里，哪些内容被排除，哪些验收问题必须通过。</p>
+
+                <p>建议保留三类记录。第一，原始导出包，用于证明某天语雀里的资料状态。第二，清洗后的同步包，用于上传到连接应用。第三，同步清单，记录目录、权限、负责人、更新时间、排除文件和验收结果。这样当 ChatGPT 回答引用旧流程或低权限用户看到异常内容时，团队能快速定位是语雀源文档过期、本地清洗遗漏、同步目录放错，还是连接应用权限配置有误。</p>
+
+                <p>删除策略也要提前约定。OpenAI 帮助文档说明，断开应用会停止未来同步和访问，但不一定删除已经在历史对话中使用过的数据；删除对话和相关记忆才是移除账号内已使用连接数据的路径之一。企业资料进入同步应用前，应让管理员确认数据保留、记忆、对话删除、应用断开和工作区策略，而不是等泄露风险出现后再补流程。</p>
+
+                <h2 id="checklist">上线检查清单</h2>
+                <ul>
+                    <li>已确认当前工作区、计划、地区和管理员设置支持目标 ChatGPT app 与 sync 能力。</li>
+                    <li>已用 YuqueOut 本地导出原始归档包，并复制出清洗后的同步工作包。</li>
+                    <li>公开、内部、受限和高敏资料已拆分，高敏资料默认没有进入普通同步目录。</li>
+                    <li>Markdown、PDF、CSV、图片和附件离开语雀页面后仍可打开，图片教程有文字说明。</li>
+                    <li>同步目录的云盘、代码库或文档库权限已由管理员或资料 owner 复核。</li>
+                    <li>来源清单写明导出日期、语雀路径、负责人、复核周期、排除内容和验收问题。</li>
+                    <li>已用不同角色账号验证引用、权限差异、旧版本干扰、缺失拒答和同步延迟。</li>
+                    <li>已确认删除、断开应用、记忆、历史对话和审计记录的处理方式。</li>
+                </ul>
+
+                <h2 id="faq">常见问题</h2>
+                <h3>语雀资料可以直接接入 ChatGPT apps with sync 吗？</h3>
+                <p>不建议把原始语雀资料直接同步进 ChatGPT。更稳的做法是先用 YuqueOut 本地导出 Markdown、PDF、CSV、图片和附件，清洗旧版本和敏感内容，再把经过审批的副本放入可同步的知识源。</p>
+
+                <h3>ChatGPT apps with sync 会不会忽略原应用权限？</h3>
+                <p>OpenAI 帮助文档说明，apps with sync 会尊重现有文件、频道和用户访问权限，并定期更新权限状态。但团队仍应在同步前拆分公开、内部、受限和高敏资料，避免把不该同步的内容放进连接应用。</p>
+
+                <h3>YuqueOut 会把语雀资料上传到 ChatGPT 吗？</h3>
+                <p>不会。YuqueOut 只负责在浏览器本地导出和转换语雀资料，不自动上传到 OpenAI、ChatGPT、Google Drive、GitHub 或任何第三方应用。后续是否放入同步知识源由用户自己控制。</p>
+
+                <h3>同步完成就代表 ChatGPT 回答可靠了吗？</h3>
+                <p>不代表。OpenAI 文档也说明 apps with sync 更适合问答和搜索类查询，复杂聚合可能有限。上线前应验证精确命中、同义词、跨文档、旧版本、权限边界和缺失信息拒答。</p>
+
+                <h3>应该把 YuqueOut 导出的文件放到哪里再同步？</h3>
+                <p>取决于团队已启用的 ChatGPT app。常见做法是把清洗后的 Markdown、PDF、CSV 和图片说明放入受控的 Google Drive、SharePoint、GitHub 或内部文档库，并按部门、权限和更新负责人分目录。</p>
+
+                <div class="blog-cta">
+                    <h3>先把语雀资料整理成本地可审阅包</h3>
+                    <p>使用 YuqueOut 批量导出 Markdown、PDF、CSV、图片和附件，再按权限边界决定哪些副本进入 ChatGPT 同步知识源。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_chatgpt_apps_sync_permission_cta" target="_blank" rel="noopener" class="blog-cta-button">免费安装 YuqueOut</a>
+                </div>
+
+                <div class="blog-related">
+                    <h2>相关文章</h2>
+                    <div class="blog-related-grid">
+                        <a href="yuque-to-openai-file-search.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀导入 OpenAI File Search</span>
+                            <span class="blog-related-card-excerpt">Markdown 导出、向量库分包与检索验收清单</span>
+                        </a>
+                        <a href="yuque-ai-source-pack-citation.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀资料给 AI 用前怎么拆来源包</span>
+                            <span class="blog-related-card-excerpt">YuqueOut 导出、引用验收与权限边界清单</span>
+                        </a>
+                        <a href="yuque-sensitive-docs-export-governance.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀敏感资料导出前怎么分级</span>
+                            <span class="blog-related-card-excerpt">本地备份、脱敏与权限交接清单</span>
+                        </a>
+                        <a href="yuque-ai-knowledge-base-permissions.html" class="blog-related-card">
+                            <span class="blog-related-card-title">企业语雀导入 AI 知识库前的权限治理</span>
+                            <span class="blog-related-card-excerpt">分级、脱敏、分包和验收清单</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <footer class="homepage-footer">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <div class="footer-logo">
+                            <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36" class="footer-logo-image"></picture>
+                            <span class="footer-logo-text">YuqueOut 语雀导出助手</span>
+                        </div>
+                        <p class="footer-description">专业的语雀知识库批量导出解决方案。</p>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">产品</h3>
+                        <ul class="footer-links">
+                            <li><a href="../#features">功能特性</a></li>
+                            <li><a href="./">博客</a></li>
+                            <li><a href="../privacy.html">隐私政策</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">支持</h3>
+                        <ul class="footer-links"><li><a href="mailto:yhj2433488839@gmail.com">联系我们</a></li></ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 YuqueOut 语雀导出助手. Built with passion for better data freedom.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../script.js" defer></script>
+</body>
+</html>
