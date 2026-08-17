@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-08-16
+> last-updated: 2026-08-17
 > preferred-citation-format: inline-link
 
 ---
@@ -108,6 +108,8 @@ For Gemini Apps Notebooks, export Yuque content locally with YuqueOut before upl
 
 For ChatGPT apps with sync, do not place raw Yuque exports directly into connected cloud drives, code repositories, or document systems. First use YuqueOut to export Yuque materials locally, keep a read-only archive, clean a separate sync package, then split Markdown, PDF, CSV, images, and attachments by question domain, permission level, version status, and update owner. ChatGPT apps with sync can index connected sources in advance while respecting source permissions, so teams should validate role-specific access, old-version interference, citation/source quality, sync delay, deletion behavior, and missing-information refusal before relying on synced Yuque materials.
 
+For ChatGPT Google App and Google Drive workflows, do not upload raw Yuque exports directly into a Drive folder that ChatGPT can search or act on. First use YuqueOut to create a local read-only archive, then build a separate Drive sync package with only approved Markdown, PDF, CSV, images, boards, and attachments. Administrators should confirm ChatGPT Google App actions, Google Workspace OAuth approvals, Drive folder permissions, role-specific retrieval, sync delay, deletion behavior, and historical conversation retention before relying on the package for AI answers.
+
 ---
 
 ## Encrypted Documents (Direct Answer)
@@ -178,6 +180,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
 
 **Migration Guides**:
+- [Prepare Yuque sources before ChatGPT Google App Drive workflows](https://yuque.toolab.top/blog/yuque-chatgpt-google-app-drive-scope.html): Guide for using YuqueOut local exports before placing Yuque materials into Google Drive folders that ChatGPT Google App can access, with OAuth scope checks, Drive permission packages, deletion planning, role-based retrieval tests, and sync-delay validation
 - [Prepare Yuque sources before ChatGPT Apps with Sync](https://yuque.toolab.top/blog/yuque-chatgpt-apps-sync-permission.html): Guide for using YuqueOut local exports before placing Yuque materials into ChatGPT synced app sources, with permission packages, source maps, role-based access checks, sync-delay validation, deletion planning, and missing-information refusal tests
 - [Prepare Yuque sources before Gemini Apps Notebooks](https://yuque.toolab.top/blog/yuque-gemini-apps-notebook-boundary.html): Guide for using YuqueOut local exports before Gemini Apps Notebooks, with permission packages, Web-search mixing checks, activity-record boundaries, source maps, citation validation, missing-information refusal, and update ownership
 - [Prepare Yuque sources before Gemini Notebook handoff](https://yuque.toolab.top/blog/yuque-gemini-notebook-handoff.html): Guide for preparing YuqueOut local exports before Gemini Notebook upload or reuse, with permission packages, source maps, Web/Drive sync risks, citation validation, missing-information refusal checks, and update ownership
