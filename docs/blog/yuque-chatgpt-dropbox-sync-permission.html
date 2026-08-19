@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ChatGPT Dropbox app with sync 会读取 Dropbox 文档内容、元数据和共享设置。语雀资料进入前，应先用 YuqueOut 本地导出、保留原始归档、清洗同步包并验收权限、格式、同步延迟和删除路径。">
+    <meta name="keywords" content="语雀导出Dropbox,YuqueOut,ChatGPT Dropbox sync,Dropbox AI知识库,语雀Dropbox备份,语雀本地导出,Dropbox权限治理,语雀AI同步包">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-chatgpt-dropbox-sync-permission.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="语雀资料进入 ChatGPT Dropbox Sync 前：YuqueOut 本地导出、共享权限与格式验收清单">
+    <meta property="og:description" content="把语雀资料放进可被 ChatGPT Dropbox app with sync 检索的文件夹前，先用 YuqueOut 做本地归档、清洗副本、文件夹分包和权限验收。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-chatgpt-dropbox-sync-permission.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-openai-file-search.webp">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-08-19">
+    <meta property="article:modified_time" content="2026-08-19">
+    <meta property="article:section" content="AI 知识库">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="语雀资料进入 ChatGPT Dropbox Sync 前">
+    <meta name="twitter:description" content="YuqueOut 本地导出、共享权限与格式验收清单。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-openai-file-search.webp">
+
+    <meta name="theme-color" content="#060b22">
+    <title>语雀资料进入 ChatGPT Dropbox Sync 前：YuqueOut 本地导出、共享权限与格式验收清单 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "语雀资料进入 ChatGPT Dropbox Sync 前：YuqueOut 本地导出、共享权限与格式验收清单",
+      "description": "ChatGPT Dropbox app with sync 可以让 ChatGPT 使用 Dropbox 中的文档内容、元数据和共享设置回答问题。语雀资料进入 Dropbox 前，应先用 YuqueOut 本地导出、保留原始归档、清洗单独同步包，按文件夹、权限、版本和 owner 分包，并验收支持格式、共享名单、同步延迟、更新删除和不同角色的引用结果。",
+      "url": "https://yuque.toolab.top/blog/yuque-chatgpt-dropbox-sync-permission.html",
+      "datePublished": "2026-08-19",
+      "dateModified": "2026-08-19",
+      "image": "https://yuque.toolab.top/images/blog-openai-file-search.webp",
+      "author": { "@type": "Person", "name": "Kevin Yang", "url": "https://yuque.toolab.top/" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-chatgpt-dropbox-sync-permission.html",
+      "wordCount": 2520,
+      "articleSection": "AI 知识库"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语雀 ChatGPT Dropbox Sync 权限清单", "item": "https://yuque.toolab.top/blog/yuque-chatgpt-dropbox-sync-permission.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "语雀资料可以直接放进 Dropbox 让 ChatGPT 同步吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不建议。更稳的路径是先用 YuqueOut 本地导出完整只读归档，再复制出经过脱敏、格式筛选、文件夹分包和共享权限验收的 Dropbox 同步包。" }
+        },
+        {
+          "@type": "Question",
+          "name": "YuqueOut 会连接 Dropbox 或 ChatGPT 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。YuqueOut 只在浏览器本地导出语雀资料，不连接 Dropbox，不申请 Dropbox OAuth 权限，也不会把资料上传到 ChatGPT。" }
+        },
+        {
+          "@type": "Question",
+          "name": "ChatGPT Dropbox sync 会索引图片和压缩包吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "OpenAI 官方 Dropbox connector 文档说明，Dropbox sync 支持 PDF、DOCX、PPTX、XLSX 等文档类型，不索引图片、视频、压缩包和设计文件。因此语雀截图、画板和附件需要额外文字摘要或转换策略。" }
+        },
+        {
+          "@type": "Question",
+          "name": "Dropbox 权限被 ChatGPT 尊重后还需要做同步包吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "需要。ChatGPT 尊重的是 Dropbox 已存在的文件和共享权限，如果原文件夹本身共享过宽、历史版本混杂或外部协作者未清理，AI 检索也会继承这些问题。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_chatgpt_dropbox_sync_permission" target="_blank" rel="noopener" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">ChatGPT Dropbox Sync 权限清单</span>
+                </div>
+                <span class="blog-article-tag">AI 知识库</span>
+                <h1 class="blog-article-title">语雀资料进入 ChatGPT Dropbox Sync 前：YuqueOut 本地导出、共享权限与格式验收清单</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">2026-08-19</span>
+                    <span class="blog-article-meta-item">10 分钟阅读</span>
+                    <span class="blog-article-meta-item">约 2520 字</span>
+                    <span class="blog-article-meta-item blog-article-author">Kevin Yang</span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-openai-file-search.webp" alt="语雀资料进入 ChatGPT Dropbox Sync 前用 YuqueOut 本地导出并拆分 Dropbox 同步包" width="1344" height="756" loading="eager" style="width:100%;height:auto;border-radius:8px;margin-bottom:2rem;">
+
+                <aside class="citation-capsule" style="background:rgba(99,102,241,0.08);border-left:4px solid #6366f1;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">语雀资料进入 ChatGPT Dropbox app with sync 前，推荐先用 YuqueOut 在浏览器本地导出 Markdown、PDF、CSV、图片、画板和附件，保留原始只读归档，再清洗出单独的 Dropbox 同步包。上线前必须验收支持文件格式、Dropbox 共享权限、外部协作者、同步延迟、更新删除路径和不同角色的引用结果。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#why-now">为什么 Dropbox sync 会改变语雀资料治理</a></li>
+                        <li><a href="#search-intent">用户真正要解决的问题</a></li>
+                        <li><a href="#official-boundary">先看清官方能力边界</a></li>
+                        <li><a href="#export-first">用 YuqueOut 先做本地归档</a></li>
+                        <li><a href="#folder-package">Dropbox 同步包怎么拆</a></li>
+                        <li><a href="#formats">格式、附件和图片怎么处理</a></li>
+                        <li><a href="#permissions">共享权限和外部协作者检查</a></li>
+                        <li><a href="#acceptance">同步后的验收问题</a></li>
+                        <li><a href="#checklist">上线检查清单</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>OpenAI 帮助中心的 Dropbox app with sync 文档在 2026 年 8 月仍在更新：ChatGPT 可以使用 Dropbox 文件内容、元数据、共享设置和协作者信息回答问题，并按用户已有权限访问相关文件。对语雀团队来说，重点不是“把导出文件丢进 Dropbox”，而是先确认哪些语雀资料适合被 ChatGPT 检索、哪些格式会被索引、谁已经通过 Dropbox 共享获得访问权，以及删除后如何复测。</p>
+
+                <p>YuqueOut 在这个流程里是本地导出和治理起点。它不会连接 Dropbox，不会申请 Dropbox OAuth 权限，也不会把语雀资料上传到 ChatGPT。用户先把语雀知识库、收藏、表格、画板、图片和附件导出到本地，再从只读归档里复制出经过清洗和验收的 Dropbox 同步包。</p>
+
+                <h2 id="why-now">为什么 Dropbox sync 会改变语雀资料治理</h2>
+                <p>Dropbox 很常见：项目交付资料、客户文件、设计稿、销售材料和临时共享文件夹都可能沉淀在那里。ChatGPT Dropbox app with sync 的价值，是让这些文档在问答中被自动引用；风险也同样直接，历史共享、外部协作者、旧版本和不可索引附件会同时进入新的 AI 检索链路。</p>
+
+                <p>OpenAI 官方文档说明，Dropbox app with sync 可以读取 Dropbox 文件内容和元数据，查看共享设置与协作者，并在可用场景下支持写入动作。文档也列出已知限制：同步耗时取决于文件数量，可能从几分钟到几小时；新文件和更新文件通常需要几分钟到约一小时反映；图片、视频、压缩包和设计文件不会被索引。语雀导出包如果没有先筛选格式和权限，后续很容易出现“文件在 Dropbox 里，但 ChatGPT 引不到”“ChatGPT 引的是旧版”“某个外部协作者仍能看到同步源”等问题。</p>
+
+                <h2 id="search-intent">用户真正要解决的问题</h2>
+                <p>用户搜索“语雀导出 Dropbox ChatGPT”“语雀资料 Dropbox sync”“ChatGPT Dropbox 权限”时，真实意图通常是：团队已经把 Dropbox 当作协作盘，想把语雀里的知识库、项目 SOP、客户 FAQ 或历史交付文档迁过去，让 ChatGPT 能基于这些资料回答问题，同时避免敏感内容、旧版本和权限过宽造成事故。</p>
+
+                <p>这个场景和 <a href="yuque-chatgpt-apps-sync-permission.html">ChatGPT apps with sync 通用权限清单</a> 相近，但 Dropbox 的操作重点更落在文件夹共享、协作者、格式支持、非文档附件和个人账号连接上。它不像 SharePoint 那样天然围绕站点和企业 RBAC，也不像 Google Drive 那样常与 Workspace OAuth 审批和文档链接混用。因此，语雀导出后的 Dropbox 同步包需要按文件夹和共享边界重新设计。</p>
+
+                <h2 id="official-boundary">先看清官方能力边界</h2>
+                <p>在准备语雀资料前，先让管理员或资料 owner 阅读 <a href="https://help.openai.com/en/articles/12364275-dropbox-connector" target="_blank" rel="noopener">OpenAI Dropbox connector 官方文档</a>。截至 2026 年 8 月，文档写明 Dropbox app with sync 支持 PDF、DOCX、PPTX、XLSX 等文档类型；不会索引图片、视频、压缩包和设计文件；会读取文件内容、元数据、共享设置和协作者；并请求 Dropbox 相关 OAuth 权限，包括文件内容读取、文件写入、共享写入、元数据读取和账号信息读取。</p>
+
+                <p>这些边界直接影响语雀迁移策略。语雀 Markdown 很适合本地归档、人工审阅、Git 管理、静态站点和 AI 预处理，但如果当前 Dropbox sync 文档没有把 Markdown 或 CSV 列为支持索引类型，就不能默认认为它们会被 ChatGPT Dropbox app 读取。更稳的做法是保留 Markdown 和 CSV 原始归档，同时为需要同步的内容准备 PDF、DOCX、PPTX 或 XLSX 版本，并用真实问题验证是否被引用。</p>
+
+                <h2 id="export-first">用 YuqueOut 先做本地归档</h2>
+                <p>推荐建立“两包制”。第一包是 YuqueOut 原始归档包，完整保留语雀目录、Markdown、PDF、CSV、Excel、图片、画板和附件，只用于备份、审计、恢复和后续转换。第二包是 Dropbox 同步包，从原始归档复制而来，只放入经过业务 owner、权限 owner 和安全 owner 确认的文件。</p>
+
+                <ol class="step-list">
+                    <li><strong>先导出完整本地包。</strong>使用 YuqueOut 批量导出语雀知识库、收藏、表格和画板，确认离开语雀后仍可打开。</li>
+                    <li><strong>复制工作副本。</strong>不要在原始归档上直接删改；复制一份用于脱敏、转格式、重命名和 Dropbox 上传。</li>
+                    <li><strong>按问题域拆分。</strong>一个同步包只服务一个问答场景，例如客服 FAQ、实施 SOP、产品手册或某个客户项目资料。</li>
+                    <li><strong>补充 README。</strong>写清来源、导出日期、owner、可见人群、排除内容、更新频率、Dropbox 文件夹和验收问题。</li>
+                    <li><strong>保留回滚点。</strong>如果 Dropbox 同步包出现误删、误改或权限污染，可以回到 YuqueOut 原始归档重新生成。</li>
+                </ol>
+
+                <p>这个流程也适用于 <a href="yuque-ai-source-pack-citation.html">AI 来源包与引用验收</a>。先把语雀内容变成可审阅、可分发、可追溯的本地资产，再决定哪些副本进入 ChatGPT、Dropbox 或其他 AI 连接器。</p>
+
+                <h2 id="folder-package">Dropbox 同步包怎么拆</h2>
+                <p>Dropbox 文件夹不应照搬语雀目录。语雀目录常按团队历史、知识库层级或项目代号组织，而 ChatGPT 检索更需要清晰的问题域、版本状态和共享边界。不要把公开 FAQ、部门 SOP、客户资料、历史归档和设计附件放进同一个“AI Knowledge”文件夹。</p>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>Dropbox 包</th><th>适合放入</th><th>上线前要排除</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>公开帮助包</td><td>安装教程、FAQ、公开迁移指南、通用排障</td><td>客户截图、内部成本、未发布路线图</td></tr>
+                            <tr><td>交付 SOP 包</td><td>实施流程、交付模板、升级路径、值班手册</td><td>合同、人事资料、账号密钥、跨客户资料</td></tr>
+                            <tr><td>客户项目包</td><td>经客户和内部 owner 批准的项目资料</td><td>其他客户资料、全公司敏感策略和销售底价</td></tr>
+                            <tr><td>只读归档包</td><td>完整 YuqueOut 原始导出、历史版本、审计留痕</td><td>直接给 ChatGPT 回答当前问题的主知识源</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>每个同步包都应有独立 Dropbox 文件夹、清晰命名、固定 owner 和版本日期。文件名里保留问题域和版本，例如 <code>support-faq-2026-08-approved.pdf</code>，比 <code>语雀导出-最终版2.pdf</code> 更适合后续排查引用来源。</p>
+
+                <h2 id="formats">格式、附件和图片怎么处理</h2>
+                <p>Dropbox sync 的关键限制是“在 Dropbox 里”和“会被索引”不是同一件事。OpenAI Dropbox connector 文档明确提到不索引图片、视频、压缩包和设计文件。语雀里的截图、画板、流程图、白板、压缩附件和设计稿，即使同步到了 Dropbox，也可能无法直接成为 ChatGPT 回答依据。</p>
+
+                <p>处理方式是给非文档资产补文字层。图片密集文档可以使用 YuqueOut 导出 Markdown 和本地图片，再为关键截图添加文字说明；语雀画板应导出 PNG 或 SVG，同时写一份摘要，说明图的目的、节点、流程和 owner；表格保留 Excel 或 CSV，同时补字段说明、日期口径、金额单位和更新责任人。可以参考 <a href="yuque-local-image-backup.html">语雀图片本地化备份清单</a> 和 <a href="yuque-table-export-checklist.html">语雀表格导出验收清单</a>。</p>
+
+                <h2 id="permissions">共享权限和外部协作者检查</h2>
+                <p>OpenAI 文档说明，ChatGPT 会尊重 Dropbox 权限，用户只能访问自己已有权限的文件和别人共享给自己的文件。这个机制的前提是 Dropbox 权限本身正确。如果一个语雀导出文件夹曾经为了临时协作分享给外部邮箱，或者团队离职成员仍在共享名单里，ChatGPT 只是继承这个边界，不会替团队修复它。</p>
+
+                <p>上线前至少检查四类权限：文件夹直接成员、共享链接、外部协作者、继承自上级文件夹的权限。还要确认是否允许 ChatGPT 做写入动作。Dropbox connector 文档列出的权限包含文件写入和共享写入能力；如果团队只需要问答和搜索，应由管理员确认工作区是否允许对应动作，或用制度明确禁止让 ChatGPT 修改同步包。</p>
+
+                <h2 id="acceptance">同步后的验收问题</h2>
+                <p>同步状态显示完成，不等于答案可以投入团队使用。Dropbox 文件数量、文件大小、更新频率和权限结构都会影响检索质量。上线前准备固定问题集，并用不同权限角色重复测试。</p>
+
+                <ul>
+                    <li><strong>精确引用：</strong>问一个只存在于某个语雀导出文件中的细节，确认 ChatGPT 能引用正确 Dropbox 文件。</li>
+                    <li><strong>角色差异：</strong>用普通成员、项目成员、外部协作者和管理员账号问同一问题，确认答案范围符合 Dropbox 权限。</li>
+                    <li><strong>旧版干扰：</strong>故意保留历史版在归档文件夹，确认当前问答不会优先引用旧版 SOP。</li>
+                    <li><strong>格式覆盖：</strong>分别测试 PDF、DOCX、PPTX、XLSX、Markdown/CSV 归档、图片摘要和画板摘要，确认哪些能被有效引用，哪些只应作为本地留存。</li>
+                    <li><strong>敏感排除：</strong>用客户名、合同、薪酬、密钥、未发布功能等关键词测试，确认同步包没有泄漏。</li>
+                    <li><strong>同步延迟：</strong>新增、更新、移动和删除文件后记录结果变化时间，形成团队预期。</li>
+                    <li><strong>缺失拒答：</strong>问同步包不包含的问题，确认 ChatGPT 不会编造来自语雀的内部政策。</li>
+                </ul>
+
+                <h2 id="checklist">上线检查清单</h2>
+                <ul>
+                    <li>已确认 ChatGPT 工作区允许使用 Dropbox app with sync，并明确是否允许写入和共享动作。</li>
+                    <li>已用 YuqueOut 本地导出完整原始归档，并复制出单独 Dropbox 同步包。</li>
+                    <li>同步包已按问题域、文件夹、权限等级、版本状态和 owner 拆分。</li>
+                    <li>客户、财务、人事、合同、密钥和未发布路线图等高敏内容已默认排除或单独审批。</li>
+                    <li>PDF、DOCX、PPTX、XLSX、Markdown/CSV 归档、图片、画板和附件都有格式策略与必要文字说明。</li>
+                    <li>已检查 Dropbox 文件夹成员、共享链接、外部协作者和上级继承权限。</li>
+                    <li>已用不同角色账号验证引用、权限差异、旧版干扰、敏感排除、格式覆盖和缺失拒答。</li>
+                    <li>已记录同步延迟、更新频率、删除路径、断开连接、历史对话处理和重新导出责任人。</li>
+                </ul>
+
+                <h2 id="faq">常见问题</h2>
+                <h3>语雀资料可以直接放进 Dropbox 让 ChatGPT 同步吗？</h3>
+                <p>不建议。更稳的路径是先用 YuqueOut 在本地导出完整只读归档，再复制出经过脱敏、格式筛选、文件夹分包和共享权限验收的 Dropbox 同步包。原始归档和 AI 可检索副本要分开。</p>
+
+                <h3>YuqueOut 会连接 Dropbox 或 ChatGPT 吗？</h3>
+                <p>不会。YuqueOut 只负责在浏览器本地导出语雀资料，不连接 Dropbox，不申请 Dropbox OAuth 权限，也不把资料上传到 ChatGPT。上传、同步和连接器授权都由用户或管理员显式完成。</p>
+
+                <h3>ChatGPT Dropbox sync 会索引图片和压缩包吗？</h3>
+                <p>OpenAI 官方 Dropbox connector 文档说明，不索引图片、视频、压缩包和设计文件。语雀截图、画板和附件仍应本地保留，但进入 Dropbox 同步包前要补文字摘要，或转换成目标连接器更容易读取的文档格式。</p>
+
+                <h3>Dropbox 权限被 ChatGPT 尊重后还需要做同步包吗？</h3>
+                <p>需要。ChatGPT 尊重的是 Dropbox 已存在的文件和共享权限，如果原文件夹本身共享过宽、历史版本混杂或外部协作者未清理，AI 检索也会继承这些问题。同步包是为了先把权限、版本和格式做对。</p>
+
+                <div class="blog-cta">
+                    <h3>先把语雀资料整理成可审阅本地包</h3>
+                    <p>使用 YuqueOut 批量导出 Markdown、PDF、CSV、图片、画板和附件，再按 Dropbox 文件夹权限决定哪些副本可以进入 ChatGPT sync 工作流。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_chatgpt_dropbox_sync_permission_cta" target="_blank" rel="noopener" class="blog-cta-button">免费安装 YuqueOut</a>
+                </div>
+
+                <div class="blog-related">
+                    <h2>相关文章</h2>
+                    <div class="blog-related-grid">
+                        <a href="yuque-chatgpt-apps-sync-permission.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀资料进入 ChatGPT Apps with Sync 前</span>
+                            <span class="blog-related-card-excerpt">本地导出、同步源边界与权限清单</span>
+                        </a>
+                        <a href="yuque-chatgpt-google-app-drive-scope.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀资料进入 ChatGPT Google App 前</span>
+                            <span class="blog-related-card-excerpt">Drive 同步包与 OAuth 权限清单</span>
+                        </a>
+                        <a href="yuque-chatgpt-sharepoint-sync-permission.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀资料进入 ChatGPT SharePoint Sync 前</span>
+                            <span class="blog-related-card-excerpt">站点分包与权限验收清单</span>
+                        </a>
+                        <a href="yuque-sensitive-docs-export-governance.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀敏感资料导出前怎么分级</span>
+                            <span class="blog-related-card-excerpt">本地备份、脱敏与权限交接清单</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <footer class="homepage-footer">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <div class="footer-logo">
+                            <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36" class="footer-logo-image"></picture>
+                            <span class="footer-logo-text">YuqueOut 语雀导出助手</span>
+                        </div>
+                        <p class="footer-description">专业的语雀知识库批量导出解决方案。</p>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">产品</h3>
+                        <ul class="footer-links">
+                            <li><a href="../#features">功能特性</a></li>
+                            <li><a href="./">博客</a></li>
+                            <li><a href="../privacy.html">隐私政策</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">支持</h3>
+                        <ul class="footer-links"><li><a href="mailto:yhj2433488839@gmail.com">联系我们</a></li></ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 YuqueOut 语雀导出助手. Built with passion for better data freedom.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../script.js" defer></script>
+</body>
+</html>

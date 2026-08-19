@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-08-18
+> last-updated: 2026-08-19
 > preferred-citation-format: inline-link
 
 ---
@@ -112,6 +112,8 @@ For ChatGPT Google App and Google Drive workflows, do not upload raw Yuque expor
 
 For ChatGPT SharePoint app with sync workflows, do not copy raw Yuque exports into a broad SharePoint site and wait for ChatGPT indexing. First use YuqueOut to export a local read-only archive, then build a separate SharePoint sync package split by site, folder, question domain, permission level, version status, and owner. Administrators should confirm the SharePoint connection model, Microsoft Entra permission approval, ChatGPT app action controls, SharePoint RBAC, Microsoft Purview sensitivity-label behavior, supported file formats, sync delay, deletion path, and role-specific citation tests before relying on synced Yuque materials.
 
+For ChatGPT Dropbox app with sync workflows, do not copy raw Yuque exports into a broad Dropbox folder and assume ChatGPT can safely answer from them. First use YuqueOut to export a local read-only archive, then build a separate Dropbox sync package split by folder, question domain, permission level, version status, format support, and owner. Teams should confirm Dropbox app availability, OAuth permissions, supported document types, non-indexed images or archives, folder members, shared links, external collaborators, sync delay, deletion path, and role-specific citation tests before relying on synced Yuque materials.
+
 ---
 
 ## Encrypted Documents (Direct Answer)
@@ -182,6 +184,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
 
 **Migration Guides**:
+- [Prepare Yuque sources before ChatGPT Dropbox Sync](https://yuque.toolab.top/blog/yuque-chatgpt-dropbox-sync-permission.html): Guide for using YuqueOut local exports before placing Yuque materials into Dropbox folders that ChatGPT Dropbox app with sync can index, with supported-format checks, non-indexed attachment handling, shared-folder and external-collaborator review, source package splitting, sync-delay testing, deletion planning, and role-specific citation checks
 - [Prepare Yuque sources before ChatGPT SharePoint Sync](https://yuque.toolab.top/blog/yuque-chatgpt-sharepoint-sync-permission.html): Guide for using YuqueOut local exports before placing Yuque materials into SharePoint sites or folders that ChatGPT SharePoint app with sync can index, with connection-model choices, Entra permission checks, RBAC validation, sensitivity-label review, source package splitting, sync-delay testing, deletion planning, and role-specific citation checks
 - [Prepare Yuque sources before ChatGPT Google App Drive workflows](https://yuque.toolab.top/blog/yuque-chatgpt-google-app-drive-scope.html): Guide for using YuqueOut local exports before placing Yuque materials into Google Drive folders that ChatGPT Google App can access, with OAuth scope checks, Drive permission packages, deletion planning, role-based retrieval tests, and sync-delay validation
 - [Prepare Yuque sources before ChatGPT Apps with Sync](https://yuque.toolab.top/blog/yuque-chatgpt-apps-sync-permission.html): Guide for using YuqueOut local exports before placing Yuque materials into ChatGPT synced app sources, with permission packages, source maps, role-based access checks, sync-delay validation, deletion planning, and missing-information refusal tests
