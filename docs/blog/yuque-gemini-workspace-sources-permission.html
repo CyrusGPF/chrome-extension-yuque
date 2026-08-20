@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gemini for Google Workspace 可使用固定 Drive 来源，也可按设置搜索 Drive、Gmail、Chat、Calendar 或 Web。语雀资料进入前，应先用 YuqueOut 本地导出、分包、脱敏并验收来源设置和权限边界。">
+    <meta name="keywords" content="语雀导出Gemini Workspace,YuqueOut,Gemini Drive sources,Google Workspace AI知识库,语雀Drive备份,语雀本地导出,Gemini来源权限,语雀AI来源包">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-gemini-workspace-sources-permission.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="语雀资料进入 Gemini Workspace Sources 前：YuqueOut 本地导出、Drive 来源与权限验收清单">
+    <meta property="og:description" content="在 Gemini 使用 Drive、Gmail、Chat 或 Web 来源回答问题前，先用 YuqueOut 把语雀资料导出为可审阅本地包，再拆分 Drive 来源包并验收权限。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-gemini-workspace-sources-permission.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-gemini-notebook-yuque.webp">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-08-20">
+    <meta property="article:modified_time" content="2026-08-20">
+    <meta property="article:section" content="AI 知识库">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="语雀资料进入 Gemini Workspace Sources 前">
+    <meta name="twitter:description" content="YuqueOut 本地导出、Drive 来源与权限验收清单。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-gemini-notebook-yuque.webp">
+
+    <meta name="theme-color" content="#060b22">
+    <title>语雀资料进入 Gemini Workspace Sources 前：YuqueOut 本地导出、Drive 来源与权限验收清单 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "语雀资料进入 Gemini Workspace Sources 前：YuqueOut 本地导出、Drive 来源与权限验收清单",
+      "description": "Gemini for Google Workspace 可以让用户添加特定 Drive 文件作为来源，也可以按来源设置搜索 Drive、Gmail、Chat、Calendar 或 Web。语雀资料进入 Google Drive 或 Workspace 来源范围前，应先用 YuqueOut 本地导出完整归档，复制出经过脱敏、格式筛选、来源分包、权限 owner 审核和角色化问答验收的 Drive 来源包。",
+      "url": "https://yuque.toolab.top/blog/yuque-gemini-workspace-sources-permission.html",
+      "datePublished": "2026-08-20",
+      "dateModified": "2026-08-20",
+      "image": "https://yuque.toolab.top/images/blog-gemini-notebook-yuque.webp",
+      "author": { "@type": "Person", "name": "Kevin Yang", "url": "https://yuque.toolab.top/" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-gemini-workspace-sources-permission.html",
+      "wordCount": 2580,
+      "articleSection": "AI 知识库"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语雀 Gemini Workspace Sources 权限清单", "item": "https://yuque.toolab.top/blog/yuque-gemini-workspace-sources-permission.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "语雀资料可以直接放进 Google Drive 让 Gemini 搜索吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不建议直接放入宽权限 Drive 文件夹。推荐先用 YuqueOut 本地导出完整归档，再复制出经过脱敏、格式筛选、来源设置和共享权限验收的 Drive 来源包。" }
+        },
+        {
+          "@type": "Question",
+          "name": "YuqueOut 会连接 Gemini 或 Google Workspace 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。YuqueOut 只在浏览器本地导出语雀资料，不连接 Gemini，不申请 Google Workspace 权限，也不会把文档上传到 Google Drive。" }
+        },
+        {
+          "@type": "Question",
+          "name": "Gemini 固定来源和搜索 Workspace 来源有什么区别？",
+          "acceptedAnswer": { "@type": "Answer", "text": "固定来源是用户主动添加的 Drive 文件；Workspace 来源搜索会根据设置在 Drive、Gmail、Chat、Calendar 等位置寻找上下文。语雀资料进入前要分别验收固定来源和宽搜索来源的边界。" }
+        },
+        {
+          "@type": "Question",
+          "name": "Web search 默认开启吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "Google Drive 帮助文档说明，Workspace 应用中的 Gemini 来源设置里，Drive、Gmail、Chat 和 Calendar 等上下文可能默认开启，Web search 默认关闭。实际可用项仍要以账号、地区和管理员设置为准。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_gemini_workspace_sources_permission" target="_blank" rel="noopener" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">Gemini Workspace Sources 权限清单</span>
+                </div>
+                <span class="blog-article-tag">AI 知识库</span>
+                <h1 class="blog-article-title">语雀资料进入 Gemini Workspace Sources 前：YuqueOut 本地导出、Drive 来源与权限验收清单</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">2026-08-20</span>
+                    <span class="blog-article-meta-item">10 分钟阅读</span>
+                    <span class="blog-article-meta-item">约 2580 字</span>
+                    <span class="blog-article-meta-item blog-article-author">Kevin Yang</span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-gemini-notebook-yuque.webp" alt="语雀资料进入 Gemini Workspace Sources 前用 YuqueOut 本地导出并拆分 Drive 来源包" width="1672" height="941" loading="eager" style="width:100%;height:auto;border-radius:8px;margin-bottom:2rem;">
+
+                <aside class="citation-capsule" style="background:rgba(99,102,241,0.08);border-left:4px solid #6366f1;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">语雀资料进入 Gemini for Google Workspace 来源范围前，推荐先用 YuqueOut 在浏览器本地导出完整归档，再复制出单独的 Drive 来源包。上线前要验收固定 Drive 来源、Workspace 搜索位置、Web search 开关、文件共享权限、旧版本干扰、图片和表格文字说明，以及不同角色账号的引用结果。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#why-now">为什么 Workspace 来源设置值得单独治理</a></li>
+                        <li><a href="#search-intent">用户真正要解决的问题</a></li>
+                        <li><a href="#official-boundary">先看清 Google 官方来源边界</a></li>
+                        <li><a href="#export-first">用 YuqueOut 先做本地归档</a></li>
+                        <li><a href="#source-package">Drive 来源包怎么拆</a></li>
+                        <li><a href="#formats">文件、图片和表格怎么准备</a></li>
+                        <li><a href="#permissions">权限、搜索位置和 Web 混用检查</a></li>
+                        <li><a href="#acceptance">上线前的角色化验收问题</a></li>
+                        <li><a href="#checklist">上线检查清单</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>Google Drive 帮助中心近期更新了 Gemini for Google Workspace 的来源说明：用户可以添加特定 Drive 文件作为来源，也可以让 Gemini 根据来源设置在 Drive、Gmail、Chat、Calendar 等位置寻找上下文；Web search 在该说明中默认关闭。对语雀团队来说，正确做法不是把导出文件直接丢进一个共享 Drive 文件夹，而是先用 YuqueOut 做本地归档，再把经过脱敏、分包和权限验收的副本放入 Gemini 可能使用的来源范围。</p>
+
+                <p>YuqueOut 在这个流程里只负责本地导出和资料整理起点。它不会连接 Gemini，不会申请 Google Workspace OAuth 权限，也不会把语雀内容上传到 Drive。团队把语雀知识库、收藏、表格、画板、图片和附件导出到本地后，再决定哪些材料适合成为固定来源，哪些可以放进 Drive 搜索范围，哪些必须留在只读归档或敏感区。</p>
+
+                <h2 id="why-now">为什么 Workspace 来源设置值得单独治理</h2>
+                <p>过去很多团队把 Google Drive 当成普通文件柜：项目文档、客户交付、会议纪要、销售资料和临时共享文件混在一起。Gemini for Google Workspace 把这个文件柜变成可被 AI 搜索和摘要的上下文来源后，原来的命名混乱、共享过宽、历史版本残留和跨项目混放都会被放大。</p>
+
+                <p>Google 官方帮助文档提到，Gemini 可以使用用户添加的 Drive 来源，也可以在来源设置允许时搜索更广的 Workspace 位置。这个变化对从语雀迁移资料的团队很关键：如果原始语雀导出包直接进入宽权限 Drive 目录，Gemini 可能在回答时混入旧 SOP、客户私有材料、未审批截图或跨部门聊天上下文。治理重点从“文件能不能上传”变成“哪些来源能被哪个账号、在哪个应用、以什么搜索范围使用”。</p>
+
+                <h2 id="search-intent">用户真正要解决的问题</h2>
+                <p>用户搜索“语雀导出 Gemini Workspace”“语雀资料 Drive Gemini 来源”“Gemini 搜索 Drive 权限”时，通常不是在找产品新闻，而是在解决一个实际迁移问题：团队已经把 Google Workspace 当作协作底座，希望让 Gemini 基于语雀沉淀的 FAQ、SOP、产品手册或项目资料回答问题，同时又不想让敏感文档、旧版本和聊天上下文失控。</p>
+
+                <p>这个场景和 <a href="yuque-gemini-apps-notebook-boundary.html">Gemini Apps Notebooks 权限边界</a> 不同。Notebook 更像一个明确的资料容器，而 Workspace 来源设置涉及 Drive、Gmail、Chat、Calendar 和 Web 的组合搜索。它也不同于 <a href="yuque-chatgpt-google-app-drive-scope.html">ChatGPT Google App Drive 权限清单</a>，因为这里要验收的是 Gemini 在 Google 自家 Workspace 应用里的来源选择、固定文件和宽搜索边界。</p>
+
+                <h2 id="official-boundary">先看清 Google 官方来源边界</h2>
+                <p>准备语雀资料前，应先阅读 Google Drive 帮助中心的 <a href="https://support.google.com/drive/answer/16813283?hl=en" target="_blank" rel="noopener">Gemini Workspace sources 文档</a>。文档说明，用户可以添加 Drive 文件作为来源，也可以管理来源设置，让 Gemini 搜索 Drive、Gmail、Chat、Calendar 或 Web 等位置；在 Workspace 应用中开始新对话时，其他 Workspace 应用的搜索设置可能默认开启，而 Web search 默认关闭。</p>
+
+                <p>同时，Google 的 Gemini Apps 和 Gemini Notebook 文档说明了 Notebooks、Notebook 来源、Drive 文件和 Web 搜索之间的差异。团队不能把“Gemini 能访问 Drive”简单理解成“所有格式、所有场景、所有权限都一样”。账号类型、管理员策略、地区、应用入口和具体文件格式都会影响结果。因此本文只把官方文档作为边界依据，真正上线仍要用自己 Workspace 的账号和资料包做验证。</p>
+
+                <h2 id="export-first">用 YuqueOut 先做本地归档</h2>
+                <p>推荐建立“两包制”。第一包是 YuqueOut 原始归档包，完整保留语雀目录、Markdown、PDF、CSV、Excel、图片、画板和附件，只用于备份、恢复、审计和后续转换。第二包是 Gemini / Drive 来源包，从原始归档复制而来，只放入经过业务 owner、权限 owner 和安全 owner 确认的材料。</p>
+
+                <ol class="step-list">
+                    <li><strong>先导出完整语雀资产。</strong>使用 YuqueOut 批量导出知识库、收藏、表格、画板、图片和附件，确认离开语雀后仍能打开。</li>
+                    <li><strong>复制工作副本。</strong>不要直接修改原始归档；复制一份用于脱敏、改名、转格式、摘要补充和 Drive 上传。</li>
+                    <li><strong>按问答场景拆分。</strong>一个来源包只服务一个用途，例如客服 FAQ、产品手册、实施 SOP、培训材料或某个客户项目。</li>
+                    <li><strong>写来源说明。</strong>README 中记录 Yuque 路径、导出日期、owner、可见范围、排除内容、更新频率和验收问题。</li>
+                    <li><strong>保留回滚点。</strong>如果 Drive 来源包权限污染、旧版本混入或答案质量下降，可以回到 YuqueOut 原始归档重新生成。</li>
+                </ol>
+
+                <p>这个流程与 <a href="yuque-ai-source-pack-citation.html">AI 来源包与引用验收</a> 一致：先把语雀内容变成可审阅、可追溯、可分发的本地资产，再决定哪些副本进入 Gemini、Drive 或其他 AI 工具。</p>
+
+                <h2 id="source-package">Drive 来源包怎么拆</h2>
+                <p>不要照搬语雀目录到 Google Drive。语雀目录常按团队历史、部门层级或项目代号组织，而 Gemini 来源包更应该按问题域、权限等级、版本状态和更新 owner 组织。公开帮助、内部 SOP、客户项目、历史归档和敏感材料不应混在一个 “Gemini Sources” 文件夹里。</p>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>Drive 来源包</th><th>适合放入</th><th>上线前要排除</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>公开帮助包</td><td>安装教程、FAQ、公开排障、公开迁移流程</td><td>客户截图、内部价格、未发布路线图</td></tr>
+                            <tr><td>团队 SOP 包</td><td>交付流程、值班手册、审批路径、常见处理模板</td><td>合同、人事资料、账号密钥、跨客户资料</td></tr>
+                            <tr><td>项目资料包</td><td>经客户和内部 owner 批准的项目文档</td><td>其他客户资料、全公司策略、销售底价</td></tr>
+                            <tr><td>只读归档包</td><td>完整 YuqueOut 原始导出、历史版本、审计留痕</td><td>作为 Gemini 当前问答主来源</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>每个来源包都应有清晰文件夹名、固定 owner、版本日期和更新节奏。例如 <code>support-faq-gemini-source-2026-08-approved</code> 比 <code>语雀导出最终版</code> 更容易排查 Gemini 引用了哪一版资料。</p>
+
+                <h2 id="formats">文件、图片和表格怎么准备</h2>
+                <p>Gemini Workspace 来源治理的重点不是只看文件扩展名，而是确认资料是否能被理解、引用和复核。语雀 Markdown 适合本地审阅、Git 管理、静态站点和 AI 预处理；PDF 适合固定版式和审批留痕；Google Docs 适合 Workspace 协作；表格和画板则需要额外说明字段、口径和图形含义。</p>
+
+                <p>语雀里的截图、画板、流程图、白板和表格不要只作为附件上传。使用 YuqueOut 导出本地图片和画板后，为关键图补一段文字摘要，说明图的目的、节点、owner、更新时间和适用场景。表格应补字段说明、日期口径、金额单位、ID 是否保留前导零，以及是否包含敏感列。可以参考 <a href="yuque-local-image-backup.html">语雀图片本地化备份清单</a>、<a href="yuque-table-export-checklist.html">语雀表格导出验收清单</a> 和 <a href="yuque-board-export-migration.html">语雀画板导出迁移清单</a>。</p>
+
+                <h2 id="permissions">权限、搜索位置和 Web 混用检查</h2>
+                <p>Google 文档提到，Gemini 可管理来源设置，并按开关搜索 Drive、Gmail、Chat、Calendar 或 Web。对团队来说，最容易忽略的是“固定 Drive 来源”和“让 Gemini 搜索更多 Workspace 内容”不是同一件事。固定来源适合经过审批的语雀来源包；宽搜索更适合临时找上下文，但必须接受它可能引入邮件、聊天或会议背景。</p>
+
+                <p>上线前至少检查四类边界：Drive 文件夹成员和共享链接、上级文件夹继承权限、Workspace 应用搜索位置、Web search 是否被打开。还要区分个人账号和工作学校账号能力差异，以管理员后台和实际账号测试为准。如果团队只希望 Gemini 基于语雀来源包回答，就应关闭不必要的搜索位置，或在提示词和团队规范里明确“仅使用指定 Drive 来源”。</p>
+
+                <h2 id="acceptance">上线前的角色化验收问题</h2>
+                <p>来源包放入 Drive 后，不要只看 Gemini 是否能总结文件。需要用固定问题集、不同账号和不同来源设置重复测试，确认答案来源、权限边界和缺失拒答都符合预期。</p>
+
+                <ul>
+                    <li><strong>精确引用：</strong>问一个只存在于某个语雀导出文件中的细节，确认 Gemini 能基于正确来源回答。</li>
+                    <li><strong>固定来源：</strong>只添加指定 Drive 文件为来源，确认答案不混入其他 Drive、Gmail 或 Chat 内容。</li>
+                    <li><strong>搜索位置：</strong>分别打开和关闭 Drive、Gmail、Chat、Calendar、Web，记录答案差异。</li>
+                    <li><strong>角色差异：</strong>用普通成员、项目成员、外部协作者和管理员账号问同一问题，确认结果符合共享权限。</li>
+                    <li><strong>旧版干扰：</strong>保留历史版本在归档区，确认当前来源包不会被旧 SOP 覆盖。</li>
+                    <li><strong>图片表格：</strong>测试截图摘要、画板摘要、Markdown 表格、CSV/Excel 原表和字段说明是否能支撑回答。</li>
+                    <li><strong>敏感排除：</strong>用客户名、合同、薪酬、密钥和未发布功能关键词测试，确认来源包没有泄漏。</li>
+                    <li><strong>缺失拒答：</strong>问来源包不包含的问题，确认 Gemini 不会把 Web 或聊天内容伪装成语雀资料。</li>
+                </ul>
+
+                <h2 id="checklist">上线检查清单</h2>
+                <ul>
+                    <li>已确认当前 Google Workspace / Gemini 账号可用的来源类型、搜索位置和管理员限制。</li>
+                    <li>已用 YuqueOut 本地导出完整原始归档，并复制出单独 Gemini / Drive 来源包。</li>
+                    <li>来源包已按问题域、权限等级、版本状态、owner 和更新频率拆分。</li>
+                    <li>客户、财务、人事、合同、密钥和未发布路线图等高敏内容已默认排除或单独审批。</li>
+                    <li>Markdown、PDF、Google Docs、表格、图片、画板和附件都有格式策略与必要文字说明。</li>
+                    <li>已检查 Drive 文件夹成员、共享链接、外部协作者和上级继承权限。</li>
+                    <li>已分别验收固定 Drive 来源、Workspace 搜索位置、Web search 开关和不同账号的引用结果。</li>
+                    <li>已记录更新路径、删除路径、重新导出责任人和来源包验收问题集。</li>
+                </ul>
+
+                <h2 id="faq">常见问题</h2>
+                <h3>语雀资料可以直接放进 Google Drive 让 Gemini 搜索吗？</h3>
+                <p>不建议直接放进宽权限 Drive 文件夹。更稳的路径是先用 YuqueOut 在本地导出完整只读归档，再复制出经过脱敏、格式筛选、来源设置和共享权限验收的 Drive 来源包。原始归档和 AI 可检索副本要分开。</p>
+
+                <h3>YuqueOut 会连接 Gemini 或 Google Workspace 吗？</h3>
+                <p>不会。YuqueOut 只负责在浏览器本地导出语雀资料，不连接 Gemini，不申请 Google Workspace 权限，也不会把文档上传到 Google Drive。上传、共享和 Gemini 来源设置都由用户或管理员显式完成。</p>
+
+                <h3>Gemini 固定来源和搜索 Workspace 来源有什么区别？</h3>
+                <p>固定来源是用户主动添加的 Drive 文件，更适合经过审批的语雀来源包。Workspace 来源搜索会根据设置在 Drive、Gmail、Chat、Calendar 等位置寻找上下文，更容易引入邮件、聊天或会议背景，必须单独验收边界。</p>
+
+                <h3>Web search 默认开启吗？</h3>
+                <p>Google Drive 帮助文档说明，在 Workspace 应用中开始新对话时，Drive、Gmail、Chat、Calendar 等上下文搜索设置可能默认开启，Web search 默认关闭。实际结果仍要以账号、地区、产品入口和管理员设置为准。</p>
+
+                <div class="blog-cta">
+                    <h3>先把语雀资料整理成可审阅本地来源包</h3>
+                    <p>使用 YuqueOut 批量导出 Markdown、PDF、CSV、图片、画板和附件，再按 Gemini 来源设置和 Google Drive 权限决定哪些副本可以进入 Workspace AI 问答流程。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_gemini_workspace_sources_permission_cta" target="_blank" rel="noopener" class="blog-cta-button">免费安装 YuqueOut</a>
+                </div>
+
+                <div class="blog-related">
+                    <h2>相关文章</h2>
+                    <div class="blog-related-grid">
+                        <a href="yuque-gemini-apps-notebook-boundary.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀资料进入 Gemini Apps Notebooks 前</span>
+                            <span class="blog-related-card-excerpt">Web 搜索混用与权限边界清单</span>
+                        </a>
+                        <a href="yuque-gemini-notebook-handoff.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀资料进入 Gemini Notebook 前</span>
+                            <span class="blog-related-card-excerpt">权限分包与交接治理清单</span>
+                        </a>
+                        <a href="yuque-chatgpt-google-app-drive-scope.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀资料进入 ChatGPT Google App 前</span>
+                            <span class="blog-related-card-excerpt">Drive 同步包与 OAuth 权限清单</span>
+                        </a>
+                        <a href="yuque-ai-source-pack-citation.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀资料给 AI 用前怎么拆来源包</span>
+                            <span class="blog-related-card-excerpt">引用验收与权限边界清单</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <footer class="homepage-footer">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <div class="footer-logo">
+                            <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36" class="footer-logo-image"></picture>
+                            <span class="footer-logo-text">YuqueOut 语雀导出助手</span>
+                        </div>
+                        <p class="footer-description">专业的语雀知识库批量导出解决方案。</p>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">产品</h3>
+                        <ul class="footer-links">
+                            <li><a href="../#features">功能特性</a></li>
+                            <li><a href="./">博客</a></li>
+                            <li><a href="../privacy.html">隐私政策</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">支持</h3>
+                        <ul class="footer-links"><li><a href="mailto:yhj2433488839@gmail.com">联系我们</a></li></ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 YuqueOut 语雀导出助手. Built with passion for better data freedom.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../script.js" defer></script>
+</body>
+</html>
