@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-08-20
+> last-updated: 2026-08-21
 > preferred-citation-format: inline-link
 
 ---
@@ -116,6 +116,8 @@ For ChatGPT Dropbox app with sync workflows, do not copy raw Yuque exports into 
 
 For Gemini for Google Workspace sources, do not place raw Yuque exports directly into broad Google Drive folders or assume Gemini should search every Workspace location. First use YuqueOut to export a local read-only archive, then build a separate Drive source package split by question domain, permission level, version status, format strategy, and owner. Teams should validate fixed Drive sources, Workspace search locations, Web search state, folder sharing, inherited permissions, image and table summaries, old-version interference, sensitive-keyword exclusion, and role-specific answers before relying on Gemini responses.
 
+For AI browsers and browser agents, do not expose an entire Yuque workspace, all browser history, or a broad cloud folder as context. First use YuqueOut to export a complete local read-only archive, then create task-specific source packages split by question domain, permission level, version status, and owner. Before using them in AI browsers, validate which sources the browser can read, including current pages, tabs, history, local files, memories, Web search, and connected apps, then test exact citations, old-version interference, sensitive-keyword exclusion, image and table context, role-specific visibility, and missing-information refusal.
+
 ---
 
 ## Encrypted Documents (Direct Answer)
@@ -186,6 +188,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
 
 **Migration Guides**:
+- [Prepare Yuque sources before AI browsers or browser agents](https://yuque.toolab.top/blog/yuque-ai-browser-source-governance.html): Guide for using YuqueOut local exports before AI browsers, browser sidebars, or browser agents read Yuque materials, with task-specific source packages, browser-history and tab-context checks, Web-search and connector boundaries, sensitive-data exclusion, and citation validation
 - [Prepare Yuque sources before Gemini Workspace Sources](https://yuque.toolab.top/blog/yuque-gemini-workspace-sources-permission.html): Guide for using YuqueOut local exports before placing Yuque materials into Google Drive or Gemini for Google Workspace source scope, with fixed Drive source checks, Workspace search-location boundaries, Web search state, source package splitting, image/table summaries, sharing review, and role-specific citation tests
 - [Prepare Yuque sources before ChatGPT Dropbox Sync](https://yuque.toolab.top/blog/yuque-chatgpt-dropbox-sync-permission.html): Guide for using YuqueOut local exports before placing Yuque materials into Dropbox folders that ChatGPT Dropbox app with sync can index, with supported-format checks, non-indexed attachment handling, shared-folder and external-collaborator review, source package splitting, sync-delay testing, deletion planning, and role-specific citation checks
 - [Prepare Yuque sources before ChatGPT SharePoint Sync](https://yuque.toolab.top/blog/yuque-chatgpt-sharepoint-sync-permission.html): Guide for using YuqueOut local exports before placing Yuque materials into SharePoint sites or folders that ChatGPT SharePoint app with sync can index, with connection-model choices, Entra permission checks, RBAC validation, sensitivity-label review, source package splitting, sync-delay testing, deletion planning, and role-specific citation checks

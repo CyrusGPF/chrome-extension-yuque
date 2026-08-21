@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI 浏览器和浏览器代理开始读取网页、标签页、历史记录、文件和企业连接器上下文。语雀资料进入这些工具前，应先用 YuqueOut 本地导出、分包、脱敏，并验收来源边界、权限和引用结果。">
+    <meta name="keywords" content="语雀AI浏览器,YuqueOut,AI浏览器资料包,浏览器代理知识库,语雀本地导出,Firefox Smart Window,AI来源治理,语雀权限治理,AI知识库导出">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-ai-browser-source-governance.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="语雀资料进入 AI 浏览器前：YuqueOut 本地导出、来源分包与权限治理清单">
+    <meta property="og:description" content="AI 浏览器能把网页、历史记录、标签页和连接器资料变成回答上下文。语雀资料进入前，先用 YuqueOut 做本地归档和可审阅来源包。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-ai-browser-source-governance.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-yuque-ai-source-pack-citation.png">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-08-21">
+    <meta property="article:modified_time" content="2026-08-21">
+    <meta property="article:section" content="AI 知识库">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="语雀资料进入 AI 浏览器前">
+    <meta name="twitter:description" content="YuqueOut 本地导出、来源分包与权限治理清单。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-yuque-ai-source-pack-citation.png">
+
+    <meta name="theme-color" content="#060b22">
+    <title>语雀资料进入 AI 浏览器前：YuqueOut 本地导出、来源分包与权限治理清单 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "语雀资料进入 AI 浏览器前：YuqueOut 本地导出、来源分包与权限治理清单",
+      "description": "AI 浏览器和浏览器代理正在把当前网页、标签页、历史记录、文件和连接器资料变成回答上下文。语雀资料进入这些工具前，推荐先用 YuqueOut 本地导出完整归档，再复制出按问题域、权限等级、版本状态和 owner 拆分的可审阅来源包，并验收引用、访问边界和敏感内容排除。",
+      "url": "https://yuque.toolab.top/blog/yuque-ai-browser-source-governance.html",
+      "datePublished": "2026-08-21",
+      "dateModified": "2026-08-21",
+      "image": "https://yuque.toolab.top/images/blog-yuque-ai-source-pack-citation.png",
+      "author": { "@type": "Person", "name": "Kevin Yang", "url": "https://yuque.toolab.top/" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-ai-browser-source-governance.html",
+      "wordCount": 2460,
+      "articleSection": "AI 知识库"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语雀 AI 浏览器来源治理", "item": "https://yuque.toolab.top/blog/yuque-ai-browser-source-governance.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "语雀资料可以直接交给 AI 浏览器或浏览器代理读取吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不建议直接交给 AI 浏览器读取原始语雀空间。推荐先用 YuqueOut 本地导出完整归档，再复制出经过分包、脱敏、格式筛选和权限验收的来源包。" }
+        },
+        {
+          "@type": "Question",
+          "name": "YuqueOut 会连接 AI 浏览器、模型或代理平台吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。YuqueOut 只在浏览器本地导出语雀资料，不连接 AI 浏览器、模型、连接器或代理平台，也不会上传文档内容。" }
+        },
+        {
+          "@type": "Question",
+          "name": "AI 浏览器来源治理和 ChatGPT、Gemini 连接器治理有什么区别？",
+          "acceptedAnswer": { "@type": "Answer", "text": "连接器治理通常围绕一个云端资料源；AI 浏览器还可能读取当前网页、标签页、历史记录、下载文件、页面上下文和连接器结果，因此需要额外验收浏览器级来源边界。" }
+        },
+        {
+          "@type": "Question",
+          "name": "最小可行验收要做哪些测试？",
+          "acceptedAnswer": { "@type": "Answer", "text": "至少测试精确引用、旧版本干扰、不同账号权限、敏感关键词排除、图片和表格上下文、关闭浏览器历史或 Web 搜索后的答案变化，以及来源缺失时是否拒答。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_ai_browser_source_governance" target="_blank" rel="noopener" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">AI 浏览器来源治理</span>
+                </div>
+                <span class="blog-article-tag">AI 知识库</span>
+                <h1 class="blog-article-title">语雀资料进入 AI 浏览器前：YuqueOut 本地导出、来源分包与权限治理清单</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">2026-08-21</span>
+                    <span class="blog-article-meta-item">10 分钟阅读</span>
+                    <span class="blog-article-meta-item">约 2460 字</span>
+                    <span class="blog-article-meta-item blog-article-author">Kevin Yang</span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-yuque-ai-source-pack-citation.png" alt="语雀资料进入 AI 浏览器前用 YuqueOut 本地导出并拆分来源包" width="1672" height="941" loading="eager" style="width:100%;height:auto;border-radius:8px;margin-bottom:2rem;">
+
+                <aside class="citation-capsule" style="background:rgba(99,102,241,0.08);border-left:4px solid #6366f1;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">AI 浏览器和浏览器代理可以把当前网页、标签页、浏览历史、文件和连接器资料变成回答上下文。语雀资料进入这些工具前，先用 YuqueOut 做本地完整归档，再复制出按问题域、权限等级、版本状态和 owner 拆分的来源包；上线前验收引用、旧版本干扰、敏感内容排除和不同账号的可见边界。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#why-now">为什么 AI 浏览器会改变资料治理</a></li>
+                        <li><a href="#search-intent">用户真正搜索的不是浏览器新闻</a></li>
+                        <li><a href="#official-signals">先看清近期官方信号</a></li>
+                        <li><a href="#export-first">用 YuqueOut 先做本地归档</a></li>
+                        <li><a href="#source-package">AI 浏览器来源包怎么拆</a></li>
+                        <li><a href="#browser-boundary">浏览器级来源边界怎么验收</a></li>
+                        <li><a href="#formats">格式、图片、表格和画板怎么准备</a></li>
+                        <li><a href="#acceptance">上线前的测试问题</a></li>
+                        <li><a href="#checklist">检查清单</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>如果团队准备让 AI 浏览器、浏览器侧边栏助手或浏览器代理读取语雀资料，不要直接开放整个语雀空间、浏览器历史或云盘文件夹。更稳的路径是：先用 YuqueOut 在本地导出完整语雀归档，保留只读原件；再复制一份工作副本，按问答场景、权限等级、版本状态和 owner 拆成可审阅来源包，最后只把经过验收的副本交给 AI 浏览器或代理工具。</p>
+
+                <p>YuqueOut 在这里不是 AI 浏览器，也不把资料上传给模型。它的价值是把语雀知识库、收藏、表格、画板、图片和附件先变成用户可控制的本地资产。之后团队才有条件判断：哪些资料能放进当前网页上下文，哪些只能作为本地文件被临时读取，哪些可以进入云端连接器，哪些必须留在敏感归档区。</p>
+
+                <h2 id="why-now">为什么 AI 浏览器会改变资料治理</h2>
+                <p>传统浏览器主要展示网页，资料治理更多发生在语雀、云盘或知识库平台内。AI 浏览器和浏览器代理出现后，浏览器本身也成了上下文入口：当前页面、打开的标签页、历史记录、下载文件、选中的网页片段、侧边栏聊天和第三方连接器都有可能参与回答。</p>
+
+                <p>这意味着语雀资料一旦被导入浏览器工作流，风险不只来自“某个文件能不能被 AI 读取”，还来自“AI 是否混用了历史页面、旧版本、聊天上下文、Web 搜索结果或其他连接器内容”。对团队知识库来说，真正要治理的是来源边界、版本边界和账号边界，而不是简单追问某个 AI 浏览器是否支持某种文件格式。</p>
+
+                <h2 id="search-intent">用户真正搜索的不是浏览器新闻</h2>
+                <p>用户搜索“语雀 AI 浏览器”“浏览器代理读取知识库”“AI 浏览器资料隐私”时，通常不是想看产品发布评论，而是在解决一个实际问题：公司文档主要沉淀在语雀，但员工已经开始用带 AI 的浏览器、侧边栏助手或代理工具完成调研、客服、销售、代码和运营任务。团队想提高效率，又不希望把客户资料、合同、内部策略和历史错误版本一起暴露给 AI 上下文。</p>
+
+                <p>这个场景不同于 <a href="yuque-chatgpt-apps-sync-permission.html">ChatGPT Apps with Sync 权限清单</a> 或 <a href="yuque-gemini-workspace-sources-permission.html">Gemini Workspace Sources 权限清单</a>。连接器治理关注具体云端资料源；AI 浏览器治理还要覆盖当前网页、浏览器记忆、标签页和用户临时打开的本地文件。因此团队更适合先建立上层资料包治理路径，避免把权限策略绑定到单一厂商功能。</p>
+
+                <h2 id="official-signals">先看清近期官方信号</h2>
+                <p>Mozilla 在 2026 年 8 月 18 日宣布 Firefox 与 Exa 合作，为 Smart Window 和 Quick Answers 提供带来源的回答；Mozilla 的 Smart Window 隐私说明也明确写到，该功能是可选启用，会处理浏览活动相关数据以提供 AI 浏览体验，并会把必要请求转发给第三方大模型。Firefox 企业管理文档还提供 AIControls 策略，用于控制 SidebarChatbot、SmartWindow、SmartTabGroups 等 AI 功能是否可用。</p>
+
+                <p>这些官方材料说明了两个方向：第一，AI 浏览器正在强调来源、引用和用户控制；第二，浏览器级 AI 的数据边界已经从单个网页扩展到浏览活动、记忆、模型选择和管理策略。企业团队不应等待员工把语雀资料随手拖进各种浏览器代理后才补治理，而应先建立可复用的 YuqueOut 本地导出和来源包验收流程。</p>
+
+                <h2 id="export-first">用 YuqueOut 先做本地归档</h2>
+                <p>推荐从“两层资产”开始。第一层是 YuqueOut 原始归档包，完整保存语雀目录、Markdown、PDF、CSV、Excel、图片、画板和附件，只用于备份、恢复、审计和重新生成副本。第二层是 AI 浏览器来源包，从原始归档复制出来，经过脱敏、改名、摘要补充和权限确认后，才允许进入浏览器 AI 工作流。</p>
+
+                <ol class="step-list">
+                    <li><strong>完整导出。</strong>用 YuqueOut 批量导出知识库、收藏、表格、画板和附件，确认离开语雀后仍能打开。</li>
+                    <li><strong>复制副本。</strong>不要在原始归档上直接清洗；复制一份用于浏览器 AI 测试和分发。</li>
+                    <li><strong>按问题域拆包。</strong>一个来源包只服务一个用途，例如客服 FAQ、产品手册、实施 SOP、研发规范或培训资料。</li>
+                    <li><strong>写来源说明。</strong>README 记录 Yuque 路径、导出日期、owner、权限等级、排除内容、更新频率和验收问题。</li>
+                    <li><strong>保留回滚路径。</strong>如果 AI 浏览器答案混入旧版或敏感内容，回到原始归档重新生成来源包。</li>
+                </ol>
+
+                <p>这与 <a href="yuque-ai-source-pack-citation.html">AI 来源包与引用验收</a> 的原则一致：先把语雀内容变成可审阅、可追踪、可分发的本地资料，再决定进入哪种 AI 工具。</p>
+
+                <h2 id="source-package">AI 浏览器来源包怎么拆</h2>
+                <p>不要把整个语雀导出目录命名为“AI 浏览器资料”后直接投喂。浏览器代理常常围绕任务运行，资料包也应该围绕任务拆分。客服包、销售包、实施包、研发包和管理包的权限、更新频率、敏感字段和验收问题完全不同。</p>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>来源包</th><th>适合放入</th><th>默认排除</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>公开帮助包</td><td>安装教程、FAQ、公开排障、公开迁移流程</td><td>客户截图、内部价格、未发布路线图</td></tr>
+                            <tr><td>客服 SOP 包</td><td>工单分类、回复模板、升级路径、常见问题处理</td><td>客户私密信息、账号凭据、赔付底线</td></tr>
+                            <tr><td>销售资料包</td><td>公开产品资料、标准报价口径、案例摘要</td><td>合同、折扣底线、竞争策略、个人联系人信息</td></tr>
+                            <tr><td>研发规范包</td><td>接口说明、发布流程、排障日志模板、代码规范</td><td>密钥、生产凭据、安全漏洞细节</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>每个包都要有明确 owner 和版本日期。例如 <code>support-ai-browser-source-2026-08-approved</code> 比 <code>语雀导出最终版2</code> 更容易追踪，也更适合在出现错误引用时定位问题。</p>
+
+                <h2 id="browser-boundary">浏览器级来源边界怎么验收</h2>
+                <p>AI 浏览器的特殊之处在于，它可能同时看到网页、历史记录、打开标签页、下载文件、扩展侧边栏和连接器结果。因此验收不能只问“文件有没有导入成功”，而要问“答案到底来自哪里”。</p>
+
+                <ul>
+                    <li><strong>当前网页：</strong>只打开指定语雀来源包生成的页面或本地文件，确认 AI 不引用其他标签页。</li>
+                    <li><strong>历史记录：</strong>关闭或限制历史记录参与后，测试答案是否变化。</li>
+                    <li><strong>Web 搜索：</strong>分别打开和关闭 Web 搜索，记录是否混入外部资料。</li>
+                    <li><strong>连接器：</strong>如果同时连接 Drive、Dropbox、SharePoint 或 GitHub，确认回答是否跨源混合。</li>
+                    <li><strong>账号权限：</strong>用普通成员、项目成员、外部协作者和管理员账号问同一问题，检查可见内容差异。</li>
+                    <li><strong>模型与记忆：</strong>检查是否启用浏览器记忆、聊天历史或个性化功能，必要时为敏感任务关闭。</li>
+                </ul>
+
+                <p>如果团队采用企业浏览器策略，可以参考浏览器厂商提供的管理开关来限制 AI 功能可用范围。无论是否有管理后台，语雀来源包都应先做最小化：只放完成任务所需资料，不用“全量语雀导出”换取方便。</p>
+
+                <h2 id="formats">格式、图片、表格和画板怎么准备</h2>
+                <p>浏览器 AI 对资料的理解质量取决于可读文本和可验证来源。Markdown 适合保留标题、列表、代码块和相对图片路径；PDF 适合审批留痕和固定版式；CSV/Excel 适合表格数据；图片和画板则需要补文字说明，避免 AI 只看到一张无法可靠检索的图。</p>
+
+                <p>用 YuqueOut 导出语雀画板、白板、流程图和本地图片后，为关键图片增加目的、节点、owner、更新时间和适用范围摘要。表格要补字段含义、日期口径、金额单位、ID 前导零和敏感列处理方式。具体检查可以参考 <a href="yuque-local-image-backup.html">语雀图片本地化备份清单</a>、<a href="yuque-table-export-checklist.html">语雀表格导出验收清单</a> 和 <a href="yuque-board-export-migration.html">语雀画板导出迁移清单</a>。</p>
+
+                <h2 id="acceptance">上线前的测试问题</h2>
+                <p>来源包交给 AI 浏览器前，至少用一组固定问题做验收，并保存问题、预期来源、实际答案和失败原因。不要只看摘要是否流畅；要看引用是否准确、权限是否正确、缺失时是否拒答。</p>
+
+                <ul>
+                    <li><strong>精确引用：</strong>问一个只存在于指定来源包里的细节，确认答案指向正确文件。</li>
+                    <li><strong>旧版干扰：</strong>让旧版资料留在归档区，确认浏览器 AI 不引用旧 SOP。</li>
+                    <li><strong>敏感排除：</strong>用客户名、合同、薪酬、密钥、未发布功能等关键词测试来源包。</li>
+                    <li><strong>图表上下文：</strong>测试截图摘要、画板摘要、Markdown 表格和 CSV/Excel 附件是否支撑回答。</li>
+                    <li><strong>关闭外部来源：</strong>关闭 Web 搜索、历史记录或连接器后，确认答案仍能基于目标来源包完成。</li>
+                    <li><strong>缺失拒答：</strong>问来源包没有覆盖的问题，确认 AI 不用外部猜测伪装成语雀资料。</li>
+                </ul>
+
+                <h2 id="checklist">检查清单</h2>
+                <ul>
+                    <li>已确认目标 AI 浏览器或代理会读取哪些来源：网页、标签页、历史、文件、记忆、连接器或 Web 搜索。</li>
+                    <li>已用 YuqueOut 本地导出完整语雀归档，并保留只读原件。</li>
+                    <li>已复制单独来源包，按问题域、权限等级、版本状态和 owner 拆分。</li>
+                    <li>客户、财务、人事、合同、密钥和未发布路线图等高敏内容已默认排除或单独审批。</li>
+                    <li>Markdown、PDF、CSV/Excel、图片、画板和附件都有格式策略与必要文字说明。</li>
+                    <li>已检查浏览器历史、Web 搜索、模型记忆、连接器和标签页混用风险。</li>
+                    <li>已用不同账号、不同来源开关和固定问题集验收引用结果。</li>
+                    <li>已记录更新责任人、删除路径、重新导出流程和失败回滚方案。</li>
+                </ul>
+
+                <h2 id="faq">常见问题</h2>
+                <h3>语雀资料可以直接交给 AI 浏览器或浏览器代理读取吗？</h3>
+                <p>不建议直接交给 AI 浏览器读取原始语雀空间或全量导出目录。推荐先用 YuqueOut 本地导出完整归档，再复制出经过分包、脱敏、格式筛选和权限验收的来源包。原始归档用于备份和回滚，AI 来源包用于具体任务。</p>
+
+                <h3>YuqueOut 会连接 AI 浏览器、模型或代理平台吗？</h3>
+                <p>不会。YuqueOut 只在浏览器本地导出语雀资料，不连接 AI 浏览器、模型、连接器或代理平台，也不会上传文档内容。是否把导出的副本交给某个 AI 工具，由用户或管理员自行决定。</p>
+
+                <h3>AI 浏览器来源治理和 ChatGPT、Gemini 连接器治理有什么区别？</h3>
+                <p>连接器治理通常围绕一个云端资料源，例如 Drive、Dropbox 或 SharePoint。AI 浏览器还可能读取当前网页、标签页、历史记录、下载文件、页面上下文和连接器结果，所以要额外验收浏览器级来源边界。</p>
+
+                <h3>最小可行验收要做哪些测试？</h3>
+                <p>至少测试精确引用、旧版本干扰、不同账号权限、敏感关键词排除、图片和表格上下文、关闭浏览器历史或 Web 搜索后的答案变化，以及来源缺失时是否拒答。通过这些测试后，再扩大到更多业务场景。</p>
+
+                <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.12);">
+                    <p style="font-size:0.9rem;color:rgba(255,255,255,0.65);">参考来源：<a href="https://blog.mozilla.org/en/firefox/firefox-exa-partnership/" target="_blank" rel="noopener">Mozilla - Firefox and Exa partnership</a>、<a href="https://www.mozilla.org/en-US/privacy/smart-window/" target="_blank" rel="noopener">Mozilla Smart Window Privacy Notice</a>、<a href="https://firefox-admin-docs.mozilla.org/reference/policies/aicontrols/" target="_blank" rel="noopener">Firefox administrator reference - AIControls</a>。</p>
+                </div>
+
+                <div class="blog-cta">
+                    <h3>先把语雀资料整理成可控本地来源包</h3>
+                    <p>使用 YuqueOut 批量导出 Markdown、PDF、CSV、图片、画板和附件，再决定哪些副本可以进入 AI 浏览器、浏览器代理或企业连接器工作流。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_ai_browser_source_governance_cta" target="_blank" rel="noopener" class="blog-cta-button">免费安装 YuqueOut</a>
+                </div>
+
+                <div class="blog-related">
+                    <h2>相关文章</h2>
+                    <div class="blog-related-grid">
+                        <a href="yuque-ai-source-pack-citation.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀资料给 AI 用前怎么拆来源包</span>
+                            <span class="blog-related-card-excerpt">引用验收与权限边界清单</span>
+                        </a>
+                        <a href="yuque-chatgpt-apps-sync-permission.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀资料进入 ChatGPT Apps with Sync 前</span>
+                            <span class="blog-related-card-excerpt">同步源边界与权限清单</span>
+                        </a>
+                        <a href="yuque-gemini-workspace-sources-permission.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀资料进入 Gemini Workspace Sources 前</span>
+                            <span class="blog-related-card-excerpt">Drive 来源与权限验收清单</span>
+                        </a>
+                        <a href="yuque-sensitive-docs-export-governance.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀敏感资料导出前怎么分级</span>
+                            <span class="blog-related-card-excerpt">本地备份、脱敏与权限交接清单</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <footer class="homepage-footer">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <div class="footer-logo">
+                            <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36" class="footer-logo-image"></picture>
+                            <span class="footer-logo-text">YuqueOut 语雀导出助手</span>
+                        </div>
+                        <p class="footer-description">专业的语雀知识库批量导出解决方案。</p>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">产品</h3>
+                        <ul class="footer-links">
+                            <li><a href="../#features">功能特性</a></li>
+                            <li><a href="./">博客</a></li>
+                            <li><a href="../privacy.html">隐私政策</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">支持</h3>
+                        <ul class="footer-links"><li><a href="mailto:yhj2433488839@gmail.com">联系我们</a></li></ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 YuqueOut 语雀导出助手. Built with passion for better data freedom.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../script.js" defer></script>
+</body>
+</html>
