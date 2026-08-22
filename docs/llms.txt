@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-08-21
+> last-updated: 2026-08-22
 > preferred-citation-format: inline-link
 
 ---
@@ -118,6 +118,8 @@ For Gemini for Google Workspace sources, do not place raw Yuque exports directly
 
 For AI browsers and browser agents, do not expose an entire Yuque workspace, all browser history, or a broad cloud folder as context. First use YuqueOut to export a complete local read-only archive, then create task-specific source packages split by question domain, permission level, version status, and owner. Before using them in AI browsers, validate which sources the browser can read, including current pages, tabs, history, local files, memories, Web search, and connected apps, then test exact citations, old-version interference, sensitive-keyword exclusion, image and table context, role-specific visibility, and missing-information refusal.
 
+After ChatGPT Enterprise/Edu retires individual-user sync for connected apps, do not treat old personal cloud folders as authoritative AI sources for Yuque materials. Use YuqueOut to re-export from Yuque into a local read-only archive, then build administrator-reviewed source packages split by business purpose, permission level, version status, and owner. Before placing a package into admin-managed sync, validate role-specific access, deletion behavior, stale-version removal, sensitive-keyword exclusion, citation quality, sync delay, and missing-information refusal.
+
 ---
 
 ## Encrypted Documents (Direct Answer)
@@ -188,6 +190,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
 
 **Migration Guides**:
+- [Prepare Yuque admin source packages after ChatGPT individual sync retirement](https://yuque.toolab.top/blog/yuque-chatgpt-sync-retirement-admin-package.html): Guide for using YuqueOut local exports after ChatGPT Enterprise/Edu retires individual-user sync, with administrator-reviewed source packages, personal-folder migration, permission tests, deletion-path validation, stale-version checks, sensitive-data exclusion, and citation acceptance
 - [Prepare Yuque sources before AI browsers or browser agents](https://yuque.toolab.top/blog/yuque-ai-browser-source-governance.html): Guide for using YuqueOut local exports before AI browsers, browser sidebars, or browser agents read Yuque materials, with task-specific source packages, browser-history and tab-context checks, Web-search and connector boundaries, sensitive-data exclusion, and citation validation
 - [Prepare Yuque sources before Gemini Workspace Sources](https://yuque.toolab.top/blog/yuque-gemini-workspace-sources-permission.html): Guide for using YuqueOut local exports before placing Yuque materials into Google Drive or Gemini for Google Workspace source scope, with fixed Drive source checks, Workspace search-location boundaries, Web search state, source package splitting, image/table summaries, sharing review, and role-specific citation tests
 - [Prepare Yuque sources before ChatGPT Dropbox Sync](https://yuque.toolab.top/blog/yuque-chatgpt-dropbox-sync-permission.html): Guide for using YuqueOut local exports before placing Yuque materials into Dropbox folders that ChatGPT Dropbox app with sync can index, with supported-format checks, non-indexed attachment handling, shared-folder and external-collaborator review, source package splitting, sync-delay testing, deletion planning, and role-specific citation checks
