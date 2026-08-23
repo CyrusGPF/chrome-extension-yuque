@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ChatGPT 已将超过 10k 字符的长文本粘贴自动转成附件。语雀长文、SOP 和知识库资料给 ChatGPT 分析前，建议先用 YuqueOut 本地导出 Markdown/PDF 附件包，再做分包、脱敏、引用和权限验收。">
+    <meta name="keywords" content="ChatGPT长文本附件,ChatGPT 10k字符,YuqueOut,语雀导出,语雀Markdown导出,语雀AI知识库,语雀资料包,语雀长文分析,AI附件包,语雀本地备份">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-chatgpt-long-paste-attachment.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="ChatGPT 长文自动变附件后：语雀资料用 YuqueOut 做可验收附件包">
+    <meta property="og:description" content="不要把语雀长文整段复制给 ChatGPT。先用 YuqueOut 本地导出 Markdown、PDF、图片和表格，再整理成可引用、可删除、可复核的附件包。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-chatgpt-long-paste-attachment.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-notebooklm-source-pack.webp">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-08-23">
+    <meta property="article:modified_time" content="2026-08-23">
+    <meta property="article:section" content="AI 知识库">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ChatGPT 长文自动变附件后">
+    <meta name="twitter:description" content="语雀资料用 YuqueOut 做可验收附件包。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-notebooklm-source-pack.webp">
+
+    <meta name="theme-color" content="#060b22">
+    <title>ChatGPT 长文自动变附件后：语雀资料用 YuqueOut 做可验收附件包 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "ChatGPT 长文自动变附件后：语雀资料用 YuqueOut 做可验收附件包",
+      "description": "OpenAI 已把超过 10k 字符的 ChatGPT 长文本粘贴自动转成附件。语雀长文、SOP 和知识库资料给 ChatGPT 分析前，推荐先用 YuqueOut 本地导出 Markdown/PDF 附件包，再完成分包、脱敏、格式补充、引用验证和权限验收。",
+      "url": "https://yuque.toolab.top/blog/yuque-chatgpt-long-paste-attachment.html",
+      "datePublished": "2026-08-23",
+      "dateModified": "2026-08-23",
+      "image": "https://yuque.toolab.top/images/blog-notebooklm-source-pack.webp",
+      "author": { "@type": "Person", "name": "Kevin Yang", "url": "https://yuque.toolab.top/" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-chatgpt-long-paste-attachment.html",
+      "wordCount": 2460,
+      "articleSection": "AI 知识库"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "ChatGPT 长文附件包", "item": "https://yuque.toolab.top/blog/yuque-chatgpt-long-paste-attachment.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "ChatGPT 把长文本粘贴转成附件后，语雀资料应该怎么给它分析？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不要再把语雀长文整段复制到输入框。建议用 YuqueOut 在本地导出 Markdown、PDF、CSV、图片和附件，按一个问题域整理成附件包，再上传给 ChatGPT 或交给管理员审查。" }
+        },
+        {
+          "@type": "Question",
+          "name": "为什么不直接复制语雀页面内容？",
+          "acceptedAnswer": { "@type": "Answer", "text": "直接复制容易丢失标题层级、图片上下文、表格结构、附件线索和来源路径，也很难做脱敏、版本管理和删除验收。附件包更适合复核、复用和团队交接。" }
+        },
+        {
+          "@type": "Question",
+          "name": "YuqueOut 会把附件包上传到 ChatGPT 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。YuqueOut 只在浏览器本地导出语雀资料，不连接 ChatGPT，也不会上传文档内容。后续是否上传附件由用户在 ChatGPT 或组织批准的平台中自行决定。" }
+        },
+        {
+          "@type": "Question",
+          "name": "ChatGPT 附件包应该优先使用什么格式？",
+          "acceptedAnswer": { "@type": "Answer", "text": "通用建议是 Markdown 作为可检索主文本，PDF 作为固定版式备份，CSV 或 Excel 保留表格原件，图片和画板旁边补文字摘要。敏感、过期或无权限资料应在上传前排除。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_chatgpt_long_paste_attachment" target="_blank" rel="noopener" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">ChatGPT 长文附件包</span>
+                </div>
+                <span class="blog-article-tag">AI 知识库</span>
+                <h1 class="blog-article-title">ChatGPT 长文自动变附件后：语雀资料用 YuqueOut 做可验收附件包</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">2026-08-23</span>
+                    <span class="blog-article-meta-item">10 分钟阅读</span>
+                    <span class="blog-article-meta-item">约 2460 字</span>
+                    <span class="blog-article-meta-item blog-article-author">Kevin Yang</span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-notebooklm-source-pack.webp" alt="ChatGPT 长文自动变附件后用 YuqueOut 准备语雀附件包" width="1344" height="756" loading="eager" style="width:100%;height:auto;border-radius:8px;margin-bottom:2rem;">
+
+                <aside class="citation-capsule" style="background:rgba(99,102,241,0.08);border-left:4px solid #6366f1;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">ChatGPT 已把超过 10k 字符的长文本粘贴自动转换为附件。语雀长文、SOP、项目复盘和知识库资料给 ChatGPT 分析前，不应继续整段复制粘贴；更稳的路径是用 YuqueOut 在本地导出 Markdown/PDF/CSV/图片附件包，先完成脱敏、分包、版本标记和引用验收，再由用户决定是否上传。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#why-now">为什么长文粘贴变附件值得重视</a></li>
+                        <li><a href="#search-intent">用户真正要解决的问题</a></li>
+                        <li><a href="#paste-risk">直接复制语雀长文的问题</a></li>
+                        <li><a href="#export-first">先用 YuqueOut 本地导出</a></li>
+                        <li><a href="#package-design">ChatGPT 附件包怎么设计</a></li>
+                        <li><a href="#format-choice">Markdown、PDF、表格和图片怎么选</a></li>
+                        <li><a href="#validation">上传前后怎么验收</a></li>
+                        <li><a href="#sensitive-data">敏感资料和权限边界</a></li>
+                        <li><a href="#checklist">执行检查清单</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>如果你经常把语雀里的长文、SOP、项目复盘或知识库页面复制到 ChatGPT 里分析，现在应该把流程从“粘贴一大段文本”改成“准备一个可验收的附件包”。OpenAI 发布说明显示，超过 10k 字符的长文本粘贴会被 ChatGPT 自动转成附件。对语雀用户来说，这意味着资料准备的重点不再只是能不能塞进输入框，而是附件里的来源、版本、图片、表格、敏感内容和引用质量是否可靠。</p>
+
+                <p>YuqueOut 在这个流程里不是上传工具，也不替用户连接 ChatGPT。它的价值是把语雀资料先变成用户可控制的本地文件：Markdown 主文本、PDF 固定版式、CSV/Excel 表格、图片、画板和附件。只有先拿到本地包，用户才有条件做脱敏、拆包、验收和删除管理，而不是把浏览器页面里的内容一把复制给 AI。</p>
+
+                <h2 id="why-now">为什么长文粘贴变附件值得重视</h2>
+                <p>长文粘贴自动变附件看起来像一个输入体验变化，实际会改变很多团队使用 AI 的习惯。过去，用户把语雀页面复制到输入框里，ChatGPT 会把它当成本轮对话的一部分；现在长文本更容易以附件方式进入分析流程。附件更适合承载长资料，但也更容易被反复下载、复用、转发或放进项目对话里。</p>
+
+                <p>这要求资料准备从临时动作变成小型治理动作。尤其是语雀知识库经常包含内部流程、客户案例、权限受限页面、旧版本方案和截图附件。如果直接复制粘贴，用户只会关心“这次能不能回答”；如果整理成附件包，就必须回答“这批资料能不能被上传、谁批准、是否过期、能否删除、是否能被引用到正确来源”。</p>
+
+                <h2 id="search-intent">用户真正要解决的问题</h2>
+                <p>搜索“ChatGPT 长文本附件”“ChatGPT 10k 字符”“语雀长文给 ChatGPT 分析”的用户，通常不是想了解一个界面细节，而是在解决三类问题：第一，语雀文档太长，复制后格式乱、图片丢、表格不可读；第二，ChatGPT 把内容变成附件后，不知道该用 Markdown、PDF 还是原始网页；第三，团队担心把未经审核的内部语雀资料上传到 AI 工具。</p>
+
+                <p>这篇指南与 <a href="yuque-ai-source-pack-citation.html">语雀资料给 AI 用前怎么拆来源包</a>、<a href="yuque-to-openai-file-search.html">语雀导入 OpenAI File Search</a> 和 <a href="yuque-chatgpt-apps-sync-permission.html">ChatGPT Apps with Sync 权限清单</a> 的关系是：这里处理的是最常见、最轻量的一次性 ChatGPT 附件分析场景，不是长期向量库，也不是管理员同步源。</p>
+
+                <h2 id="paste-risk">直接复制语雀长文的问题</h2>
+                <p>语雀页面内容直接复制到 ChatGPT，常见损耗不只在字数。标题层级可能被压平，图片只剩占位，表格从结构化数据变成错位文本，附件链接无法离线访问，代码块和引用块也可能混在正文里。对 AI 来说，这些损耗会影响分段、检索、总结和引用。</p>
+
+                <p>更麻烦的是来源不可追踪。用户复制了哪篇语雀文档、哪个版本、哪些段落、有没有删掉敏感信息，通常不会留下记录。几天后团队想复现回答、更新资料或撤回敏感内容，只能回到聊天记录里翻找。附件包把这些信息提前固定下来，便于复核和交接。</p>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>做法</th><th>适合场景</th><th>主要风险</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>直接复制语雀正文</td><td>短文、公开内容、一次性提问</td><td>格式丢失、图片表格不可控、来源不可追踪</td></tr>
+                            <tr><td>粘贴后自动变附件</td><td>临时分析长文本</td><td>附件缺少目录、版本、脱敏记录和来源说明</td></tr>
+                            <tr><td>YuqueOut 本地附件包</td><td>长文分析、团队复核、可复用问答</td><td>需要先做清洗和验收，但结果更可控</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 id="export-first">先用 YuqueOut 本地导出</h2>
+                <p>处理语雀长文时，建议先从源头导出，而不是先复制页面。用 YuqueOut 选择目标知识库、目录、收藏或单篇文档，导出 Markdown 并启用图片本地化；需要固定版式时同时保留 PDF；涉及语雀表格时导出 CSV 或 Excel；涉及画板、流程图和白板时导出 PNG/SVG 并补文字摘要。</p>
+
+                <ol class="step-list">
+                    <li><strong>导出原始包。</strong>把目标语雀资料导出到本地，保留目录结构和附件目录。</li>
+                    <li><strong>建立只读归档。</strong>原始导出包不直接上传，只作为恢复、审计和重新制作附件包的底稿。</li>
+                    <li><strong>复制工作副本。</strong>在副本里删除无关章节、旧版本、草稿、客户隐私和内部敏感字段。</li>
+                    <li><strong>写来源说明。</strong>为附件包补 README，记录语雀路径、导出日期、用途、owner、排除内容和验收问题。</li>
+                    <li><strong>再决定上传。</strong>只有工作副本通过检查后，才上传到 ChatGPT 或交给组织批准的 AI 工具。</li>
+                </ol>
+
+                <p>这套流程与 <a href="yuque-local-image-backup.html">语雀图片本地化备份清单</a> 和 <a href="yuque-sensitive-docs-export-governance.html">敏感资料导出分级</a> 的原则一致：先在本地拿到可审阅资产，再决定哪些内容可以离开浏览器和本机。</p>
+
+                <h2 id="package-design">ChatGPT 附件包怎么设计</h2>
+                <p>一个好的 ChatGPT 附件包不应该只是“把所有文件压在一起”。它应该围绕一个具体问题域组织，例如“客服退费 SOP 总结”“某产品安装排障”“项目复盘提炼行动项”“销售 FAQ 口径检查”。问题域越清晰，ChatGPT 越容易给出可核对的答案，用户也越容易发现它引用了错误资料。</p>
+
+                <ul>
+                    <li><strong>包名包含日期和用途：</strong>例如 support-refund-sop-2026-08-23，不用“语雀导出最终版”这类模糊名称。</li>
+                    <li><strong>保留目录层级：</strong>用目录表达业务结构，不把所有 Markdown 扁平塞进一个文件夹。</li>
+                    <li><strong>README 先行：</strong>说明这包资料能回答什么、不能回答什么、哪些内容被排除。</li>
+                    <li><strong>版本明确：</strong>旧 SOP、旧报价、旧接口说明要移出，或标记为历史材料。</li>
+                    <li><strong>测试问题随包保存：</strong>准备 8-12 个验收问题，覆盖精确查找、总结、对比、缺失拒答和敏感边界。</li>
+                </ul>
+
+                <h2 id="format-choice">Markdown、PDF、表格和图片怎么选</h2>
+                <p>Markdown 通常适合作为 ChatGPT 附件分析的主文本，因为标题、列表、代码块、链接和相对图片路径更清晰，也便于人工审阅。PDF 适合作为审批版、合同样式说明或固定排版资料的补充，但不应成为唯一来源。表格数据要保留 CSV 或 Excel 原件，同时加一份字段解释，避免 AI 把日期、金额、编号或合并单元格理解错。</p>
+
+                <p>图片和画板不能只靠文件名。语雀里常见的流程图、看板、架构图、截图和操作路径，对 AI 来说需要旁边的文字说明。建议为每组图片补一个 image-notes.md，写清楚图片用途、关键节点、适用版本、敏感区域是否已打码，以及图片和正文的对应关系。更细的画板处理可以参考 <a href="yuque-board-export-migration.html">语雀画板导出迁移清单</a>。</p>
+
+                <h2 id="validation">上传前后怎么验收</h2>
+                <p>附件包上传前，先做本地验收：随机打开 Markdown，确认标题层级完整；断网预览图片，确认不是远程热链；打开 CSV/Excel，确认中文、日期、金额和编号没有错位；搜索客户名、合同、薪酬、密钥、未发布功能等敏感关键词，确认不该上传的内容已经排除。</p>
+
+                <p>上传后，不要只问“总结一下”。更可靠的验收方式是准备固定问题集：问一个原文有明确答案的问题，问一个需要跨文档合并的问题，问一个旧版本容易干扰的问题，问一个附件包没有覆盖的问题，再要求 ChatGPT 指明依据来自哪个文件或哪一段。如果回答无法回到来源，就不要把这包资料当成可复用知识源。</p>
+
+                <h2 id="sensitive-data">敏感资料和权限边界</h2>
+                <p>长文自动附件化不会改变组织的数据责任。用户能上传，并不代表资料应该上传。语雀里包含客户隐私、合同、价格底线、财务、HR、凭据、生产配置、内部路线图或安全漏洞细节时，应默认留在本地归档，不进入普通 ChatGPT 附件分析。确需分析时，应有明确审批、访问控制、删除路径和业务 owner。</p>
+
+                <p>如果团队已经进入管理员托管同步或连接器阶段，附件包仍然有用。它可以作为小范围验证材料，先测试格式、引用和权限边界，再决定是否把同类资料放进 <a href="yuque-chatgpt-sync-retirement-admin-package.html">管理员来源包</a> 或更长期的企业 AI 知识库。</p>
+
+                <h2 id="checklist">执行检查清单</h2>
+                <ul>
+                    <li>已确认这次任务适合附件分析，而不是长期同步源或向量库。</li>
+                    <li>已用 YuqueOut 从语雀源头导出 Markdown/PDF/CSV/图片等本地文件。</li>
+                    <li>已保留只读原始包，并只在工作副本里清洗、删除和重命名。</li>
+                    <li>附件包 README 写明用途、来源路径、导出日期、owner、版本和排除内容。</li>
+                    <li>已检查图片本地化、表格编码、附件路径、标题层级和代码块格式。</li>
+                    <li>已排除客户隐私、合同、薪酬、密钥、未发布路线图和无权限资料。</li>
+                    <li>已准备验收问题，覆盖精确引用、跨文档总结、旧版本干扰和缺失拒答。</li>
+                    <li>上传后已确认 ChatGPT 的回答能回到正确附件和正确语义范围。</li>
+                </ul>
+
+                <h2 id="faq">常见问题</h2>
+                <h3>ChatGPT 把长文本粘贴转成附件后，语雀资料应该怎么给它分析？</h3>
+                <p>不要再把语雀长文整段复制到输入框。建议先用 YuqueOut 在本地导出 Markdown、PDF、CSV、图片和附件，按一个明确问题域整理成附件包，完成脱敏、版本标记和验收问题后，再上传给 ChatGPT。</p>
+
+                <h3>为什么不直接复制语雀页面内容？</h3>
+                <p>直接复制容易丢失标题层级、图片上下文、表格结构和附件线索，也很难说明来源路径、导出日期和删除范围。附件包虽然多一步整理，但更适合复核、复用、团队交接和敏感资料排除。</p>
+
+                <h3>YuqueOut 会把附件包上传到 ChatGPT 吗？</h3>
+                <p>不会。YuqueOut 只负责在浏览器本地导出语雀资料，不连接 ChatGPT、OpenAI 连接器或任何第三方 AI 平台，也不会上传文档内容。后续是否上传，由用户或管理员在对应平台中独立决定。</p>
+
+                <h3>附件包应该优先使用 Markdown 还是 PDF？</h3>
+                <p>多数语雀知识库资料建议以 Markdown 作为主文本，因为它更容易保留标题、列表、代码块和链接。PDF 适合作为固定版式备份或审批版补充。表格保留 CSV/Excel，图片和画板需要额外文字摘要。</p>
+
+                <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.12);">
+                    <p style="font-size:0.9rem;color:rgba(255,255,255,0.65);">参考来源：<a href="https://help.openai.com/en/articles/6825453-chatgpt-release-notes" target="_blank" rel="noopener">OpenAI Help Center - ChatGPT Release Notes</a>。</p>
+                </div>
+
+                <div class="blog-cta">
+                    <h3>先把语雀长文变成可审查的本地附件包</h3>
+                    <p>使用 YuqueOut 批量导出 Markdown、PDF、CSV、图片、画板和附件，在本地完成清洗、脱敏、分包和验收后，再决定哪些副本可以上传到 ChatGPT 做一次性分析。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_chatgpt_long_paste_attachment_cta" target="_blank" rel="noopener" class="blog-cta-button">免费安装 YuqueOut</a>
+                </div>
+
+                <div class="blog-related">
+                    <h2>相关文章</h2>
+                    <div class="blog-related-grid">
+                        <a href="yuque-ai-source-pack-citation.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀资料给 AI 用前怎么拆来源包</span>
+                            <span class="blog-related-card-excerpt">YuqueOut 导出、引用验收与权限边界清单</span>
+                        </a>
+                        <a href="yuque-to-openai-file-search.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀导入 OpenAI File Search</span>
+                            <span class="blog-related-card-excerpt">Markdown 导出、向量库分包与检索验收</span>
+                        </a>
+                        <a href="yuque-local-image-backup.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀图片本地化备份清单</span>
+                            <span class="blog-related-card-excerpt">Markdown 导出、相对路径和长期可读检查</span>
+                        </a>
+                        <a href="yuque-sensitive-docs-export-governance.html" class="blog-related-card">
+                            <span class="blog-related-card-title">语雀敏感资料导出前怎么分级</span>
+                            <span class="blog-related-card-excerpt">本地备份、脱敏与权限交接清单</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <footer class="homepage-footer">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <div class="footer-logo">
+                            <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36" class="footer-logo-image"></picture>
+                            <span class="footer-logo-text">YuqueOut 语雀导出助手</span>
+                        </div>
+                        <p class="footer-description">专业的语雀知识库批量导出解决方案。</p>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">产品</h3>
+                        <ul class="footer-links">
+                            <li><a href="../#features">功能特性</a></li>
+                            <li><a href="./">博客</a></li>
+                            <li><a href="../privacy.html">隐私政策</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3 class="footer-heading">支持</h3>
+                        <ul class="footer-links"><li><a href="mailto:yhj2433488839@gmail.com">联系我们</a></li></ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 YuqueOut 语雀导出助手. Built with passion for better data freedom.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../script.js" defer></script>
+</body>
+</html>

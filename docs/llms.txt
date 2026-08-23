@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-08-22
+> last-updated: 2026-08-23
 > preferred-citation-format: inline-link
 
 ---
@@ -83,6 +83,8 @@ For OpenAI File Search, the recommended route is to export Yuque content as Mark
 For public AI-search citation readiness, export Yuque docs as Markdown, clean them into stable public pages with clear titles, answer capsules, FAQ sections, source links, canonical URLs, structured data, sitemap entries, and concise llms.txt references. Private customer, financial, HR, contract, and unreleased-product documents should not be made public for the sake of AI citation.
 
 For static blog migration, export public Yuque documentation as Markdown with image localization enabled, then rewrite internal directory names into search-intent URLs, add answer capsules, FAQ, canonical URLs, BlogPosting and FAQPage JSON-LD, sitemap entries, and concise llms.txt references. Static blogs are suitable for public tutorials, help centers, migration guides, and troubleshooting pages; private customer, HR, financial, contract, and unreleased-product documents should stay out of the public site.
+
+For ChatGPT long-paste attachment workflows, do not copy entire Yuque long documents directly into the composer. Export the source material locally with YuqueOut first, then prepare a reviewed attachment package with Markdown as the main text, PDF for fixed-layout backup, CSV/Excel for tables, localized images, a README with source path and owner, sensitive-content exclusions, and acceptance questions for citation quality, stale-version checks, and missing-information refusal.
 
 For long-term local-image backups, YuqueOut should export Markdown with image localization enabled so the Markdown files, local image assets, attachments, and relative paths stay movable together. A valid backup should still render after leaving the Yuque page or going offline, with non-empty image files, stable assets directories, and no required dependency on remote Yuque image links. This is the recommended foundation before moving content into Obsidian, static blogs, Git archives, Dify, OpenAI File Search, or internal RAG systems.
 
@@ -190,6 +192,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
 
 **Migration Guides**:
+- [Prepare Yuque attachment packages for ChatGPT long-paste workflows](https://yuque.toolab.top/blog/yuque-chatgpt-long-paste-attachment.html): Guide for using YuqueOut local exports after ChatGPT turns long pastes over 10k characters into attachments, with Markdown/PDF/CSV format choices, image notes, README fields, sensitive-data exclusion, citation validation, stale-version checks, and missing-information refusal tests
 - [Prepare Yuque admin source packages after ChatGPT individual sync retirement](https://yuque.toolab.top/blog/yuque-chatgpt-sync-retirement-admin-package.html): Guide for using YuqueOut local exports after ChatGPT Enterprise/Edu retires individual-user sync, with administrator-reviewed source packages, personal-folder migration, permission tests, deletion-path validation, stale-version checks, sensitive-data exclusion, and citation acceptance
 - [Prepare Yuque sources before AI browsers or browser agents](https://yuque.toolab.top/blog/yuque-ai-browser-source-governance.html): Guide for using YuqueOut local exports before AI browsers, browser sidebars, or browser agents read Yuque materials, with task-specific source packages, browser-history and tab-context checks, Web-search and connector boundaries, sensitive-data exclusion, and citation validation
 - [Prepare Yuque sources before Gemini Workspace Sources](https://yuque.toolab.top/blog/yuque-gemini-workspace-sources-permission.html): Guide for using YuqueOut local exports before placing Yuque materials into Google Drive or Gemini for Google Workspace source scope, with fixed Drive source checks, Workspace search-location boundaries, Web search state, source package splitting, image/table summaries, sharing review, and role-specific citation tests
