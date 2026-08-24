@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ChatGPT Library 已支持浏览 Google Drive 文件和文件夹后，语雀资料不要直接丢进 Drive。本文给出 YuqueOut 本地导出、Drive 来源包命名、权限分层、文件夹选择和引用验收清单。">
+    <meta name="keywords" content="ChatGPT Library Google Drive,语雀导出ChatGPT Library,YuqueOut,语雀Drive来源包,语雀AI知识库,Google Drive文件夹ChatGPT,语雀本地导出,语雀权限治理">
+    <link rel="canonical" href="https://yuque.toolab.top/blog/yuque-chatgpt-library-drive-source-pack.html">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="ChatGPT Library 可浏览 Google Drive 后：语雀资料用 YuqueOut 做可检索来源包">
+    <meta property="og:description" content="Google Drive 文件和文件夹进入 ChatGPT Library 后，语雀资料应先用 YuqueOut 本地导出、清洗、分包、命名和验收，再进入可浏览的 Drive 来源目录。">
+    <meta property="og:url" content="https://yuque.toolab.top/blog/yuque-chatgpt-library-drive-source-pack.html">
+    <meta property="og:image" content="https://yuque.toolab.top/images/blog-openai-file-search.webp">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="article:published_time" content="2026-08-24">
+    <meta property="article:modified_time" content="2026-08-24">
+    <meta property="article:section" content="AI 知识库">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ChatGPT Library 可浏览 Google Drive 后">
+    <meta name="twitter:description" content="语雀资料用 YuqueOut 做可检索来源包。">
+    <meta name="twitter:image" content="https://yuque.toolab.top/images/blog-openai-file-search.webp">
+
+    <meta name="theme-color" content="#060b22">
+    <title>ChatGPT Library 可浏览 Google Drive 后：语雀资料用 YuqueOut 做可检索来源包 - YuqueOut 博客</title>
+    <link rel="icon" href="../images/icon.png" type="image/png">
+    <link rel="preload" href="../style.css" as="style">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="blog.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "ChatGPT Library 可浏览 Google Drive 后：语雀资料用 YuqueOut 做可检索来源包",
+      "description": "OpenAI 2026 年 8 月发布说明显示，连接 Google Drive 插件后，用户可以在 ChatGPT Library 中浏览 Drive 文件和文件夹，并从 composer 或 @mentions 添加到对话。语雀资料进入这类工作流前，应先用 YuqueOut 本地导出、清洗、分包、命名、补 README，并用引用、权限、旧版本和删除路径做验收。",
+      "url": "https://yuque.toolab.top/blog/yuque-chatgpt-library-drive-source-pack.html",
+      "datePublished": "2026-08-24",
+      "dateModified": "2026-08-24",
+      "image": "https://yuque.toolab.top/images/blog-openai-file-search.webp",
+      "author": { "@type": "Person", "name": "Kevin Yang", "url": "https://yuque.toolab.top/" },
+      "publisher": { "@type": "Organization", "name": "YuqueOut 语雀导出助手", "url": "https://yuque.toolab.top/", "logo": {"@type": "ImageObject", "url": "https://yuque.toolab.top/images/icon.png", "width": 36, "height": 36} },
+      "mainEntityOfPage": "https://yuque.toolab.top/blog/yuque-chatgpt-library-drive-source-pack.html",
+      "wordCount": 2520,
+      "articleSection": "AI 知识库"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://yuque.toolab.top/" },
+        { "@type": "ListItem", "position": 2, "name": "博客", "item": "https://yuque.toolab.top/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "语雀 ChatGPT Library Drive 来源包", "item": "https://yuque.toolab.top/blog/yuque-chatgpt-library-drive-source-pack.html" }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "ChatGPT Library 能浏览 Google Drive 后，语雀资料可以直接上传到 Drive 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不建议直接上传原始语雀导出目录。推荐先用 YuqueOut 在本地导出并保留只读归档，再复制出经过脱敏、分包、命名和权限复核的 Drive 来源包。" }
+        },
+        {
+          "@type": "Question",
+          "name": "YuqueOut 会把语雀资料同步到 ChatGPT Library 或 Google Drive 吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。YuqueOut 只在浏览器本地导出语雀资料，不连接 ChatGPT Library，也不连接 Google Drive。后续上传、共享和连接由用户或管理员自行控制。" }
+        },
+        {
+          "@type": "Question",
+          "name": "Drive 来源包应该按语雀原目录还是按问题域拆分？",
+          "acceptedAnswer": { "@type": "Answer", "text": "更建议按问题域、权限等级、版本状态和更新负责人拆分。语雀原目录适合归档，但 ChatGPT Library 浏览和文件夹选择更需要清楚的来源包名称与边界。" }
+        },
+        {
+          "@type": "Question",
+          "name": "如何验收 ChatGPT 从 Drive 文件夹回答得是否可靠？",
+          "acceptedAnswer": { "@type": "Answer", "text": "至少测试精确引用、同义问题、跨文件综合、旧版本干扰、图片表格上下文、权限差异、缺失信息拒答和删除后的可见性变化。" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <main class="homepage">
+        <div class="dot-grid">
+            <div class="dot-grid__wrap">
+                <canvas id="dotCanvas" class="dot-grid__canvas"></canvas>
+            </div>
+        </div>
+
+        <nav class="homepage-nav">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <a href="../">
+                        <picture><img src="../images/icon-36x36.png" alt="YuqueOut" width="36" height="36"></picture>
+                        <span class="logo-text">YuqueOut 语雀导出助手</span>
+                    </a>
+                </div>
+                <div class="nav-center">
+                    <a href="../#features" class="nav-link">功能特性</a>
+                    <a href="./" class="nav-link">博客</a>
+                    <a href="../#privacy" class="nav-link">隐私保护</a>
+                    <a href="../privacy.html" class="nav-link">隐私政策</a>
+                </div>
+                <div class="nav-right">
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_chatgpt_library_drive_source_pack" target="_blank" rel="noopener" class="nav-cta-button">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M131.5 217.5L55.1 100.1c47.6-59.2 119-91.8 192-92.1 42.3-.3 85.5 10.5 124.8 33.2 43.4 25.2 76.4 61.4 97.4 103L264 133.4c-58.1-3.4-113.4 29.3-132.5 84.1zm32.9 38.5c0 46.2 37.4 83.6 83.6 83.6s83.6-37.4 83.6-83.6-37.4-83.6-83.6-83.6-83.6 37.3-83.6 83.6zm314.9-89.2L339.6 174c37.9 44.3 38.5 108.2 6.6 157.2L234.1 503.6c46.5 2.5 94.4-7.7 137.8-32.9 107.4-62 150.9-192 107.4-303.9zM133.7 303.6L40.4 120.1C14.9 159.1 0 205.9 0 256c0 124 90.8 226.7 209.5 244.9l63.7-124.8c-57.6 10.8-113.2-20.8-139.5-72.5z"></path></svg>
+                        <span>添加到 Chrome</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <article class="blog-article-section">
+            <div class="blog-article-header">
+                <div class="blog-article-breadcrumb">
+                    <a href="../">首页</a> <span>/</span>
+                    <a href="./">博客</a> <span>/</span>
+                    <span style="color: hsla(0,0%,100%,0.7);">ChatGPT Library Drive 来源包</span>
+                </div>
+                <span class="blog-article-tag">AI 知识库</span>
+                <h1 class="blog-article-title">ChatGPT Library 可浏览 Google Drive 后：语雀资料用 YuqueOut 做可检索来源包</h1>
+                <div class="blog-article-meta">
+                    <span class="blog-article-meta-item">2026-08-24</span>
+                    <span class="blog-article-meta-item">10 分钟阅读</span>
+                    <span class="blog-article-meta-item">约 2520 字</span>
+                    <span class="blog-article-meta-item blog-article-author">Kevin Yang</span>
+                </div>
+            </div>
+
+            <div class="blog-article-content">
+                <img src="../images/blog-openai-file-search.webp" alt="ChatGPT Library 浏览 Google Drive 后用 YuqueOut 准备语雀可检索来源包" width="1344" height="756" loading="eager" style="width:100%;height:auto;border-radius:8px;margin-bottom:2rem;">
+
+                <aside class="citation-capsule" style="background:rgba(99,102,241,0.08);border-left:4px solid #6366f1;padding:1.2rem 1.5rem;border-radius:0 8px 8px 0;margin-bottom:2rem;">
+                    <p style="margin:0;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.85);">ChatGPT Library 能浏览 Google Drive 文件和文件夹后，语雀资料进入 AI 问答前更需要先做来源包治理：用 YuqueOut 在浏览器本地导出 Markdown、PDF、CSV、图片和附件，保留只读归档，再制作命名清楚、权限单一、可引用验收的 Drive 来源包。不要把原始语雀目录直接丢进可被 ChatGPT 选择的 Drive 文件夹。</p>
+                </aside>
+
+                <div class="blog-toc">
+                    <div class="blog-toc-title">目录</div>
+                    <ol>
+                        <li><a href="#why-now">为什么 Library 浏览 Drive 会改变资料准备</a></li>
+                        <li><a href="#topic-candidates">候选主题和排重判断</a></li>
+                        <li><a href="#user-intent">用户真正要解决的问题</a></li>
+                        <li><a href="#export-first">先用 YuqueOut 建本地归档</a></li>
+                        <li><a href="#source-pack">Drive 来源包怎么设计</a></li>
+                        <li><a href="#permission">权限和文件夹选择边界</a></li>
+                        <li><a href="#format">Markdown、PDF、表格和图片怎么放</a></li>
+                        <li><a href="#validation">ChatGPT Library 验收问题</a></li>
+                        <li><a href="#checklist">上线检查清单</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ol>
+                </div>
+
+                <p>如果团队已经把语雀资料导出到 Google Drive，并准备用 ChatGPT 直接从 Library 或 composer 里选择 Drive 文件夹提问，现在要先补一层来源包治理。OpenAI 2026 年 8 月 13 日发布说明提到，连接 Google Drive 插件后，用户可以在 ChatGPT Library 中看到和浏览 Drive 文件、文件夹，也可以从 composer 或 @mentions 拉起 Drive 文件，并对选中文件夹内的资料提问。对语雀用户来说，风险不在“能不能选到文件夹”，而在“选到的文件夹是否已经清洗、分包、命名、验收和授权”。</p>
+
+                <p>YuqueOut 在这个流程里的角色很明确：先把语雀知识库、收藏、表格、画板、图片和附件导出为本地可审阅文件。它不会连接 ChatGPT Library，也不会把资料同步到 Google Drive。用户拿到本地包后，才能决定哪些副本适合进入 Drive，哪些只能归档，哪些必须脱敏或排除。</p>
+
+                <h2 id="why-now">为什么 Library 浏览 Drive 会改变资料准备</h2>
+                <p>过去很多人把 Drive 当成“云端硬盘”：文件在那里，只有需要时才打开。ChatGPT Library 能浏览 Drive 后，Drive 文件夹会变成 AI 对话中的可选上下文。用户不一定逐个上传文件，而是可能选择一个文件夹，让 ChatGPT 帮忙总结、比较、起草、查找或回答问题。</p>
+
+                <p>这种体验降低了使用门槛，也放大了目录治理的重要性。语雀导出的原始目录通常包含历史版本、草稿、截图、附件、内部流程、客户案例和不同权限等级的材料。如果原样进入 Drive，再被 Library 浏览和选择，AI 可能从旧流程里找答案，也可能把本该只给交付团队看的内容带进普通对话。</p>
+
+                <p>这篇文章不讨论如何安装 Google Drive 插件，也不重复 OAuth 审批清单。更具体的问题是：当用户已经能在 ChatGPT 里选 Drive 文件和文件夹时，语雀资料应该怎样准备，才能被准确发现、正确引用、方便删除，并且不越过团队权限边界。</p>
+
+                <h2 id="topic-candidates">候选主题和排重判断</h2>
+                <p>写作前已检查现有博客、<code>docs/llms.txt</code>、<code>docs/sitemap.xml</code> 和最近提交。已有文章覆盖 <a href="yuque-chatgpt-google-app-drive-scope.html">ChatGPT Google App 与 Drive OAuth 权限</a>、<a href="yuque-chatgpt-apps-sync-permission.html">ChatGPT apps with sync 权限清单</a>、<a href="yuque-chatgpt-sync-retirement-admin-package.html">个人同步退役后的管理员来源包</a>、<a href="yuque-ai-browser-source-governance.html">AI 浏览器来源治理</a> 和 <a href="yuque-chatgpt-long-paste-attachment.html">长文粘贴转附件后的语雀附件包</a>。</p>
+
+                <p>本次候选方向有四个。第一，ChatGPT Library 浏览 Google Drive 后的语雀来源包，需求来自 OpenAI 8 月 13 日发布说明，搜索意图是“Drive 文件夹能被 ChatGPT 选择后语雀资料怎么整理”，YuqueOut 关联点是本地导出和可检索分包，和旧文不重复在于强调 Library 浏览、文件夹发现和来源包命名。第二，ChatGPT 8 月 21 日插件发现更新后的语雀资料插件目录治理，关联较弱，偏平台新闻。第三，ChatGPT 更接近文档回答后的语雀附件质量验收，容易和长文附件旧文重叠。第四，Google Drive 文件夹跨文件问答的删除验收，真实但范围太窄。最终选择第一项，因为它能自然连接 YuqueOut 的导出、分包和本地优先承诺。</p>
+
+                <h2 id="user-intent">用户真正要解决的问题</h2>
+                <p>搜索“ChatGPT Library Google Drive 文件夹”“语雀资料给 ChatGPT Drive”“语雀导出 AI 来源包”的用户，通常有三个实际问题。第一，资料已经在语雀里沉淀多年，想让 ChatGPT 辅助问答、总结或写作。第二，团队已经使用 Google Drive 协作，不想每次手动上传一堆 Markdown 或 PDF。第三，担心 Drive 文件夹被 AI 直接浏览后，旧版本、敏感资料和无关附件一起进入回答。</p>
+
+                <p>因此，合格的方案不是“把语雀全量导出到 Drive”。合格方案应该把语雀资料先变成可审阅资产，再变成可选择来源包。每个来源包只服务一个问题域、一个权限边界和一个更新 owner。这样用户在 ChatGPT Library 里看到文件夹名称时，就能判断它适不适合当前对话。</p>
+
+                <h2 id="export-first">先用 YuqueOut 建本地归档</h2>
+                <p>第一步永远是在本地拿到完整、可恢复的原始包。用 YuqueOut 选择目标知识库、目录、收藏或单篇文档，导出 Markdown 并开启图片本地化；需要固定排版时同时保留 PDF；涉及表格时导出 CSV 或 Excel；涉及画板、流程图和白板时导出 PNG/SVG，并补文字摘要。</p>
+
+                <ol class="step-list">
+                    <li><strong>先导出原始归档。</strong>保留语雀目录结构、附件目录和导出日期，不直接上传到 ChatGPT 可选择的 Drive 目录。</li>
+                    <li><strong>再复制工作副本。</strong>Drive 来源包只从工作副本制作，便于删旧版、脱敏和重命名。</li>
+                    <li><strong>补 README。</strong>记录语雀路径、来源范围、owner、导出日期、适用问题、排除内容和验收问题。</li>
+                    <li><strong>按用途删减。</strong>客服 FAQ、研发排障、销售问答、新员工培训不要混在一个文件夹。</li>
+                    <li><strong>保留回滚路径。</strong>Drive 包出错时，可以从只读归档重新制作，而不是继续修补已污染文件夹。</li>
+                </ol>
+
+                <p>这个流程和 <a href="yuque-local-image-backup.html">语雀图片本地化备份清单</a>、<a href="yuque-table-export-checklist.html">语雀表格导出验收清单</a> 的原则一致：离开语雀页面后，文件仍要能打开、能阅读、能追溯。</p>
+
+                <h2 id="source-pack">Drive 来源包怎么设计</h2>
+                <p>ChatGPT Library 让文件夹更容易被看见，所以命名和结构不能随意。建议来源包名称包含业务域、可见范围、版本或日期，例如 <code>support-refund-faq-public-2026-08</code>、<code>delivery-sop-internal-2026q3</code>、<code>product-install-troubleshooting-staff-2026-08-24</code>。不要使用“语雀导出”“AI 资料”“最终版”这类无法判断边界的名称。</p>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>来源包元素</th><th>建议做法</th><th>为什么重要</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>README</td><td>写清用途、范围、owner、导出日期和排除项</td><td>用户选择文件夹前能判断边界</td></tr>
+                            <tr><td>Markdown 主文档</td><td>保留标题层级、列表、代码块和相对图片路径</td><td>便于检索、引用和人工复核</td></tr>
+                            <tr><td>PDF 对照</td><td>只放制度、合同样式、培训手册等固定版式资料</td><td>避免 PDF 成为不可审阅的万能容器</td></tr>
+                            <tr><td>表格文件</td><td>CSV/Excel 加字段说明和更新时间</td><td>减少日期、金额、编号和列含义误读</td></tr>
+                            <tr><td>图片说明</td><td>为截图、画板、流程图补 image-notes.md</td><td>让 AI 有可检索文字上下文</td></tr>
+                            <tr><td>验收问题</td><td>随包保存 8-12 个真实问题</td><td>更新后可重复验证回答质量</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>如果来源包以后可能进入更正式的向量库或企业 RAG，可以沿用 <a href="yuque-ai-source-pack-citation.html">AI 来源包与引用验收清单</a>：一个包只覆盖一个问题域、一个权限边界和一个更新负责人。</p>
+
+                <h2 id="permission">权限和文件夹选择边界</h2>
+                <p>ChatGPT 会在已连接应用和用户权限范围内使用资料，但这不是把 Drive 目录放宽的理由。源文件夹权限过宽，AI 对话也会继承过宽的输入边界。建议把语雀来源包至少拆成公开、内部、受限和高敏四类。</p>
+
+                <ul>
+                    <li><strong>公开：</strong>官网帮助、公开 FAQ、公开迁移教程，可用于公开问答和内容生成。</li>
+                    <li><strong>内部：</strong>员工 SOP、交付流程、研发排障，只给员工或对应部门使用。</li>
+                    <li><strong>受限：</strong>客户项目、报价策略、合作资料，需要指定团队、指定 owner 和复核记录。</li>
+                    <li><strong>高敏：</strong>合同、人事、财务、密钥、生产账号、未发布路线图，默认不进入普通 Drive 来源包。</li>
+                </ul>
+
+                <p>还要注意“共享给我”的文件。OpenAI 发布说明提到初始体验包含 My Drive 以及直接共享给用户的文件和文件夹。团队不能只检查自己的 Drive 目录，还要检查是否有人把旧语雀导出包直接共享给成员，导致 Library 中出现多个相似来源。</p>
+
+                <h2 id="format">Markdown、PDF、表格和图片怎么放</h2>
+                <p>普通语雀文档优先用 Markdown 作为主文本。Markdown 可读、可 diff、可删改，也能保留标题、列表、链接、代码块和表格结构。PDF 适合作为固定版式备份或审批留痕，但不要把所有内容都塞成 PDF；一旦出现引用错误或敏感段落，很难快速定位和修补。</p>
+
+                <p>表格资料要保留 CSV 或 Excel 原件，并额外写字段说明。语雀表格里的合并单元格、日期、金额、编号和状态枚举，如果没有说明，AI 很容易把展示格式当成业务含义。图片和画板同理：截图、流程图、白板、思维导图可以导出 PNG/SVG，但旁边要有文字摘要，说明图片对应的步骤、版本、责任人和敏感区域是否已打码。更细的画板处理可以参考 <a href="yuque-board-export-migration.html">语雀画板导出迁移清单</a>。</p>
+
+                <h2 id="validation">ChatGPT Library 验收问题</h2>
+                <p>把来源包放进 Drive 后，不要只验证“ChatGPT 能看到文件夹”。上线前至少用不同角色跑一组固定问题，并记录答案、引用和异常。</p>
+
+                <ul>
+                    <li><strong>精确引用：</strong>问一个只存在于某篇语雀导出文档的问题，检查是否引用正确文件。</li>
+                    <li><strong>同义表达：</strong>用业务别名、缩写和口语化问法复测，确认能找到同一资料。</li>
+                    <li><strong>文件夹边界：</strong>选择公开包时，不应回答内部 SOP 或客户案例。</li>
+                    <li><strong>旧版本干扰：</strong>把归档文件移出可选来源包后，确认回答不再引用旧流程。</li>
+                    <li><strong>图片表格上下文：</strong>问截图步骤、流程图节点和表格字段，检查文字说明是否足够。</li>
+                    <li><strong>缺失拒答：</strong>问来源包没有覆盖的问题，合格回答应承认资料不足。</li>
+                    <li><strong>删除路径：</strong>删除或移走文件后复测同一问题，记录可见性变化和需要删除的历史对话。</li>
+                </ul>
+
+                <p>这些问题也应该留在来源包 README 里。每次语雀源文档更新、Drive 文件夹调整或 ChatGPT 连接策略变化后，都用同一组问题复测，避免来源包悄悄变成不可控资料堆。</p>
+
+                <h2 id="checklist">上线检查清单</h2>
+                <ul>
+                    <li>已确认 ChatGPT Library / composer 中 Google Drive 文件和文件夹的可见范围。</li>
+                    <li>已用 YuqueOut 本地导出原始归档包，并复制出单独的 Drive 来源包。</li>
+                    <li>来源包名称包含业务域、权限范围、版本或日期，不使用“最终版”“AI 资料”等模糊名称。</li>
+                    <li>公开、内部、受限、高敏资料已拆分，高敏资料默认不进入普通来源包。</li>
+                    <li>Markdown、PDF、CSV/Excel、图片、画板和附件离开语雀后仍可打开。</li>
+                    <li>截图、画板和表格已有文字摘要、字段说明或 image-notes。</li>
+                    <li>已用不同角色验证引用、文件夹边界、旧版本干扰、缺失拒答和删除路径。</li>
+                    <li>已写明来源包 owner、更新节奏、语雀源路径和下次复核日期。</li>
+                </ul>
+
+                <h2 id="faq">常见问题</h2>
+                <h3>ChatGPT Library 能浏览 Google Drive 后，语雀资料可以直接上传到 Drive 吗？</h3>
+                <p>不建议直接上传原始语雀导出目录。推荐先用 YuqueOut 在本地导出并保留只读归档，再复制出经过脱敏、分包、命名和权限复核的 Drive 来源包。</p>
+
+                <h3>YuqueOut 会把语雀资料同步到 ChatGPT Library 或 Google Drive 吗？</h3>
+                <p>不会。YuqueOut 只在浏览器本地导出语雀资料，不连接 ChatGPT Library，也不连接 Google Drive。后续上传、共享和连接由用户或管理员自行控制。</p>
+
+                <h3>Drive 来源包应该按语雀原目录还是按问题域拆分？</h3>
+                <p>更建议按问题域、权限等级、版本状态和更新负责人拆分。语雀原目录适合归档，但 ChatGPT Library 浏览和文件夹选择更需要清楚的来源包名称与边界。</p>
+
+                <h3>如何验收 ChatGPT 从 Drive 文件夹回答得是否可靠？</h3>
+                <p>至少测试精确引用、同义问题、跨文件综合、旧版本干扰、图片表格上下文、权限差异、缺失信息拒答和删除后的可见性变化。</p>
+
+                <div class="blog-cta">
+                    <h3>先把语雀资料整理成可选择的来源包</h3>
+                    <p>使用 YuqueOut 批量导出 Markdown、PDF、CSV、图片、画板和附件，再把经过审阅的副本放入 Google Drive，供 ChatGPT Library 按权限选择。</p>
+                    <a href="https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc?utm_source=blog_chatgpt_library_drive_source_pack_cta" target="_blank" rel="noopener" class="blog-cta-button">免费安装 YuqueOut</a>
+                </div>
+
+                <div class="blog-related">
+                    <h2>相关文章</h2>
+                    <ul>
+                        <li><a href="yuque-chatgpt-google-app-drive-scope.html">语雀资料进入 ChatGPT Google App 前：Drive 同步包与 OAuth 权限清单</a></li>
+                        <li><a href="yuque-ai-source-pack-citation.html">语雀资料给 AI 用前怎么拆来源包：引用验收与权限边界清单</a></li>
+                        <li><a href="yuque-chatgpt-long-paste-attachment.html">ChatGPT 长文自动变附件后：语雀资料用 YuqueOut 做可验收附件包</a></li>
+                        <li><a href="yuque-local-image-backup.html">语雀图片本地化备份：Markdown 导出、相对路径和长期可读检查清单</a></li>
+                    </ul>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <script src="../script.js"></script>
+</body>
+</html>

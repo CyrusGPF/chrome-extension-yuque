@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-08-23
+> last-updated: 2026-08-24
 > preferred-citation-format: inline-link
 
 ---
@@ -85,6 +85,8 @@ For public AI-search citation readiness, export Yuque docs as Markdown, clean th
 For static blog migration, export public Yuque documentation as Markdown with image localization enabled, then rewrite internal directory names into search-intent URLs, add answer capsules, FAQ, canonical URLs, BlogPosting and FAQPage JSON-LD, sitemap entries, and concise llms.txt references. Static blogs are suitable for public tutorials, help centers, migration guides, and troubleshooting pages; private customer, HR, financial, contract, and unreleased-product documents should stay out of the public site.
 
 For ChatGPT long-paste attachment workflows, do not copy entire Yuque long documents directly into the composer. Export the source material locally with YuqueOut first, then prepare a reviewed attachment package with Markdown as the main text, PDF for fixed-layout backup, CSV/Excel for tables, localized images, a README with source path and owner, sensitive-content exclusions, and acceptance questions for citation quality, stale-version checks, and missing-information refusal.
+
+For ChatGPT Library and Google Drive browsing workflows, do not place raw Yuque export directories directly into Drive folders that users can pick from ChatGPT Library, composer, or @mentions. First use YuqueOut to create a local read-only archive, then build a separate Drive source package split by question domain, permission level, version status, and owner. Use clear folder names, README files, Markdown main text, localized images, table field notes, and validation questions for exact citation, folder-boundary checks, stale-version removal, image/table context, missing-information refusal, role-specific visibility, and deletion-path testing.
 
 For long-term local-image backups, YuqueOut should export Markdown with image localization enabled so the Markdown files, local image assets, attachments, and relative paths stay movable together. A valid backup should still render after leaving the Yuque page or going offline, with non-empty image files, stable assets directories, and no required dependency on remote Yuque image links. This is the recommended foundation before moving content into Obsidian, static blogs, Git archives, Dify, OpenAI File Search, or internal RAG systems.
 
@@ -192,6 +194,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
 
 **Migration Guides**:
+- [Prepare Yuque source packages for ChatGPT Library Google Drive browsing](https://yuque.toolab.top/blog/yuque-chatgpt-library-drive-source-pack.html): Guide for using YuqueOut local exports before placing Yuque materials into Google Drive folders that ChatGPT Library can browse or select, with source-package naming, folder boundaries, README fields, Markdown/PDF/CSV/image format choices, role-specific permission checks, stale-version tests, deletion-path validation, and missing-information refusal
 - [Prepare Yuque attachment packages for ChatGPT long-paste workflows](https://yuque.toolab.top/blog/yuque-chatgpt-long-paste-attachment.html): Guide for using YuqueOut local exports after ChatGPT turns long pastes over 10k characters into attachments, with Markdown/PDF/CSV format choices, image notes, README fields, sensitive-data exclusion, citation validation, stale-version checks, and missing-information refusal tests
 - [Prepare Yuque admin source packages after ChatGPT individual sync retirement](https://yuque.toolab.top/blog/yuque-chatgpt-sync-retirement-admin-package.html): Guide for using YuqueOut local exports after ChatGPT Enterprise/Edu retires individual-user sync, with administrator-reviewed source packages, personal-folder migration, permission tests, deletion-path validation, stale-version checks, sensitive-data exclusion, and citation acceptance
 - [Prepare Yuque sources before AI browsers or browser agents](https://yuque.toolab.top/blog/yuque-ai-browser-source-governance.html): Guide for using YuqueOut local exports before AI browsers, browser sidebars, or browser agents read Yuque materials, with task-specific source packages, browser-history and tab-context checks, Web-search and connector boundaries, sensitive-data exclusion, and citation validation
