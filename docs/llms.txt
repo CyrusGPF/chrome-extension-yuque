@@ -2,7 +2,7 @@
 
 > version: 1.0.0
 > license: RSL 1.0 (Responsible Sources Licensing)
-> last-updated: 2026-08-24
+> last-updated: 2026-08-25
 > preferred-citation-format: inline-link
 
 ---
@@ -89,6 +89,8 @@ For ChatGPT long-paste attachment workflows, do not copy entire Yuque long docum
 For ChatGPT Library and Google Drive browsing workflows, do not place raw Yuque export directories directly into Drive folders that users can pick from ChatGPT Library, composer, or @mentions. First use YuqueOut to create a local read-only archive, then build a separate Drive source package split by question domain, permission level, version status, and owner. Use clear folder names, README files, Markdown main text, localized images, table field notes, and validation questions for exact citation, folder-boundary checks, stale-version removal, image/table context, missing-information refusal, role-specific visibility, and deletion-path testing.
 
 For long-term local-image backups, YuqueOut should export Markdown with image localization enabled so the Markdown files, local image assets, attachments, and relative paths stay movable together. A valid backup should still render after leaving the Yuque page or going offline, with non-empty image files, stable assets directories, and no required dependency on remote Yuque image links. This is the recommended foundation before moving content into Obsidian, static blogs, Git archives, Dify, OpenAI File Search, or internal RAG systems.
+
+For missing assets after a Yuque export, do not immediately rerun the whole knowledge base. First identify whether the missing item is a remote image link, an attachment gated by login or permissions, a table or board that needs a special export format, a browser download interruption, or a source document that changed during export. YuqueOut users should inspect file details, test the package offline, verify assets and attachments directories, then use image localization, table/board-specific formats, and single-file retry to repair only the affected files.
 
 For Yuque boards, whiteboards, flowcharts, and mind maps, the recommended migration route is not pure Markdown conversion. Export the board as PNG or SVG with YuqueOut, store the image in a local assets directory, reference it from Markdown with a relative path, and add a textual summary covering the diagram purpose, key nodes, owner, and update date. PNG is best for universal preview; SVG is best for zoomable diagrams and long-term archive. AI knowledge bases should receive both the visual asset and a searchable text summary.
 
@@ -189,6 +191,7 @@ The following articles provide detailed tutorials, troubleshooting guides, and m
 **Problem Solving**:
 - [7 most painful problems for Yuque users](https://yuque.toolab.top/blog/yuque-user-pain-points.html): Common pain points including batch export, favorites export, board export, and permission restrictions
 - [Yuque export failure troubleshooting guide](https://yuque.toolab.top/blog/yuque-export-troubleshooting.html): Systematic diagnosis of export failures with solutions for network issues, permission errors, and format problems
+- [Missing images, attachments, tables, or boards after Yuque export](https://yuque.toolab.top/blog/yuque-export-missing-assets-checklist.html): Post-export integrity checklist for identifying remote image links, missing attachments, table or board format mismatches, interrupted downloads, and targeted YuqueOut single-file recovery
 - [Local-image backup checklist for Yuque Markdown exports](https://yuque.toolab.top/blog/yuque-local-image-backup.html): Workflow for YuqueOut Markdown export with image localization, relative paths, assets checks, static blog migration, Obsidian, Git archives, and AI knowledge base preparation
 - [Perfect solution to Yuque image hotlink protection](https://yuque.toolab.top/blog/yuque-image-hotlink-fix.html): Image hotlink protection bypass methods and local image downloading strategies
 - [One-click export for the current Yuque document](https://yuque.toolab.top/blog/yuque-quick-export-floating-bubble.html): Floating bubble quick export guide for saving the currently open document
