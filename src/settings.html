@@ -189,6 +189,21 @@
               </div>
             </div>
           </div>
+          <div class="setting-item">
+            <label><svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4"/></svg><span data-i18n="fileConflictLabel">同名文件冲突</span></label>
+            <p class="setting-desc" data-i18n="fileConflictDesc">重新导出时如何对待同名文件。覆盖可直接替换旧文件、不留副本（推荐）；保留副本会生成「文档 (1).md」等文件。</p>
+            <div class="icon-select" data-for="fileConflict">
+              <input type="hidden" id="fileConflict" value="overwrite">
+              <div class="icon-select-trigger">
+                <span class="icon-select-display"></span>
+                <svg class="icon-select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="icon-select-dropdown">
+                <div class="icon-select-option" data-value="overwrite"><span>覆盖（推荐）</span></div>
+                <div class="icon-select-option" data-value="uniquify"><span>保留副本</span></div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="form-card">

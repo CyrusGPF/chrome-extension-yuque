@@ -42,10 +42,16 @@ function handleDownloadFilename(downloadItem, suggest) {
   const targetPath = downloadFilenameOverrides.get(downloadItem.id);
   if (targetPath) {
     downloadFilenameOverrides.delete(downloadItem.id);
-    suggest({ filename: targetPath, conflictAction: 'uniquify' });
+    suggest({ filename: targetPath, conflictAction: resolveConflictAction() });
     return;
   }
   suggest();
+}
+
+// 'overwrite' (default): re-exporting overwrites the same file instead of
+// creating '(1)' copies; 'uniquify': keep copies (legacy behavior).
+function resolveConflictAction() {
+  return exportState.fileConflict === 'uniquify' ? 'uniquify' : 'overwrite';
 }
 
 function handleDownloadChanged(delta) {
@@ -151,7 +157,7 @@ function download(url, filename) {
       url,
       filename: normalizedFilename,
       saveAs: false,
-      conflictAction: 'uniquify'
+      conflictAction: resolveConflictAction()
     }, (id) => {
       if (chrome.runtime.lastError) {
         clearTimeout(timer);
