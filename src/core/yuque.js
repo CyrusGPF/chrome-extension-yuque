@@ -376,16 +376,27 @@ export async function fetchBookToc(bookNamespace, host = null) {
  */
 export function buildDocListFromApiDocs(docs, toc = []) {
   const files = [];
-  const folderPathByDocId = buildFolderPathMapFromToc(toc);
+  const tocInfoByDocId = buildFolderPathMapFromToc(toc);
   docs.forEach(doc => {
     const docType = doc.type || DOC_TYPES.DOC;
     if (!SUPPORTED_DOC_TYPES.has(docType)) return;
+    const info = tocInfoByDocId.get(doc.id) || null;
     files.push({
       id: doc.id,
       slug: doc.slug,
       title: doc.title || '未命名文档',
       docType,
-      folderPath: folderPathByDocId.get(doc.id) || '',
+      folderPath: info?.folderPath || '',
+      // Obsidian 导出结构信息（来自语雀 TOC）：
+      // orderSegments = 从根到自身的完整层级序号，如 [1,1,2]
+      // siblingOrder  = 自身在其父节点下的同级序号（文件名前缀）
+      // folderSegments/folderOrders = 父链标题与其同级序号（目录段）
+      // hasChildren  = 是否有子文档（文件夹笔记模式用）
+      orderSegments: info?.orderSegments || null,
+      siblingOrder: info?.siblingOrder || 1,
+      folderSegments: info?.folderSegments || null,
+      folderOrders: info?.folderOrders || null,
+      hasChildren: info?.hasChildren || false,
       status: 'pending',
       localPath: '',
       updatedAt: doc.content_updated_at || doc.updated_at,
@@ -426,43 +437,90 @@ function safeParseEmbeddedPayload(encodedPayload) {
   }
 }
 
+/**
+ * Build per-doc structural info from the ordered Yuque TOC.
+ * The TOC array order IS the knowledge base directory order (parents before
+ * children, siblings in display order), so we can derive hierarchical numbers
+ * that preserve the original ordering after export to the file system.
+ *
+ * Returns Map<doc_id, {
+ *   folderPath,        // legacy: parent chain titles joined by '/' (no numbers)
+ *   orderSegments,     // full hierarchy numbers from root to self, e.g. [1,1,2]
+ *   siblingOrder,      // order among siblings under the same parent (file name prefix)
+ *   folderSegments,    // parent chain titles (TITLE/DOC only), root first
+ *   folderOrders,      // sibling orders matching folderSegments (folder name prefixes)
+ *   hasChildren,       // whether this DOC node has DOC children (folder note mode)
+ * }>
+ */
 function buildFolderPathMapFromToc(toc = []) {
   const byUuid = new Map();
   toc.forEach(item => {
     if (item?.uuid) byUuid.set(item.uuid, item);
   });
 
+  // Sibling order = 1-based index among children of the same parent.
+  // TITLE and DOC both occupy a slot so group titles keep their position.
+  const siblingOrder = new Map();   // uuid -> 1-based index
+  const seenChildren = new Map();   // parent_uuid -> children seen so far
+  toc.forEach(item => {
+    const parentKey = item?.parent_uuid || '__root__';
+    const count = (seenChildren.get(parentKey) || 0) + 1;
+    seenChildren.set(parentKey, count);
+    siblingOrder.set(item.uuid, count);
+  });
+
+  // Parent uuids that have at least one DOC child (used for folder note mode).
+  const hasDocChildren = new Set();
+  toc.forEach(item => {
+    if (item?.type === 'DOC' && item?.parent_uuid) {
+      hasDocChildren.add(item.parent_uuid);
+    }
+  });
+
   const pathCache = new Map();
 
-  function resolveFolderPath(item) {
-    if (!item?.uuid) return '';
+  function resolveNode(item) {
+    if (!item?.uuid) return null;
     if (pathCache.has(item.uuid)) return pathCache.get(item.uuid);
 
-    const segments = [];
+    const orderSegments = [siblingOrder.get(item.uuid) || 1];
+    const folderSegments = [];
+    const folderOrders = [];
     let current = item;
 
     while (current?.parent_uuid) {
       current = byUuid.get(current.parent_uuid);
       if (!current) break;
 
+      orderSegments.unshift(siblingOrder.get(current.uuid) || 1);
+
       const title = sanitizePathComponent(current.title || '');
       if (!title) continue;
 
       // Both TITLE and DOC nodes can represent folders for descendants.
       if (current.type === 'TITLE' || current.type === 'DOC') {
-        segments.unshift(title);
+        folderSegments.unshift(title);
+        folderOrders.unshift(siblingOrder.get(current.uuid) || 1);
       }
     }
 
-    const path = segments.join('/');
-    pathCache.set(item.uuid, path);
-    return path;
+    const info = {
+      folderPath: folderSegments.join('/'),
+      orderSegments,
+      siblingOrder: siblingOrder.get(item.uuid) || 1,
+      folderSegments,
+      folderOrders,
+      hasChildren: hasDocChildren.has(item.uuid),
+    };
+    pathCache.set(item.uuid, info);
+    return info;
   }
 
   const result = new Map();
   toc.forEach(item => {
     if (!item || item.type !== 'DOC' || !item.doc_id) return;
-    result.set(item.doc_id, resolveFolderPath(item));
+    const info = resolveNode(item);
+    if (info) result.set(item.doc_id, info);
   });
 
   return result;

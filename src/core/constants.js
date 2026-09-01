@@ -82,6 +82,10 @@ export const DEFAULT_SETTINGS = {
   skipEncryptedBookmarks: false, // 收藏中跳过加密文档/知识库
   markdownMode: 'local',         // 'local' = Lake HTML本地转换, 'api' = 官方导出API
   sheetMode: 'local',            // 'local' = 本地引擎, 'api' = 官方导出API（仅xlsx，仅有权限的文档）
+  // Obsidian 友好导出结构（默认开启，可关闭恢复旧行为）
+  useOrderPrefix: true,          // 文件名/目录名加层级序号前缀，保留语雀目录顺序（如 01-章节/01-01-文档.md）
+  useFolderNote: true,           // 嵌套文档使用 Obsidian 文件夹笔记模式：父文档存为 父/父.md
+  generateReadme: true,          // 知识库根目录生成 README.md 顺序索引
 };
 
 export const EXPORT_POLL_MAX = 3;

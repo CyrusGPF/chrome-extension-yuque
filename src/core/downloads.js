@@ -1,5 +1,5 @@
 import { exportState } from './state.js';
-import { sanitizePathComponent, sanitizePathSegments } from './utils.js';
+import { sanitizePathComponent, sanitizePathSegments, buildExportRelativeSegments } from './utils.js';
 
 const pendingDownloadUrlMap = new Map();
 const downloadFilenameOverrides = new Map();
@@ -84,6 +84,15 @@ export function initDownloadHooks() {
 export async function saveContentToDisk(content, file, extension, mime) {
   const relativePath = buildRelativeDownloadPath(file, extension);
   const dataUrl = `data:${mime};charset=utf-8,${encodeURIComponent(content)}`;
+  await download(dataUrl, relativePath);
+  return relativePath;
+}
+
+/**
+ * Save text content to an explicit relative path (e.g. generated index files).
+ */
+export async function saveTextToRelativePath(content, relativePath, mime) {
+  const dataUrl = `data:${mime || 'text/plain'};charset=utf-8,${encodeURIComponent(content)}`;
   await download(dataUrl, relativePath);
   return relativePath;
 }
@@ -200,21 +209,13 @@ function blobToDataUrl(blob) {
 }
 
 function buildRelativeDownloadPath(file, extension) {
-  const segments = [];
-  const baseName = `${sanitizePathComponent(file?.title) || '未命名文档'}.${extension}`;
-
-  if (exportState.subfolder) {
-    segments.push(...sanitizePathSegments(exportState.subfolder));
-  }
-  if (file?.bookName) {
-    segments.push(...sanitizePathSegments(file.bookName));
-  }
-  if (file?.folderPath) {
-    segments.push(...sanitizePathSegments(file.folderPath));
-  }
-
-  segments.push(baseName);
-  return segments.filter(Boolean).join('/');
+  // Shared with exporter.js buildFilePath: hierarchical order prefixes and
+  // folder-note layout keep every save path consistent with the Yuque TOC.
+  return buildExportRelativeSegments(file, extension, {
+    subfolder: exportState.subfolder || '',
+    useOrderPrefix: exportState.useOrderPrefix,
+    useFolderNote: exportState.useFolderNote,
+  }).join('/');
 }
 
 function normalizeRelativePath(path = '') {
