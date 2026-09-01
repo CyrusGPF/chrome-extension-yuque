@@ -18,6 +18,7 @@ function createInitialState() {
     attachmentMode: 'book',
     attachmentFolderName: 'attachment',
     fileConflict: 'overwrite',
+    exportConfirm: true,
     logs: [],
     // User info
     userInfo: null,     // { id, login, name, avatar_url }

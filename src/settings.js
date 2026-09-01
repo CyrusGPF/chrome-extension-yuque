@@ -5,7 +5,7 @@ const SETTINGS_KEYS = [
   'downloadImages', 'imageConcurrency',
   'docExportFormat', 'sheetExportFormat', 'tableExportFormat', 'boardExportFormat',
   'showBubble', 'skipEncryptedBookmarks', 'markdownMode', 'sheetMode',
-  'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode', 'attachmentFolderName', 'fileConflict'
+  'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode', 'attachmentFolderName', 'fileConflict', 'exportConfirm'
 ];
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -48,6 +48,7 @@ async function loadSettings() {
   setVal('attachmentMode', data.attachmentMode || 'book');
   setVal('attachmentFolderName', data.attachmentFolderName || 'attachment');
   setVal('fileConflict', data.fileConflict || 'overwrite');
+  setChecked('exportConfirm', data.exportConfirm !== false);
 }
 
 function bindNavigation() {
@@ -95,6 +96,7 @@ async function saveAllSettings() {
     attachmentMode: getVal('attachmentMode') || 'book',
     attachmentFolderName: getVal('attachmentFolderName') || 'attachment',
     fileConflict: getVal('fileConflict') || 'overwrite',
+    exportConfirm: getChecked('exportConfirm'),
   };
 
   await chrome.storage.local.set(settings);

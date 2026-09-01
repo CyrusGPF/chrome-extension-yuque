@@ -1,24 +1,15 @@
 import { domRefs } from './dom.js';
 
-// Books the user has already confirmed to re-export after cleaning this session.
-const cleanConfirmedBookIds = new Set();
-
 /**
- * Show the "same-name knowledge base re-export" confirmation modal.
- * @param {string[]} bookNames  names of knowledge bases that were exported before
- * @returns {Promise<'overwrite'|'clean'|'cancel'|null>} user choice, null if no modal shown
+ * Show the "export confirmation" modal that asks the user to check the target
+ * download path for any same-name knowledge base folder before exporting.
+ * Shown on every export start unless disabled in settings / via "don't ask again".
+ * @returns {Promise<'continue'|'noPrompt'|'cancel'>} user choice
  */
-export function promptReExport(bookNames) {
+export function promptReExport() {
   return new Promise(resolve => {
     const modal = domRefs.reExportModal;
-    if (!modal || !Array.isArray(bookNames) || !bookNames.length) {
-      resolve(null);
-      return;
-    }
-
-    if (domRefs.reExportBookName) {
-      domRefs.reExportBookName.textContent = bookNames.join('、');
-    }
+    if (!modal) { resolve('cancel'); return; }
     showModal(true);
 
     const finish = choice => {
@@ -28,8 +19,8 @@ export function promptReExport(bookNames) {
     };
 
     const handler = choice => () => finish(choice);
-    if (domRefs.reExportOverwriteBtn) domRefs.reExportOverwriteBtn.onclick = handler('overwrite');
-    if (domRefs.reExportCleanBtn) domRefs.reExportCleanBtn.onclick = handler('clean');
+    if (domRefs.reExportOverwriteBtn) domRefs.reExportOverwriteBtn.onclick = handler('continue');
+    if (domRefs.reExportCleanBtn) domRefs.reExportCleanBtn.onclick = handler('noPrompt');
     if (domRefs.reExportCancelBtn) domRefs.reExportCancelBtn.onclick = handler('cancel');
     if (domRefs.reExportModalClose) domRefs.reExportModalClose.onclick = handler('cancel');
     modal.onclick = e => { if (e.target === modal) finish('cancel'); };
@@ -59,12 +50,4 @@ function showModal(shouldShow) {
     reExportModal.classList.remove('is-visible');
     setTimeout(() => { reExportModal.setAttribute('inert', ''); }, 300);
   }
-}
-
-export function markCleanConfirmed(bookIds) {
-  (bookIds || []).forEach(id => cleanConfirmedBookIds.add(String(id)));
-}
-
-export function isCleanConfirmed(bookId) {
-  return cleanConfirmedBookIds.has(String(bookId));
 }
