@@ -209,6 +209,26 @@
     </div>
   </div>
 
+  <!-- Re-export confirmation modal -->
+  <div id="reExportModal" class="rating-modal" inert>
+    <div class="rating-modal-card" role="dialog" aria-modal="true" aria-labelledby="reExportTitle">
+      <button id="reExportModalClose" class="sponsor-modal-close" aria-label="关闭">&times;</button>
+      <div class="rating-modal-header">
+        <h3 id="reExportTitle" data-i18n="reExportTitle">检测到已导出的知识库</h3>
+        <p data-i18n="reExportDesc">你之前导出过以下知识库，请选择处理方式：</p>
+        <p id="reExportBookName" class="re-export-book-name"></p>
+      </div>
+      <div class="rating-modal-body">
+        <p class="re-export-hint" data-i18n="reExportHint">「覆盖并继续」直接更新旧文件；「清理旧库并重导」会打开下载文件夹，你删除旧知识库目录后重新导出，可彻底去除旧文件残留。</p>
+      </div>
+      <div class="rating-modal-footer">
+        <button id="reExportOverwriteBtn" type="button" class="btn btn-primary" data-i18n="reExportOverwrite">覆盖并继续</button>
+        <button id="reExportCleanBtn" type="button" class="btn" data-i18n="reExportClean">清理旧库并重导</button>
+        <button id="reExportCancelBtn" type="button" class="btn" data-i18n="reExportCancel">取消</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="popup.js"></script>
 </body>
 </html>
