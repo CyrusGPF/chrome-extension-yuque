@@ -15,6 +15,7 @@ function createInitialState() {
     useOrderPrefix: true,
     useFolderNote: true,
     generateReadme: true,
+    attachmentMode: 'book',
     logs: [],
     // User info
     userInfo: null,     // { id, login, name, avatar_url }

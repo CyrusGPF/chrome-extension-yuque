@@ -174,6 +174,21 @@
             </label>
             <p class="setting-desc" data-i18n="generateReadmeDesc">每个知识库根目录生成 README.md，按语雀原始目录顺序列出全部文档链接，导入 Obsidian 后作为知识库导航页。</p>
           </div>
+          <div class="setting-item">
+            <label><svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span data-i18n="attachmentModeLabel">图片附件目录</span></label>
+            <p class="setting-desc" data-i18n="attachmentModeDesc">图片等附件的存放方式。每个知识库一个 attachments 可在多个知识库共用一个 Obsidian 库时互不干扰，删除某库时附件一并删除；每篇文档一个 assets 为旧行为。</p>
+            <div class="icon-select" data-for="attachmentMode">
+              <input type="hidden" id="attachmentMode" value="book">
+              <div class="icon-select-trigger">
+                <span class="icon-select-display"></span>
+                <svg class="icon-select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="icon-select-dropdown">
+                <div class="icon-select-option" data-value="book"><span>每个知识库一个 attachments（推荐）</span></div>
+                <div class="icon-select-option" data-value="doc"><span>每篇文档一个 assets</span></div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="form-card">

@@ -5,7 +5,7 @@ const SETTINGS_KEYS = [
   'downloadImages', 'imageConcurrency',
   'docExportFormat', 'sheetExportFormat', 'tableExportFormat', 'boardExportFormat',
   'showBubble', 'skipEncryptedBookmarks', 'markdownMode', 'sheetMode',
-  'useOrderPrefix', 'useFolderNote', 'generateReadme'
+  'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode'
 ];
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -45,6 +45,7 @@ async function loadSettings() {
   setChecked('useOrderPrefix', data.useOrderPrefix !== false);
   setChecked('useFolderNote', data.useFolderNote !== false);
   setChecked('generateReadme', data.generateReadme !== false);
+  setVal('attachmentMode', data.attachmentMode || 'book');
 }
 
 function bindNavigation() {
@@ -89,6 +90,7 @@ async function saveAllSettings() {
     useOrderPrefix: getChecked('useOrderPrefix'),
     useFolderNote: getChecked('useFolderNote'),
     generateReadme: getChecked('generateReadme'),
+    attachmentMode: getVal('attachmentMode') || 'book',
   };
 
   await chrome.storage.local.set(settings);

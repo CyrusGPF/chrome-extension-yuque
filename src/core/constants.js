@@ -86,6 +86,9 @@ export const DEFAULT_SETTINGS = {
   useOrderPrefix: true,          // 文件名/目录名加层级序号前缀，保留语雀目录顺序（如 01-章节/01-01-文档.md）
   useFolderNote: true,           // 嵌套文档使用 Obsidian 文件夹笔记模式：父文档存为 父/父.md
   generateReadme: true,          // 知识库根目录生成 README.md 顺序索引
+  // 图片/附件目录模式：'book' = 每个知识库根目录一个 attachments/（多库共用一个 vault 时互不干扰）
+  //                 'doc' = 每篇文档自己的 assets/（旧行为）
+  attachmentMode: 'book',
 };
 
 export const EXPORT_POLL_MAX = 3;
