@@ -211,6 +211,8 @@
   "useFolderNoteDesc": { "message": "Parent docs are saved inside a same-named folder (e.g. 01-Parent/01-Parent.md), following the Obsidian folder-note convention, with child docs flat underneath. Applies to Markdown exports only." },
   "generateReadmeLabel": { "message": "Generate README index" },
   "generateReadmeDesc": { "message": "Generate a README.md at each knowledge base root listing all documents in the original Yuque directory order, as a navigation page after importing into Obsidian." },
+  "attachmentModeLabel": { "message": "Image attachment folder" },
+  "attachmentModeDesc": { "message": "Where to store images and other attachments. \"One attachments folder per knowledge base\" keeps multiple knowledge bases that share one Obsidian vault isolated (deleting a book removes its attachments too); \"one assets folder per document\" is the legacy behavior." },
   "cardQuickExport": { "message": "Quick Export" },
   "showBubbleLabel": { "message": "Show floating bubble" },
   "showBubbleDesc": { "message": "Display a draggable floating bubble on Yuque doc pages. Click to instantly export the current document. Format and directory follow settings above. Documents without export permission auto-convert to Markdown via local engine." },

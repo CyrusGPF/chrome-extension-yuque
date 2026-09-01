@@ -396,7 +396,7 @@ async function handleStartExport(data, sendResponse) {
       'downloadImages', 'imageConcurrency',
       'docExportFormat', 'sheetExportFormat', 'boardExportFormat', 'tableExportFormat',
       'markdownMode', 'sheetMode',
-      'useOrderPrefix', 'useFolderNote', 'generateReadme'
+      'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode'
     ]);
 
     exportState.isExporting = true;
@@ -416,6 +416,7 @@ async function handleStartExport(data, sendResponse) {
     exportState.useOrderPrefix = settings.useOrderPrefix !== false;
     exportState.useFolderNote = settings.useFolderNote !== false;
     exportState.generateReadme = settings.generateReadme !== false;
+    exportState.attachmentMode = settings.attachmentMode || DEFAULT_SETTINGS.attachmentMode;
     // Keep existing logs (file info phase logs) instead of clearing
     // exportState.logs = [];
 
@@ -871,14 +872,22 @@ async function localizeMarkdownImages(mdText, file, imageBasePath, imageConcurre
       const task = queue.shift();
       try {
         const ext = guessImageExt(task.url);
-        const localName = `assets/${sanitizePathComponent(file.title)}-${task.idx}.${ext}`;
-        const downloadPath = imageBasePath !== undefined && imageBasePath !== null
-          ? (imageBasePath ? `${imageBasePath}/${localName}` : localName)
-          : buildImagePath(file, localName);
+        const filename = `${sanitizePathComponent(file.title)}-${task.idx}.${ext}`;
+        let downloadPath;
+        let ref;
+        if (imageBasePath !== undefined && imageBasePath !== null) {
+          const localName = 'assets/' + filename;
+          downloadPath = imageBasePath ? imageBasePath + '/' + localName : localName;
+          ref = localName;
+        } else {
+          const p = resolveAssetPaths(file, filename);
+          downloadPath = p.savePath;
+          ref = p.ref;
+        }
         const cleanUrl = task.url.replace(/x-oss-process=image%2Fwatermark%2C[^&]*/, '');
         await downloadUrlToDisk(cleanUrl, downloadPath);
 
-        results.push({ fullMatch: task.fullMatch, alt: task.alt, localName });
+        results.push({ fullMatch: task.fullMatch, alt: task.alt, ref });
       } catch (e) {
         logFn(`  图片下载失败: ${task.url.substring(0, 80)}... ${e.message}`);
       }
@@ -890,7 +899,7 @@ async function localizeMarkdownImages(mdText, file, imageBasePath, imageConcurre
   // Apply all replacements sequentially after downloads complete
   let localizedMd = mdText;
   for (const r of results) {
-    localizedMd = localizedMd.replace(r.fullMatch, `![${r.alt}](${r.localName})`);
+    localizedMd = localizedMd.replace(r.fullMatch, '![' + r.alt + '](' + r.ref + ')');
   }
 
   return { localizedMd, imageCount: results.length };
@@ -928,10 +937,18 @@ async function renderEmbeddedBoardsToAssets(lakeHtml, file, imageBasePath, logFn
     boardIndex += 1;
     try {
       const { svg } = await convertBoardToSvg(JSON.stringify(data));
-      const localName = `assets/${sanitizePathComponent(file.title) || '未命名文档'}-白板-${boardIndex}.svg`;
-      const downloadPath = imageBasePath !== undefined && imageBasePath !== null
-        ? (imageBasePath ? `${imageBasePath}/${localName}` : localName)
-        : buildImagePath(file, localName);
+      const filename = `${sanitizePathComponent(file.title) || '未命名文档'}-白板-${boardIndex}.svg`;
+      let downloadPath;
+      let ref;
+      if (imageBasePath !== undefined && imageBasePath !== null) {
+        const localName = 'assets/' + filename;
+        downloadPath = imageBasePath ? imageBasePath + '/' + localName : localName;
+        ref = localName;
+      } else {
+        const p = resolveAssetPaths(file, filename);
+        downloadPath = p.savePath;
+        ref = p.ref;
+      }
       await saveBlobToDisk(new Blob([svg], { type: 'image/svg+xml' }), downloadPath);
 
       const mermaid = convertBoardToMermaid(data);
@@ -939,7 +956,7 @@ async function renderEmbeddedBoardsToAssets(lakeHtml, file, imageBasePath, logFn
       const markdown = [
         mermaid ? `\`\`\`mermaid\n${mermaid}\n\`\`\`` : '',
         echarts ? `\`\`\`echarts\n${echarts}\n\`\`\`` : '',
-        `![白板 ${boardIndex}](${localName})`
+        '![白板 ' + boardIndex + '](' + ref + ')'
       ].filter(Boolean).join('\n\n');
       const markdownCardData = { markdown };
       const markdownCard = `<card type="inline" name="markdown" value="data:${encodeURIComponent(JSON.stringify(markdownCardData))}"></card>`;
@@ -983,6 +1000,41 @@ function buildImagePath(file, localName) {
 
   segments.push(localName);
   return segments.filter(Boolean).join('/');
+}
+
+/**
+ * Resolve the save path and the Markdown reference for one attachment
+ * (a CDN image or an embedded board SVG) belonging to a document.
+ *
+ * attachmentMode 'book' (default): every attachment in a knowledge base goes
+ *   to <bookName>/attachments/, referenced by a relative path that backtracks
+ *   the document's folder depth. This keeps multiple knowledge bases that
+ *   share one vault isolated — deleting a book folder removes its attachments.
+ * attachmentMode 'doc' (legacy): each document keeps its own assets/ folder.
+ *
+ * @param file     the document being exported
+ * @param filename attachment file name WITHOUT directory prefix, e.g. "doc1-1.png"
+ * @returns {{ savePath: string, ref: string }}
+ */
+function resolveAssetPaths(file, filename) {
+  const perBook = exportState.attachmentMode === 'book' && Boolean(file.bookName);
+  const folderNote = Boolean(exportState.useFolderNote && file.hasChildren);
+  const dirDepth = (Array.isArray(file.folderSegments) ? file.folderSegments.length : 0) + (folderNote ? 1 : 0);
+
+  if (perBook) {
+    const savePath = [
+      ...sanitizePathSegments(exportState.subfolder),
+      ...sanitizePathSegments(file.bookName),
+      'attachments',
+      sanitizePathComponent(filename),
+    ].filter(Boolean).join('/');
+    const ref = '../'.repeat(dirDepth) + 'attachments/' + filename;
+    return { savePath, ref };
+  }
+
+  // legacy per-doc behavior
+  const localName = 'assets/' + filename;
+  return { savePath: buildImagePath(file, localName), ref: localName };
 }
 
 /**
