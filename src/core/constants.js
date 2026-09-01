@@ -89,6 +89,8 @@ export const DEFAULT_SETTINGS = {
   // 图片/附件目录模式：'book' = 每个知识库根目录一个 attachments/（多库共用一个 vault 时互不干扰）
   //                 'doc' = 每篇文档自己的 assets/（旧行为）
   attachmentMode: 'book',
+  // 文件名冲突处理：'overwrite' = 重导同名直接覆盖（不留副本，推荐）；'uniquify' = 自动加 (1) 保留副本（旧行为）
+  fileConflict: 'overwrite',
 };
 
 export const EXPORT_POLL_MAX = 3;

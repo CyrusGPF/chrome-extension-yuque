@@ -16,6 +16,7 @@ function createInitialState() {
     useFolderNote: true,
     generateReadme: true,
     attachmentMode: 'book',
+    fileConflict: 'overwrite',
     logs: [],
     // User info
     userInfo: null,     // { id, login, name, avatar_url }

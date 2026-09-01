@@ -396,7 +396,7 @@ async function handleStartExport(data, sendResponse) {
       'downloadImages', 'imageConcurrency',
       'docExportFormat', 'sheetExportFormat', 'boardExportFormat', 'tableExportFormat',
       'markdownMode', 'sheetMode',
-      'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode'
+      'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode', 'fileConflict'
     ]);
 
     exportState.isExporting = true;
@@ -417,6 +417,7 @@ async function handleStartExport(data, sendResponse) {
     exportState.useFolderNote = settings.useFolderNote !== false;
     exportState.generateReadme = settings.generateReadme !== false;
     exportState.attachmentMode = settings.attachmentMode || DEFAULT_SETTINGS.attachmentMode;
+    exportState.fileConflict = settings.fileConflict || DEFAULT_SETTINGS.fileConflict;
     // Keep existing logs (file info phase logs) instead of clearing
     // exportState.logs = [];
 
@@ -706,9 +707,10 @@ async function exportFiles(runToken) {
                 let mdText = await result.blob.text();
                 if (exportState.useOrderPrefix) mdText = withOrderFrontmatter(mdText, file);
                 if (exportState.downloadImages) {
-                  const { localizedMd, imageCount } = await localizeMarkdownImages(mdText, file);
+                  const { localizedMd, imageCount, failedImages } = await localizeMarkdownImages(mdText, file);
                   await saveContentToDisk(localizedMd, file, format.extension, 'text/markdown');
                   if (imageCount > 0) sendLog('  图片本地化: ' + imageCount + ' 张');
+                  if (failedImages?.length) file.missingImages = failedImages;
                 } else {
                   await saveContentToDisk(mdText, file, format.extension, 'text/markdown');
                 }
@@ -864,7 +866,8 @@ async function localizeMarkdownImages(mdText, file, imageBasePath, imageConcurre
 
   // Pre-assign sequential index to each image to avoid race conditions
   const tasks = images.map((img, idx) => ({ ...img, idx: idx + 1 }));
-  const results = []; // { fullMatch, alt, localName }
+  const results = []; // { fullMatch, alt, ref }
+  const failedImages = []; // images that failed to download, surfaced in the README index
 
   const queue = [...tasks];
   const workers = Array(Math.min(concurrency, queue.length)).fill(null).map(async () => {
@@ -872,7 +875,7 @@ async function localizeMarkdownImages(mdText, file, imageBasePath, imageConcurre
       const task = queue.shift();
       try {
         const ext = guessImageExt(task.url);
-        const filename = `${sanitizePathComponent(file.title)}-${task.idx}.${ext}`;
+        const filename = sanitizePathComponent(file.title) + (file.id ? '-' + file.id : '') + '-' + task.idx + '.' + ext;
         let downloadPath;
         let ref;
         if (imageBasePath !== undefined && imageBasePath !== null) {
@@ -890,6 +893,7 @@ async function localizeMarkdownImages(mdText, file, imageBasePath, imageConcurre
         results.push({ fullMatch: task.fullMatch, alt: task.alt, ref });
       } catch (e) {
         logFn(`  图片下载失败: ${task.url.substring(0, 80)}... ${e.message}`);
+        failedImages.push({ url: task.url, alt: task.alt, error: e.message });
       }
     }
   });
@@ -902,7 +906,7 @@ async function localizeMarkdownImages(mdText, file, imageBasePath, imageConcurre
     localizedMd = localizedMd.replace(r.fullMatch, '![' + r.alt + '](' + r.ref + ')');
   }
 
-  return { localizedMd, imageCount: results.length };
+  return { localizedMd, imageCount: results.length, failedImages };
 }
 
 async function renderEmbeddedBoardsToAssets(lakeHtml, file, imageBasePath, logFn = sendLog) {
@@ -912,6 +916,7 @@ async function renderEmbeddedBoardsToAssets(lakeHtml, file, imageBasePath, logFn
 
   let boardIndex = 0;
   let renderedCount = 0;
+  const failedImages = []; // boards that failed to render, surfaced in the README index
   // Lake may serialize cards as either `<card></card>` or self-closing
   // `<card />`; both forms must be replaced before the Markdown pass.
   const cardRegex = /<card\s+([^>]*?)(?:>\s*<\/card>|\/>)/gi;
@@ -937,7 +942,7 @@ async function renderEmbeddedBoardsToAssets(lakeHtml, file, imageBasePath, logFn
     boardIndex += 1;
     try {
       const { svg } = await convertBoardToSvg(JSON.stringify(data));
-      const filename = `${sanitizePathComponent(file.title) || '未命名文档'}-白板-${boardIndex}.svg`;
+      const filename = sanitizePathComponent(file.title) + (file.id ? '-' + file.id : '') + '-白板-' + boardIndex + '.svg';
       let downloadPath;
       let ref;
       if (imageBasePath !== undefined && imageBasePath !== null) {
@@ -964,6 +969,7 @@ async function renderEmbeddedBoardsToAssets(lakeHtml, file, imageBasePath, logFn
       renderedCount += 1;
     } catch (error) {
       logFn(`  内嵌白板渲染失败: ${error.message}`);
+      failedImages.push({ alt: '白板 ' + boardIndex, error: error.message });
     }
   }
 
@@ -972,7 +978,7 @@ async function renderEmbeddedBoardsToAssets(lakeHtml, file, imageBasePath, logFn
     content = content.replace(item.from, item.to);
   }
 
-  return { content, boardCount: renderedCount };
+  return { content, boardCount: renderedCount, failedImages };
 }
 
 function buildImagePath(file, localName) {
@@ -1174,6 +1180,28 @@ function buildReadmeContent(group) {
     const failed = file.status === 'failed' ? '（导出失败）' : '';
     lines.push(`${indent}- [${display}](${escapeMarkdownLinkPath(relPath)})${failed}`);
   });
+
+  // Report images that could not be downloaded so the user can add them manually.
+  const missing = [];
+  files.forEach(file => {
+    if (Array.isArray(file.missingImages) && file.missingImages.length) {
+      file.missingImages.forEach(m => missing.push({ doc: file.title || '未命名文档', alt: m.alt, url: m.url }));
+    }
+  });
+
+  if (missing.length) {
+    lines.push('');
+    lines.push('## 未下载成功的图片');
+    lines.push('');
+    lines.push('以下图片下载失败，可打开原始链接手动补充：');
+    lines.push('');
+    missing.forEach(m => {
+      const link = m.url ? ' [原始链接](' + escapeMarkdownLinkPath(m.url) + ')' : '';
+      lines.push('- ' + m.doc + (m.alt ? ' - ' + m.alt : '') + link);
+    });
+    lines.push('');
+  }
+
   lines.push('');
   return lines.join('\n');
 }
@@ -1220,16 +1248,20 @@ async function exportViaLakeContent(file, format, perTypeFormat) {
 
 
   // Convert Lake HTML to Markdown
-  const { content: contentWithBoards, boardCount } = await renderEmbeddedBoardsToAssets(content, file);
+  const { content: contentWithBoards, boardCount, failedImages } = await renderEmbeddedBoardsToAssets(content, file);
   if (boardCount > 0) sendLog(`  内嵌白板渲染: ${boardCount} 个`);
+  if (failedImages?.length) {
+    file.missingImages = (file.missingImages || []).concat(failedImages);
+  }
   const markdown = lakeToMarkdown(contentWithBoards);
   const finalMarkdown = exportState.useOrderPrefix ? withOrderFrontmatter(markdown, file) : markdown;
 
 
   if (exportState.downloadImages) {
-    const { localizedMd, imageCount } = await localizeMarkdownImages(finalMarkdown, file);
+    const { localizedMd, imageCount, failedImages } = await localizeMarkdownImages(finalMarkdown, file);
     await saveContentToDisk(localizedMd, file, 'md', 'text/markdown');
     if (imageCount > 0) sendLog(`  图片本地化: ${imageCount} 张`);
+    if (failedImages?.length) file.missingImages = failedImages;
   } else {
     await saveContentToDisk(finalMarkdown, file, 'md', 'text/markdown');
   }

@@ -5,7 +5,7 @@ const SETTINGS_KEYS = [
   'downloadImages', 'imageConcurrency',
   'docExportFormat', 'sheetExportFormat', 'tableExportFormat', 'boardExportFormat',
   'showBubble', 'skipEncryptedBookmarks', 'markdownMode', 'sheetMode',
-  'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode'
+  'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode', 'fileConflict'
 ];
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -46,6 +46,7 @@ async function loadSettings() {
   setChecked('useFolderNote', data.useFolderNote !== false);
   setChecked('generateReadme', data.generateReadme !== false);
   setVal('attachmentMode', data.attachmentMode || 'book');
+  setVal('fileConflict', data.fileConflict || 'overwrite');
 }
 
 function bindNavigation() {
@@ -91,6 +92,7 @@ async function saveAllSettings() {
     useFolderNote: getChecked('useFolderNote'),
     generateReadme: getChecked('generateReadme'),
     attachmentMode: getVal('attachmentMode') || 'book',
+    fileConflict: getVal('fileConflict') || 'overwrite',
   };
 
   await chrome.storage.local.set(settings);

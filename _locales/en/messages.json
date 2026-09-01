@@ -213,6 +213,8 @@
   "generateReadmeDesc": { "message": "Generate a README.md at each knowledge base root listing all documents in the original Yuque directory order, as a navigation page after importing into Obsidian." },
   "attachmentModeLabel": { "message": "Image attachment folder" },
   "attachmentModeDesc": { "message": "Where to store images and other attachments. \"One attachments folder per knowledge base\" keeps multiple knowledge bases that share one Obsidian vault isolated (deleting a book removes its attachments too); \"one assets folder per document\" is the legacy behavior." },
+  "fileConflictLabel": { "message": "Same-name file conflict" },
+  "fileConflictDesc": { "message": "How to handle same-name files on re-export. \"Overwrite\" replaces the old file directly without leaving a copy (recommended); \"Keep copies\" creates files like \"Doc (1).md\"." },
   "cardQuickExport": { "message": "Quick Export" },
   "showBubbleLabel": { "message": "Show floating bubble" },
   "showBubbleDesc": { "message": "Display a draggable floating bubble on Yuque doc pages. Click to instantly export the current document. Format and directory follow settings above. Documents without export permission auto-convert to Markdown via local engine." },
