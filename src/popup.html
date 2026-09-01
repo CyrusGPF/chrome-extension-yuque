@@ -43,7 +43,7 @@
     </div>
 
     <!-- Knowledge base dropdown selector -->
-    <div class="form-group select-group" id="bookSelectGroup">
+    <div class="form-group select-group" id="bookSelectGroup" style="position:relative">
       <label><svg class="label-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> <span data-i18n="selectBookLabel">选择知识库:</span></label>
       <div class="book-dropdown">
         <button type="button" id="bookSelectTrigger" class="book-dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
@@ -52,6 +52,9 @@
         </button>
         <ul id="bookSelectOptions" class="book-dropdown-options" role="listbox"></ul>
       </div>
+      <button type="button" id="refreshBooksBtn" class="book-refresh-btn" data-i18n="refreshBooksTitle" title="刷新知识库列表" aria-label="刷新知识库列表">
+        <svg class="refresh-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </button>
     </div>
 
     <!-- Selection summary (updated by JS) -->

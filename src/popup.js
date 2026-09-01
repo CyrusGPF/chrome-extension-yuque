@@ -5,8 +5,8 @@ import {
   syncUiWithState, renderBookDropdown, restoreBookSelection
 } from './ui/ui.js';
 import {
-  handleCheckAuth, handleLoginClick, handleGetFileInfo, handlePause,
-  handleReset, handleRetryFailed, handleStart, saveSettings
+  handleCheckAuth, handleLoginClick, handleGetFileInfo, handleGetBooks,
+  handlePause, handleReset, handleRetryFailed, handleStart, saveSettings
 } from './ui/actions.js';
 import { initSponsorInteractions } from './ui/sponsor.js';
 import { initRatingModal } from './ui/rating.js';
@@ -20,14 +20,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   cacheDomElements();
   setStartButtonLabel(START_BUTTON_DEFAULT_TEXT());
 
-  const hasRestoredBooks = await restorePersistedState();
+  await restorePersistedState();
   bindEventListeners();
   initExportTypeDropdown();
   initSponsorInteractions();
   initRatingModal();
   initRuntimeMessaging();
 
-  handleCheckAuth(hasRestoredBooks);
+  // Always refresh the knowledge base list on open so newly created books
+  // appear without reinstalling the extension.
+  handleCheckAuth(false);
 });
 
 async function restorePersistedState() {
@@ -132,6 +134,7 @@ function bindEventListeners() {
     selectAllCheckbox
   } = domRefs;
 
+  domRefs.refreshBooksBtn?.addEventListener('click', handleGetBooks);
   getInfoBtn?.addEventListener('click', handleGetFileInfo);
   startBtn?.addEventListener('click', handleStart);
   pauseBtn?.addEventListener('click', handlePause);

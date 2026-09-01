@@ -149,13 +149,19 @@ async function resolveReExportDecision(bookIds) {
   const { exportedBooks = {} } = await chrome.storage.local.get('exportedBooks');
   const names = [];
   const dirtyIds = [];
-  bookIds.forEach(id => {
+  for (const id of bookIds) {
+    const book = (uiState.bookList || []).find(b => String(b.id) === String(id));
     const rec = exportedBooks[id];
-    if (rec && !isCleanConfirmed(id)) {
-      names.push(rec.name || String(id));
+    const bookName = rec?.name || book?.name || String(id);
+    // Detect a same-name folder both via storage and via the browser download
+    // history (which survives extension removal), so deleting and reloading
+    // the extension still prompts the user to clean up an existing copy.
+    const hasRecord = Boolean(rec) || await detectBookHasDownloads(bookName);
+    if (hasRecord && !isCleanConfirmed(id)) {
+      names.push(bookName);
       dirtyIds.push(id);
     }
-  });
+  }
   if (!names.length) return 'none';
 
   const choice = await promptReExport(names);
@@ -167,6 +173,23 @@ async function resolveReExportDecision(bookIds) {
     return 'clean';
   }
   return 'cancel';
+}
+
+/**
+ * Whether the browser download history contains any file saved under a path
+ * that contains the given knowledge base name. Unlike chrome.storage, this
+ * survives the extension being removed and reinstalled, so a same-name folder
+ * left on disk can still be detected and cleaned up.
+ */
+async function detectBookHasDownloads(bookName) {
+  if (!bookName) return false;
+  try {
+    const escaped = String(bookName).replace(/[\^$.*+?()[\]{}|]/g, '\\$&');
+    const items = await chrome.downloads.search({ filenameRegex: escaped });
+    return Array.isArray(items) && items.length > 0;
+  } catch (e) {
+    return false;
+  }
 }
 
 export function handlePause() {

@@ -39,6 +39,7 @@ export const domRefs = {
   bookSelectTrigger: null,
   bookSelectOptions: null,
   bookSelectLabel: null,
+  refreshBooksBtn: null,
   // Selection bar
   selectAllCheckbox: null,
   selectedCountSpan: null,
@@ -101,6 +102,7 @@ export function cacheDomElements() {
   domRefs.bookSelectTrigger = document.getElementById('bookSelectTrigger');
   domRefs.bookSelectOptions = document.getElementById('bookSelectOptions');
   domRefs.bookSelectLabel = document.getElementById('bookSelectLabel');
+  domRefs.refreshBooksBtn = document.getElementById('refreshBooksBtn');
   // Selection bar
   domRefs.selectAllCheckbox = document.getElementById('selectAll');
   domRefs.selectedCountSpan = document.getElementById('selectedCount');

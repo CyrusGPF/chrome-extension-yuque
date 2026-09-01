@@ -224,6 +224,7 @@
   "reExportClean": { "message": "Clean and re-export" },
   "reExportCancel": { "message": "Cancel" },
   "reExportCleanHint": { "message": "Please delete the old knowledge base folder in your Downloads folder, then click \"Start export\" again." },
+  "refreshBooksTitle": { "message": "Refresh knowledge base list" },
   "cardQuickExport": { "message": "Quick Export" },
   "showBubbleLabel": { "message": "Show floating bubble" },
   "showBubbleDesc": { "message": "Display a draggable floating bubble on Yuque doc pages. Click to instantly export the current document. Format and directory follow settings above. Documents without export permission auto-convert to Markdown via local engine." },
