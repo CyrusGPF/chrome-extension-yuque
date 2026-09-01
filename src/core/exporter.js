@@ -396,7 +396,7 @@ async function handleStartExport(data, sendResponse) {
       'downloadImages', 'imageConcurrency',
       'docExportFormat', 'sheetExportFormat', 'boardExportFormat', 'tableExportFormat',
       'markdownMode', 'sheetMode',
-      'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode', 'fileConflict'
+      'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode', 'attachmentFolderName', 'fileConflict'
     ]);
 
     exportState.isExporting = true;
@@ -417,6 +417,7 @@ async function handleStartExport(data, sendResponse) {
     exportState.useFolderNote = settings.useFolderNote !== false;
     exportState.generateReadme = settings.generateReadme !== false;
     exportState.attachmentMode = settings.attachmentMode || DEFAULT_SETTINGS.attachmentMode;
+    exportState.attachmentFolderName = settings.attachmentFolderName || DEFAULT_SETTINGS.attachmentFolderName;
     exportState.fileConflict = settings.fileConflict || DEFAULT_SETTINGS.fileConflict;
     // Keep existing logs (file info phase logs) instead of clearing
     // exportState.logs = [];
@@ -1036,13 +1037,14 @@ function resolveAssetPaths(file, filename) {
   const dirDepth = (Array.isArray(file.folderSegments) ? file.folderSegments.length : 0) + (folderNote ? 1 : 0);
 
   if (perBook) {
+    const folderName = sanitizePathComponent(exportState.attachmentFolderName) || 'attachment';
     const savePath = [
       ...sanitizePathSegments(exportState.subfolder),
       ...sanitizePathSegments(file.bookName),
-      'attachments',
+      folderName,
       sanitizePathComponent(filename),
     ].filter(Boolean).join('/');
-    const ref = '../'.repeat(dirDepth) + 'attachments/' + filename;
+    const ref = '../'.repeat(dirDepth) + folderName + '/' + filename;
     return { savePath, ref };
   }
 

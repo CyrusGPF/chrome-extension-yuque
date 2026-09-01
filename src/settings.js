@@ -5,7 +5,7 @@ const SETTINGS_KEYS = [
   'downloadImages', 'imageConcurrency',
   'docExportFormat', 'sheetExportFormat', 'tableExportFormat', 'boardExportFormat',
   'showBubble', 'skipEncryptedBookmarks', 'markdownMode', 'sheetMode',
-  'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode', 'fileConflict'
+  'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode', 'attachmentFolderName', 'fileConflict'
 ];
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -46,6 +46,7 @@ async function loadSettings() {
   setChecked('useFolderNote', data.useFolderNote !== false);
   setChecked('generateReadme', data.generateReadme !== false);
   setVal('attachmentMode', data.attachmentMode || 'book');
+  setVal('attachmentFolderName', data.attachmentFolderName || 'attachment');
   setVal('fileConflict', data.fileConflict || 'overwrite');
 }
 
@@ -92,6 +93,7 @@ async function saveAllSettings() {
     useFolderNote: getChecked('useFolderNote'),
     generateReadme: getChecked('generateReadme'),
     attachmentMode: getVal('attachmentMode') || 'book',
+    attachmentFolderName: getVal('attachmentFolderName') || 'attachment',
     fileConflict: getVal('fileConflict') || 'overwrite',
   };
 
