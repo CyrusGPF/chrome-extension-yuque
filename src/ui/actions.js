@@ -7,6 +7,7 @@ import {
 } from './ui.js';
 import { START_BUTTON_DEFAULT_TEXT } from './constants.js';
 import { i18n } from './i18n.js';
+import { promptReExport, markCleanConfirmed, isCleanConfirmed } from './reExportConfirm.js';
 
 export async function handleCheckAuth(skipFetchBooks = false) {
   try {
@@ -104,6 +105,19 @@ export async function handleStart() {
     return;
   }
 
+  // Same-name knowledge base re-export confirmation.
+  const selectedBookIds = getSelectedBookIds();
+  if (selectedBookIds.length) {
+    const decision = await resolveReExportDecision(selectedBookIds);
+    if (decision === 'cancel') return;
+    if (decision === 'clean') {
+      showStatus(i18n('reExportCleanHint'), 'info');
+      addLog(i18n('reExportCleanHint'));
+      return;
+    }
+    // 'overwrite' or 'none' → continue exporting below
+  }
+
   // Get export type from storage (set by popup's export type dropdown)
   const stored = await chrome.storage.local.get(['exportType']);
   const exportType = stored.exportType || 'smart';
@@ -123,6 +137,36 @@ export async function handleStart() {
     showStatus(i18n('startExportFailed', [error.message]), 'error');
     resetUiToIdle();
   }
+}
+
+/**
+ * Check storage for knowledge bases exported earlier. If any selected book was
+ * exported before (and isn't already confirmed for a clean re-export this
+ * session), ask the user how to handle it.
+ * @returns {'overwrite'|'clean'|'cancel'|'none'}
+ */
+async function resolveReExportDecision(bookIds) {
+  const { exportedBooks = {} } = await chrome.storage.local.get('exportedBooks');
+  const names = [];
+  const dirtyIds = [];
+  bookIds.forEach(id => {
+    const rec = exportedBooks[id];
+    if (rec && !isCleanConfirmed(id)) {
+      names.push(rec.name || String(id));
+      dirtyIds.push(id);
+    }
+  });
+  if (!names.length) return 'none';
+
+  const choice = await promptReExport(names);
+  if (choice === 'overwrite') return 'overwrite';
+  if (choice === 'clean') {
+    markCleanConfirmed(dirtyIds);
+    // Open the Downloads folder so the user can delete the old book folder.
+    try { chrome.downloads.showDefaultFolder(); } catch (e) { /* ignore */ }
+    return 'clean';
+  }
+  return 'cancel';
 }
 
 export function handlePause() {

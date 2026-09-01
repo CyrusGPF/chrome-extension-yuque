@@ -828,6 +828,14 @@ async function exportFiles(runToken) {
       sendLog('生成 README 索引失败: ' + readmeErr.message);
     }
 
+    // Remember which knowledge bases were exported, so the next export can
+    // ask the user how to handle the same-name re-export.
+    try {
+      await recordExportedBooks();
+    } catch (recErr) {
+      sendLog('记录导出状态失败: ' + recErr.message);
+    }
+
     sendComplete();
   } catch (error) {
     if (error.name === 'AbortError') {
@@ -1153,6 +1161,28 @@ async function generateReadmeIndex() {
     await saveTextToRelativePath(content, readmePath, 'text/markdown');
     sendLog('已生成索引: ' + readmePath);
   }
+}
+
+/**
+ * Remember the knowledge bases exported in this run, so the next export can
+ * prompt the user on how to handle same-name re-exports.
+ */
+async function recordExportedBooks() {
+  if (!Array.isArray(exportState.fileList)) return;
+  const byBook = new Map();
+  exportState.fileList.forEach(file => {
+    if (file.bookId && file.bookName && !byBook.has(file.bookId)) {
+      byBook.set(file.bookId, { name: file.bookName });
+    }
+  });
+  if (!byBook.size) return;
+
+  const { exportedBooks = {} } = await chrome.storage.local.get('exportedBooks');
+  const now = Date.now();
+  byBook.forEach((value, id) => {
+    exportedBooks[id] = { name: value.name, lastExportedAt: now };
+  });
+  await chrome.storage.local.set({ exportedBooks });
 }
 
 function compareOrderArrays(a, b) {

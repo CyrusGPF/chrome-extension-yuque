@@ -51,6 +51,13 @@ export const domRefs = {
   ratingDismissBtn: null,
   ratingLaterBtn: null,
   ratingSponsorLink: null,
+  // Re-export confirmation modal
+  reExportModal: null,
+  reExportModalClose: null,
+  reExportBookName: null,
+  reExportOverwriteBtn: null,
+  reExportCleanBtn: null,
+  reExportCancelBtn: null,
 };
 
 export function cacheDomElements() {
@@ -106,4 +113,11 @@ export function cacheDomElements() {
   domRefs.ratingDismissBtn = document.getElementById('ratingDismissBtn');
   domRefs.ratingLaterBtn = document.getElementById('ratingLaterBtn');
   domRefs.ratingSponsorLink = document.getElementById('ratingSponsorLink');
+  // Re-export confirmation modal
+  domRefs.reExportModal = document.getElementById('reExportModal');
+  domRefs.reExportModalClose = document.getElementById('reExportModalClose');
+  domRefs.reExportBookName = document.getElementById('reExportBookName');
+  domRefs.reExportOverwriteBtn = document.getElementById('reExportOverwriteBtn');
+  domRefs.reExportCleanBtn = document.getElementById('reExportCleanBtn');
+  domRefs.reExportCancelBtn = document.getElementById('reExportCancelBtn');
 }
