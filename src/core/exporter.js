@@ -4,8 +4,8 @@ import { checkAuth, fetchAllBooks, fetchBookDocs, buildDocListFromApiDocs, expor
 import { lakeToMarkdown } from './lake-converter.js';
 import { convertLakeSheet } from './sheet-converter.js';
 import { convertBoardToSvg, convertBoardToMermaid, convertBoardToECharts } from './board-converter.js';
-import { saveBlobToDisk, saveContentToDisk, downloadUrlToDisk } from './downloads.js';
-import { delay, sanitizePathComponent, sanitizePathSegments, guessImageExt } from './utils.js';
+import { saveBlobToDisk, saveContentToDisk, downloadUrlToDisk, saveTextToRelativePath } from './downloads.js';
+import { delay, sanitizePathComponent, sanitizePathSegments, guessImageExt, buildExportRelativeSegments, withOrderFrontmatter, padNumber, escapeMarkdownLinkPath } from './utils.js';
 import { refreshAbortController, abortActiveTasks } from './task-controller.js';
 import { EXPORT_FORMATS, DEFAULT_SETTINGS, DOC_TYPES, DOC_TYPE_EXPORT_OPTIONS, SMART_EXPORT_KEY, BOOKMARKS_VIRTUAL_BOOK_ID, BOOKMARKS_VIRTUAL_BOOK_NAME, BOOKMARKS_LOOSE_DOCS_FOLDER, SUPPORTED_DOC_TYPES } from './constants.js';
 
@@ -395,7 +395,8 @@ async function handleStartExport(data, sendResponse) {
       'subfolder', 'requestInterval',
       'downloadImages', 'imageConcurrency',
       'docExportFormat', 'sheetExportFormat', 'boardExportFormat', 'tableExportFormat',
-      'markdownMode', 'sheetMode'
+      'markdownMode', 'sheetMode',
+      'useOrderPrefix', 'useFolderNote', 'generateReadme'
     ]);
 
     exportState.isExporting = true;
@@ -412,6 +413,9 @@ async function handleStartExport(data, sendResponse) {
     exportState.tableExportFormat = settings.tableExportFormat || DEFAULT_SETTINGS.tableExportFormat;
     exportState.markdownMode = settings.markdownMode || DEFAULT_SETTINGS.markdownMode;
     exportState.sheetMode = settings.sheetMode || DEFAULT_SETTINGS.sheetMode;
+    exportState.useOrderPrefix = settings.useOrderPrefix !== false;
+    exportState.useFolderNote = settings.useFolderNote !== false;
+    exportState.generateReadme = settings.generateReadme !== false;
     // Keep existing logs (file info phase logs) instead of clearing
     // exportState.logs = [];
 
@@ -697,11 +701,16 @@ async function exportFiles(runToken) {
 
               if (result.directUrl) {
                 await downloadUrlToDisk(result.url, savedPath);
-              } else if (perTypeFormat === 'md' && exportState.downloadImages && result.blob) {
-                const mdText = await result.blob.text();
-                const { localizedMd, imageCount } = await localizeMarkdownImages(mdText, file);
-                await saveContentToDisk(localizedMd, file, format.extension, 'text/markdown');
-                if (imageCount > 0) sendLog('  图片本地化: ' + imageCount + ' 张');
+              } else if (perTypeFormat === 'md' && result.blob) {
+                let mdText = await result.blob.text();
+                if (exportState.useOrderPrefix) mdText = withOrderFrontmatter(mdText, file);
+                if (exportState.downloadImages) {
+                  const { localizedMd, imageCount } = await localizeMarkdownImages(mdText, file);
+                  await saveContentToDisk(localizedMd, file, format.extension, 'text/markdown');
+                  if (imageCount > 0) sendLog('  图片本地化: ' + imageCount + ' 张');
+                } else {
+                  await saveContentToDisk(mdText, file, format.extension, 'text/markdown');
+                }
               } else if (result.blob) {
                 await saveBlobToDisk(result.blob, savedPath);
               }
@@ -807,6 +816,13 @@ async function exportFiles(runToken) {
             data: { encryptedItems }
           }).catch(() => {});
       }
+    }
+
+    // Obsidian: generate README.md order indexes for knowledge bases
+    try {
+      await generateReadmeIndex();
+    } catch (readmeErr) {
+      sendLog('生成 README 索引失败: ' + readmeErr.message);
     }
 
     sendComplete();
@@ -946,7 +962,25 @@ function buildImagePath(file, localName) {
   const segments = [];
   if (exportState.subfolder) segments.push(...sanitizePathSegments(exportState.subfolder));
   if (file.bookName) segments.push(...sanitizePathSegments(file.bookName));
-  if (file.folderPath) segments.push(...sanitizePathSegments(file.folderPath));
+
+  // Folder segments must match the document path (order prefixes included).
+  if (exportState.useOrderPrefix && Array.isArray(file.folderSegments) && file.folderSegments.length) {
+    file.folderSegments.forEach((title, i) => {
+      const seg = sanitizePathComponent(title);
+      if (seg) segments.push(`${padNumber(file.folderOrders?.[i])}-${seg}`);
+    });
+  } else if (file.folderPath) {
+    segments.push(...sanitizePathSegments(file.folderPath));
+  }
+
+  // Folder-note mode: assets of a parent doc (with children, exported as md)
+  // live in the same folder as the doc itself.
+  if (exportState.useFolderNote && file.hasChildren) {
+    const title = sanitizePathComponent(file.title) || '未命名文档';
+    const baseName = exportState.useOrderPrefix ? `${padNumber(file.siblingOrder)}-${title}` : title;
+    segments.push(baseName);
+  }
+
   segments.push(localName);
   return segments.filter(Boolean).join('/');
 }
@@ -1022,14 +1056,95 @@ function buildBookFolderPath(book) {
 
 /**
  * Build the relative download path for a file.
+ * Uses the shared Obsidian-friendly path builder: hierarchical order prefixes
+ * (01-章节/01-标题.md) and folder-note layout when enabled in settings.
  */
 function buildFilePath(file, extension) {
-  const segments = [];
-  if (exportState.subfolder) segments.push(...sanitizePathSegments(exportState.subfolder));
-  if (file.bookName) segments.push(...sanitizePathSegments(file.bookName));
-  if (file.folderPath) segments.push(...sanitizePathSegments(file.folderPath));
-  segments.push(`${sanitizePathComponent(file.title) || '未命名文档'}.${extension}`);
-  return segments.filter(Boolean).join('/');
+  return buildExportRelativeSegments(file, extension, {
+    subfolder: exportState.subfolder,
+    useOrderPrefix: exportState.useOrderPrefix,
+    useFolderNote: exportState.useFolderNote,
+  }).join('/');
+}
+
+/**
+ * Generate a README.md index for every knowledge base that has TOC order
+ * info, listing all documents in the original Yuque directory order.
+ * Runs once at the end of a full export.
+ */
+async function generateReadmeIndex() {
+  if (!exportState.generateReadme || !Array.isArray(exportState.fileList)) return;
+
+  const byBook = new Map();
+  exportState.fileList.forEach(file => {
+    if (!file.bookId || !file.bookName) return;
+    if (!Array.isArray(file.orderSegments) || !file.orderSegments.length) return;
+    if (!byBook.has(file.bookId)) byBook.set(file.bookId, { book: null, files: [] });
+    byBook.get(file.bookId).files.push(file);
+  });
+
+  for (const [bookId, group] of byBook) {
+    group.book = exportState.bookList.find(b => String(b.id) === String(bookId)) || null;
+    const content = buildReadmeContent(group);
+    const readmePath = [
+      ...sanitizePathSegments(exportState.subfolder),
+      ...sanitizePathSegments(group.files[0].bookName),
+      'README.md',
+    ].filter(Boolean).join('/');
+    if (!readmePath) continue;
+    await saveTextToRelativePath(content, readmePath, 'text/markdown');
+    sendLog('已生成索引: ' + readmePath);
+  }
+}
+
+function compareOrderArrays(a, b) {
+  const len = Math.max(a.length, b.length);
+  for (let i = 0; i < len; i += 1) {
+    const x = a[i] || 0;
+    const y = b[i] || 0;
+    if (x !== y) return x - y;
+  }
+  return a.length - b.length;
+}
+
+function buildReadmeContent(group) {
+  const files = [...group.files].sort((x, y) => compareOrderArrays(x.orderSegments, y.orderSegments));
+  const lines = [];
+  lines.push(`# ${group.book?.name || '知识库'}`);
+  lines.push('');
+  lines.push(`> 本文档按语雀目录顺序自动生成，共 ${files.length} 篇。`);
+  lines.push('');
+  files.forEach(file => {
+    const depth = Array.isArray(file.folderSegments) ? file.folderSegments.length : 0;
+    const indent = '  '.repeat(depth);
+    const relPath = buildReadmeDocPath(file);
+    const display = relPath.split('/').pop().replace(/\.[^.]+$/, '') || file.title || '未命名文档';
+    const failed = file.status === 'failed' ? '（导出失败）' : '';
+    lines.push(`${indent}- [${display}](${escapeMarkdownLinkPath(relPath)})${failed}`);
+  });
+  lines.push('');
+  return lines.join('\n');
+}
+
+/**
+ * Relative path from the knowledge base root (bookName) to the exported file.
+ * Prefers the actual saved localPath; falls back to an md path build.
+ */
+function buildReadmeDocPath(file) {
+  const localPath = file.localPath || '';
+  const bookPrefix = [
+    ...sanitizePathSegments(exportState.subfolder),
+    ...sanitizePathSegments(file.bookName),
+  ].join('/');
+  if (bookPrefix && localPath.startsWith(bookPrefix + '/')) {
+    return localPath.slice(bookPrefix.length + 1);
+  }
+  return buildExportRelativeSegments(file, 'md', {
+    subfolder: '',
+    includeBookName: false,
+    useOrderPrefix: exportState.useOrderPrefix,
+    useFolderNote: exportState.useFolderNote,
+  }).join('/');
 }
 
 /**
@@ -1056,14 +1171,15 @@ async function exportViaLakeContent(file, format, perTypeFormat) {
   const { content: contentWithBoards, boardCount } = await renderEmbeddedBoardsToAssets(content, file);
   if (boardCount > 0) sendLog(`  内嵌白板渲染: ${boardCount} 个`);
   const markdown = lakeToMarkdown(contentWithBoards);
+  const finalMarkdown = exportState.useOrderPrefix ? withOrderFrontmatter(markdown, file) : markdown;
 
 
   if (exportState.downloadImages) {
-    const { localizedMd, imageCount } = await localizeMarkdownImages(markdown, file);
+    const { localizedMd, imageCount } = await localizeMarkdownImages(finalMarkdown, file);
     await saveContentToDisk(localizedMd, file, 'md', 'text/markdown');
     if (imageCount > 0) sendLog(`  图片本地化: ${imageCount} 张`);
   } else {
-    await saveContentToDisk(markdown, file, 'md', 'text/markdown');
+    await saveContentToDisk(finalMarkdown, file, 'md', 'text/markdown');
   }
 }
 

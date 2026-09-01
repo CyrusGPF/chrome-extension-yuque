@@ -11,6 +11,10 @@ function createInitialState() {
     subfolder: '',
     requestInterval: 500,
     downloadImages: true,
+    // Obsidian 友好导出结构设置（由 handleStartExport 从 storage 装载）
+    useOrderPrefix: true,
+    useFolderNote: true,
+    generateReadme: true,
     logs: [],
     // User info
     userInfo: null,     // { id, login, name, avatar_url }

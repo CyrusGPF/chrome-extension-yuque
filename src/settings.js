@@ -4,7 +4,8 @@ const SETTINGS_KEYS = [
   'subfolder', 'requestInterval',
   'downloadImages', 'imageConcurrency',
   'docExportFormat', 'sheetExportFormat', 'tableExportFormat', 'boardExportFormat',
-  'showBubble', 'skipEncryptedBookmarks', 'markdownMode', 'sheetMode'
+  'showBubble', 'skipEncryptedBookmarks', 'markdownMode', 'sheetMode',
+  'useOrderPrefix', 'useFolderNote', 'generateReadme'
 ];
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -41,6 +42,9 @@ async function loadSettings() {
   setChecked('skipEncryptedBookmarks', data.skipEncryptedBookmarks === true);
   setVal('markdownMode', data.markdownMode || 'local');
   setVal('sheetMode', data.sheetMode || 'local');
+  setChecked('useOrderPrefix', data.useOrderPrefix !== false);
+  setChecked('useFolderNote', data.useFolderNote !== false);
+  setChecked('generateReadme', data.generateReadme !== false);
 }
 
 function bindNavigation() {
@@ -82,6 +86,9 @@ async function saveAllSettings() {
     skipEncryptedBookmarks: getChecked('skipEncryptedBookmarks'),
     markdownMode: getVal('markdownMode') || 'local',
     sheetMode: getVal('sheetMode') || 'local',
+    useOrderPrefix: getChecked('useOrderPrefix'),
+    useFolderNote: getChecked('useFolderNote'),
+    generateReadme: getChecked('generateReadme'),
   };
 
   await chrome.storage.local.set(settings);
