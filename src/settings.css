@@ -613,45 +613,6 @@ body::before {
 .ads-header h4 { font-size: 0.85rem; font-weight: 600; color: var(--text-1); margin: 0; }
 .ads-desc { font-size: 0.76rem; color: var(--text-3); line-height: 1.5; margin: 0 0 10px; }
 
-.ads-qr { text-align: center; margin-bottom: 6px; }
-.sponsor-qr-wrap {
-  position: relative;
-  display: inline-block;
-  padding-top: 22px;
-}
-.sponsor-qr-badge {
-  position: absolute;
-  top: 0;
-  right: -10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 34px;
-  padding: 0 18px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #7c3aed 0%, #14b8a6 100%);
-  color: #fff;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  box-shadow: 0 14px 30px rgba(124, 58, 237, 0.32);
-  white-space: nowrap;
-  z-index: 1;
-}
-.sponsor-qr-wrap + .sponsor-qr-wrap { margin-top: 18px; }
-.sponsor-qr-badge.alipay-badge {
-  background: linear-gradient(90deg, #1677ff 0%, #00b4d8 100%);
-  box-shadow: 0 14px 30px rgba(22, 119, 255, 0.32);
-}
-.ads-qr img {
-  width: 100%; max-width: 170px; aspect-ratio: 1; border-radius: 10px;
-  border: 1px solid var(--glass-border); padding: 5px;
-  background: var(--surface-1); transition: transform 0.3s ease;
-  object-fit: cover;
-}
-.ads-qr img:hover { transform: scale(1.03); }
-.ads-tip { font-size: 0.73rem; color: var(--text-3); text-align: center; margin: 0; }
-
 .tips-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
 .tips-list li {
   font-size: 0.76rem; color: var(--text-2); line-height: 1.4;

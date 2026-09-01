@@ -19,9 +19,6 @@ export const domRefs = {
   loginBtn: null,
   loginIcon: null,
   loginAvatar: null,
-  sponsorBtn: null,
-  sponsorModal: null,
-  sponsorModalClose: null,
   mainContainer: null,
   selectContainer: null,
   selectIcon: null,
@@ -51,7 +48,6 @@ export const domRefs = {
   ratingReviewBtn: null,
   ratingDismissBtn: null,
   ratingLaterBtn: null,
-  ratingSponsorLink: null,
   // Re-export confirmation modal
   reExportModal: null,
   reExportModalClose: null,
@@ -82,9 +78,6 @@ export function cacheDomElements() {
   domRefs.loginBtn = document.getElementById('login-btn');
   domRefs.loginIcon = document.getElementById('loginIcon');
   domRefs.loginAvatar = document.getElementById('loginAvatar');
-  domRefs.sponsorBtn = document.getElementById('sponsor-btn');
-  domRefs.sponsorModal = document.getElementById('sponsorModal');
-  domRefs.sponsorModalClose = document.getElementById('sponsorModalClose');
   domRefs.mainContainer = document.querySelector('.container');
   domRefs.selectContainer = document.querySelector('.select-container');
   domRefs.selectIcon = document.getElementById('exportTypeIcon');
@@ -114,7 +107,6 @@ export function cacheDomElements() {
   domRefs.ratingReviewBtn = document.getElementById('ratingReviewBtn');
   domRefs.ratingDismissBtn = document.getElementById('ratingDismissBtn');
   domRefs.ratingLaterBtn = document.getElementById('ratingLaterBtn');
-  domRefs.ratingSponsorLink = document.getElementById('ratingSponsorLink');
   // Re-export confirmation modal
   domRefs.reExportModal = document.getElementById('reExportModal');
   domRefs.reExportModalClose = document.getElementById('reExportModalClose');

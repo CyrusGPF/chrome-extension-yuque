@@ -6,7 +6,7 @@
 
 > 一键批量导出语雀知识库的 Chrome 扩展。语雀官方不支持批量导出，YuqueOut 帮你 30 分钟搞定。
 
-**官网**: [https://yuque.toolab.top](https://yuque.toolab.top) | **Chrome 商店**: [安装地址](https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc)
+**Chrome 商店**: [安装地址](https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc)
 
 ---
 

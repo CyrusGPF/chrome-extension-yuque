@@ -582,25 +582,6 @@ function renderLogs(logs = []) {
   logContainer.scrollTop = logContainer.scrollHeight;
 }
 
-export function toggleSponsorModal(shouldShow) {
-  const { sponsorModal, mainContainer, sponsorModalClose, sponsorBtn } = domRefs;
-  if (!sponsorModal) return;
-  if (shouldShow) {
-    sponsorModal.removeAttribute('inert');
-    sponsorModal.classList.add('is-visible');
-    document.body.classList.add('modal-open');
-    if (mainContainer) mainContainer.setAttribute('inert', '');
-  } else {
-    sponsorModalClose?.blur();
-    if (sponsorBtn) sponsorBtn.focus();
-    else if (mainContainer) mainContainer.focus();
-    if (mainContainer) mainContainer.removeAttribute('inert');
-    document.body.classList.remove('modal-open');
-    sponsorModal.classList.remove('is-visible');
-    setTimeout(() => { sponsorModal.setAttribute('inert', ''); }, 300);
-  }
-}
-
 // Export type dropdown is now managed by popup.js directly
 export function enhanceSelectInteraction() { /* no-op, kept for import compatibility */ }
 

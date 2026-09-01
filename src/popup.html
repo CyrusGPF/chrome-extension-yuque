@@ -15,9 +15,6 @@
         <img id="loginIcon" src="../assets/login.svg" alt="登录" class="btn-icon login-icon">
         <img id="loginAvatar" src="" alt="" class="login-avatar-img" style="display:none;">
       </button>
-      <button id="sponsor-btn" class="top-right-btn" data-i18n-title="sponsorSupport" title="赞助支持">
-        <img src="../assets/sponsors.png" data-i18n-alt="sponsorAlt" alt="赞助" class="btn-icon sponsor-icon">
-      </button>
       <button id="settings-btn" class="top-right-btn" data-i18n-title="openSettings" title="打开设置">
         <img src="../assets/setting.svg" data-i18n-alt="settingsAlt" alt="设置" class="btn-icon settings-icon">
       </button>
@@ -27,9 +24,6 @@
     </div>
 
     <div class="header">
-      <a href="https://yuque.toolab.top" target="_blank" title="访问官网" class="header-link">
-        <img src="../icons/icon48.png" data-i18n-alt="popupTitle" alt="YuqueOut" class="header-icon">
-      </a>
       <h2 data-i18n="popupTitle">YuqueOut 语雀导出助手</h2>
     </div>
 
@@ -181,33 +175,11 @@
         <button id="ratingReviewBtn" type="button" class="btn btn-primary rating-review-btn">
           <span data-i18n="ratingReviewBtn">⭐ 去评价</span>
         </button>
-        <button id="ratingSponsorLink" type="button" class="rating-sponsor-btn">
-          <span class="rating-heart">❤️</span>
-          <span data-i18n="ratingSponsorLink">赞助开发者</span>
-        </button>
       </div>
       <div class="rating-modal-footer">
         <button id="ratingDismissBtn" type="button" class="rating-text-btn" data-i18n="ratingDismiss">不再提醒</button>
         <span class="rating-sep">|</span>
         <button id="ratingLaterBtn" type="button" class="rating-text-btn" data-i18n="ratingLater">下次再说</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Sponsor Modal -->
-  <div id="sponsorModal" class="sponsor-modal" inert>
-    <div class="sponsor-modal-card" role="dialog" aria-modal="true" aria-labelledby="sponsorTitle">
-      <button id="sponsorModalClose" class="sponsor-modal-close" aria-label="关闭">&times;</button>
-      <div class="sponsor-modal-header">
-        <h3 id="sponsorTitle" data-i18n="sponsorModalTitle">请我喝杯咖啡 ☕️</h3>
-        <p data-i18n="sponsorModalDesc">如果这个工具帮到了你，欢迎小额赞助支持我继续维护。</p>
-      </div>
-      <div class="sponsor-modal-body">
-        <div class="sponsor-qr-wrap">
-          <span class="sponsor-qr-badge">❤️ 赞助开发者</span>
-          <img src="../assets/sp.jpeg" alt="赞助二维码" class="sponsor-qr">
-        </div>
-        <p class="sponsor-tip" data-i18n="sponsorTip">长按或扫描二维码，金额随意，感谢支持！</p>
       </div>
     </div>
   </div>
