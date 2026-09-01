@@ -131,7 +131,6 @@
 
 ---
 
-- 官网：[yuque.toolab.top](https://yuque.toolab.top)
 - 安装：Chrome Web Store（搜索 YuqueOut）
 - 反馈：yhj2433488839@gmail.com
 - 完全免费，代码开源

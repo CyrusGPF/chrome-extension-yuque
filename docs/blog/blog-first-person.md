@@ -154,6 +154,5 @@ Hello 大家好，我是安哥。
 ---
 
 **相关链接：**
-- YuqueOut 官网：[yuque.toolab.top](https://yuque.toolab.top)
 - Chrome 应用商店：搜索「YuqueOut」
 - 开源地址：[GitHub](https://github.com/Navyum/chrome-extension-yuque)

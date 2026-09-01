@@ -1,5 +1,4 @@
 import { domRefs } from './dom.js';
-import { toggleSponsorModal } from './ui.js';
 import { i18n } from './i18n.js';
 
 const REVIEW_URL = 'https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc/reviews';
@@ -14,7 +13,7 @@ export function showRatingModalAfterExport() {
 }
 
 export function initRatingModal() {
-  const { ratingModal, ratingModalClose, ratingReviewBtn, ratingDismissBtn, ratingLaterBtn, ratingSponsorLink } = domRefs;
+  const { ratingModal, ratingModalClose, ratingReviewBtn, ratingDismissBtn, ratingLaterBtn } = domRefs;
   if (!ratingModal) return;
 
   if (ratingReviewBtn) {
@@ -40,13 +39,6 @@ export function initRatingModal() {
   if (ratingModalClose) {
     ratingModalClose.addEventListener('click', () => {
       toggleRatingModal(false);
-    });
-  }
-
-  if (ratingSponsorLink) {
-    ratingSponsorLink.addEventListener('click', () => {
-      toggleRatingModal(false);
-      setTimeout(() => toggleSponsorModal(true), 350);
     });
   }
 
