@@ -494,6 +494,14 @@ body.modal-open .container { filter: blur(2px) saturate(0.9); transform: scale(0
 .password-skip-btn:hover:not(:disabled) { background: var(--bg-hover); color: var(--text-primary); }
 .password-remaining { color: var(--text-muted); font-size: 11px; text-align: center; margin-top: 10px; }
 
+/* Re-export "don't ask again" row */
+.re-export-no-prompt-row { margin-top: 14px; text-align: center; }
+.re-export-no-prompt-label {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--text-secondary); font-size: 13px; cursor: pointer; user-select: none;
+}
+.re-export-no-prompt-label input { accent-color: var(--primary-color); width: 15px; height: 15px; cursor: pointer; }
+
 /* Refresh knowledge base list button */
 .book-refresh-btn {
   position: absolute; top: 24px; right: 8px;

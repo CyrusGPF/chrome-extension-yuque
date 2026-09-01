@@ -111,12 +111,14 @@ export async function handleStart() {
   if (selectedBookIds.length) {
     const { exportConfirm = true } = await chrome.storage.local.get('exportConfirm');
     if (exportConfirm !== false) {
-      const decision = await promptReExport();
-      if (decision === 'cancel') return;
-      if (decision === 'noPrompt') {
-        chrome.storage.local.set({ exportConfirm: false });
-        showStatus(i18n('reExportNoPromptHint'), 'info');
-        addLog(i18n('reExportNoPromptHint'));
+      const { choice, noPrompt } = await promptReExport();
+      if (noPrompt) chrome.storage.local.set({ exportConfirm: false });
+      if (choice === 'cancel') return;
+      if (choice === 'clean') {
+        // Open the Downloads folder so the user can clean up old same-name data.
+        try { chrome.downloads.showDefaultFolder(); } catch (e) { /* ignore */ }
+        showStatus(i18n('reExportCleanHint'), 'info');
+        addLog(i18n('reExportCleanHint'));
         return;
       }
       // 'continue' → proceed to export below

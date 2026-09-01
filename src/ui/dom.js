@@ -55,6 +55,7 @@ export const domRefs = {
   reExportOverwriteBtn: null,
   reExportCleanBtn: null,
   reExportCancelBtn: null,
+  reExportNoPrompt: null,
 };
 
 export function cacheDomElements() {
@@ -114,4 +115,5 @@ export function cacheDomElements() {
   domRefs.reExportOverwriteBtn = document.getElementById('reExportOverwriteBtn');
   domRefs.reExportCleanBtn = document.getElementById('reExportCleanBtn');
   domRefs.reExportCancelBtn = document.getElementById('reExportCancelBtn');
+  domRefs.reExportNoPrompt = document.getElementById('reExportNoPrompt');
 }
