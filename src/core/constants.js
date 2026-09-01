@@ -93,6 +93,8 @@ export const DEFAULT_SETTINGS = {
   attachmentFolderName: 'attachment',
   // 文件名冲突处理：'overwrite' = 重导同名直接覆盖（不留副本，推荐）；'uniquify' = 自动加 (1) 保留副本（旧行为）
   fileConflict: 'overwrite',
+  // 每次导出前弹窗提醒检查目标路径是否有重名目录（可关闭，即"不再提示"）
+  exportConfirm: true,
 };
 
 export const EXPORT_POLL_MAX = 3;

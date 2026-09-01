@@ -7,7 +7,7 @@ import {
 } from './ui.js';
 import { START_BUTTON_DEFAULT_TEXT } from './constants.js';
 import { i18n } from './i18n.js';
-import { promptReExport, markCleanConfirmed, isCleanConfirmed } from './reExportConfirm.js';
+import { promptReExport } from './reExportConfirm.js';
 
 export async function handleCheckAuth(skipFetchBooks = false) {
   try {
@@ -105,17 +105,22 @@ export async function handleStart() {
     return;
   }
 
-  // Same-name knowledge base re-export confirmation.
+  // Ask the user to check the target download path for same-name folders
+  // before exporting. Configurable; can be turned off via "don't ask again".
   const selectedBookIds = getSelectedBookIds();
   if (selectedBookIds.length) {
-    const decision = await resolveReExportDecision(selectedBookIds);
-    if (decision === 'cancel') return;
-    if (decision === 'clean') {
-      showStatus(i18n('reExportCleanHint'), 'info');
-      addLog(i18n('reExportCleanHint'));
-      return;
+    const { exportConfirm = true } = await chrome.storage.local.get('exportConfirm');
+    if (exportConfirm !== false) {
+      const decision = await promptReExport();
+      if (decision === 'cancel') return;
+      if (decision === 'noPrompt') {
+        chrome.storage.local.set({ exportConfirm: false });
+        showStatus(i18n('reExportNoPromptHint'), 'info');
+        addLog(i18n('reExportNoPromptHint'));
+        return;
+      }
+      // 'continue' → proceed to export below
     }
-    // 'overwrite' or 'none' → continue exporting below
   }
 
   // Get export type from storage (set by popup's export type dropdown)
@@ -136,59 +141,6 @@ export async function handleStart() {
   } catch (error) {
     showStatus(i18n('startExportFailed', [error.message]), 'error');
     resetUiToIdle();
-  }
-}
-
-/**
- * Check storage for knowledge bases exported earlier. If any selected book was
- * exported before (and isn't already confirmed for a clean re-export this
- * session), ask the user how to handle it.
- * @returns {'overwrite'|'clean'|'cancel'|'none'}
- */
-async function resolveReExportDecision(bookIds) {
-  const { exportedBooks = {} } = await chrome.storage.local.get('exportedBooks');
-  const names = [];
-  const dirtyIds = [];
-  for (const id of bookIds) {
-    const book = (uiState.bookList || []).find(b => String(b.id) === String(id));
-    const rec = exportedBooks[id];
-    const bookName = rec?.name || book?.name || String(id);
-    // Detect a same-name folder both via storage and via the browser download
-    // history (which survives extension removal), so deleting and reloading
-    // the extension still prompts the user to clean up an existing copy.
-    const hasRecord = Boolean(rec) || await detectBookHasDownloads(bookName);
-    if (hasRecord && !isCleanConfirmed(id)) {
-      names.push(bookName);
-      dirtyIds.push(id);
-    }
-  }
-  if (!names.length) return 'none';
-
-  const choice = await promptReExport(names);
-  if (choice === 'overwrite') return 'overwrite';
-  if (choice === 'clean') {
-    markCleanConfirmed(dirtyIds);
-    // Open the Downloads folder so the user can delete the old book folder.
-    try { chrome.downloads.showDefaultFolder(); } catch (e) { /* ignore */ }
-    return 'clean';
-  }
-  return 'cancel';
-}
-
-/**
- * Whether the browser download history contains any file saved under a path
- * that contains the given knowledge base name. Unlike chrome.storage, this
- * survives the extension being removed and reinstalled, so a same-name folder
- * left on disk can still be detected and cleaned up.
- */
-async function detectBookHasDownloads(bookName) {
-  if (!bookName) return false;
-  try {
-    const escaped = String(bookName).replace(/[\^$.*+?()[\]{}|]/g, '\\$&');
-    const items = await chrome.downloads.search({ filenameRegex: escaped });
-    return Array.isArray(items) && items.length > 0;
-  } catch (e) {
-    return false;
   }
 }
 
