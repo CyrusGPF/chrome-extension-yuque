@@ -380,7 +380,7 @@ export function buildDocListFromApiDocs(docs, toc = []) {
   docs.forEach(doc => {
     const docType = doc.type || DOC_TYPES.DOC;
     if (!SUPPORTED_DOC_TYPES.has(docType)) return;
-    const info = tocInfoByDocId.get(doc.id) || null;
+    const info = tocInfoByDocId.get(String(doc.id)) || null;
     files.push({
       id: doc.id,
       slug: doc.slug,
@@ -397,6 +397,8 @@ export function buildDocListFromApiDocs(docs, toc = []) {
       folderSegments: info?.folderSegments || null,
       folderOrders: info?.folderOrders || null,
       hasChildren: info?.hasChildren || false,
+      parentDocId: info?.parentDocId || null,
+      tocIndex: info?.tocIndex ?? Number.MAX_SAFE_INTEGER,
       status: 'pending',
       localPath: '',
       updatedAt: doc.content_updated_at || doc.updated_at,
@@ -486,11 +488,16 @@ function buildFolderPathMapFromToc(toc = []) {
     const orderSegments = [siblingOrder.get(item.uuid) || 1];
     const folderSegments = [];
     const folderOrders = [];
+    let parentDocId = null;
     let current = item;
 
     while (current?.parent_uuid) {
       current = byUuid.get(current.parent_uuid);
       if (!current) break;
+
+      if (!parentDocId && current.type === 'DOC' && current.doc_id !== undefined && current.doc_id !== null) {
+        parentDocId = current.doc_id;
+      }
 
       orderSegments.unshift(siblingOrder.get(current.uuid) || 1);
 
@@ -511,6 +518,8 @@ function buildFolderPathMapFromToc(toc = []) {
       folderSegments,
       folderOrders,
       hasChildren: hasDocChildren.has(item.uuid),
+      parentDocId,
+      tocIndex: toc.indexOf(item),
     };
     pathCache.set(item.uuid, info);
     return info;
@@ -520,7 +529,7 @@ function buildFolderPathMapFromToc(toc = []) {
   toc.forEach(item => {
     if (!item || item.type !== 'DOC' || !item.doc_id) return;
     const info = resolveNode(item);
-    if (info) result.set(item.doc_id, info);
+    if (info) result.set(String(item.doc_id), info);
   });
 
   return result;

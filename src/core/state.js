@@ -9,10 +9,14 @@ function createInitialState() {
     fileList: [],       // { id, slug, title, bookId, bookName, folderPath, status, localPath, ... }
     exportType: 'md',
     subfolder: '',
+    groupBooksBySpace: false,
     requestInterval: 500,
     downloadImages: true,
-    // Obsidian 友好导出结构设置（由 handleStartExport 从 storage 装载）
-    useOrderPrefix: true,
+    // Obsidian Order Drag V1 settings (loaded from storage at export start)
+    useOrderPrefix: false,
+    writeGuid: true,
+    generateOrderManifest: true,
+    writeOrderField: false,
     useFolderNote: true,
     generateReadme: true,
     attachmentMode: 'book',

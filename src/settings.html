@@ -50,6 +50,14 @@
             <input id="subfolder" type="text" data-i18n-placeholder="subfolderPlaceholder" placeholder="例如: 语雀备份">
           </div>
           <div class="setting-item">
+            <label class="toggle-label">
+              <input id="groupBooksBySpace" type="checkbox">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M5 3h14v18H5z"/><path d="M8 11h8M8 15h5"/></svg>
+              <span data-i18n="groupBooksBySpaceLabel">按空间分类知识库</span>
+            </label>
+            <p class="setting-desc" data-i18n="groupBooksBySpaceDesc">关闭时，知识库直接放在下载目录或下载子文件夹下；开启后会增加“个人空间/我个人的”等分类目录。</p>
+          </div>
+          <div class="setting-item">
             <label><svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span data-i18n="downloadPromptLabel">系统批量下载每次询问</span></label>
             <p class="setting-desc" data-i18n="downloadPromptDesc">如果批量导出时总是弹出保存位置确认，请前往浏览器下载设置，关闭“下载前询问每个文件的保存位置”。</p>
             <button id="openDownloadsBtn" class="download-settings-btn" type="button" data-i18n="openDownloadsSettings">打开下载设置</button>
@@ -152,11 +160,35 @@
           <h4 class="card-title"><svg class="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h7l2 3h9v12H3z"/><path d="M3 6v15h18"/></svg><span data-i18n="cardExportStructure">导出结构</span></h4>
           <div class="setting-item">
             <label class="toggle-label">
-              <input id="useOrderPrefix" type="checkbox" checked>
+              <input id="useOrderPrefix" type="checkbox">
               <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="1.5"/><circle cx="8" cy="12" r="1.5"/><circle cx="8" cy="18" r="1.5"/></svg>
               <span data-i18n="useOrderPrefixLabel">层级序号前缀</span>
             </label>
-            <p class="setting-desc" data-i18n="useOrderPrefixDesc">按语雀目录顺序为文件名和文件夹添加层级序号（如 01-章节/01-01-文档.md），导入 Obsidian 后文件树顺序与语雀一致，并在 Markdown 头部写入 order 字段。</p>
+            <p class="setting-desc" data-i18n="useOrderPrefixDesc">V1 默认关闭文件名序号前缀；如需兼容旧的按名称排序流程，可重新开启。</p>
+          </div>
+          <div class="setting-item">
+            <label class="toggle-label">
+              <input id="writeGuid" type="checkbox" checked>
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.46 15 1.7 1.7 0 0 0 6.9 14H6.7v-2.4h.2A1.7 1.7 0 0 0 8.46 10a1.7 1.7 0 0 0-.34-1.88l-.06-.06 1.7-1.7.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 12.73 5.2V5h2.4v.2a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06 1.7 1.7-.06.06A1.7 1.7 0 0 0 19.4 10c.25.6.83 1 1.48 1h.2v2.4h-.2c-.65 0-1.23.4-1.48 1.6z"/></svg>
+              <span data-i18n="writeGuidLabel">写入稳定 guid</span>
+            </label>
+            <p class="setting-desc" data-i18n="writeGuidDesc">在每篇 Markdown 的 frontmatter 写入 guid: yq-文档ID，供 Obsidian Order Drag V1 识别文件身份。</p>
+          </div>
+          <div class="setting-item">
+            <label class="toggle-label">
+              <input id="generateOrderManifest" type="checkbox" checked>
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h16M4 19h16"/><circle cx="8" cy="5" r="1"/><circle cx="8" cy="12" r="1"/><circle cx="8" cy="19" r="1"/></svg>
+              <span data-i18n="generateOrderManifestLabel">生成 _yuque_order.json</span>
+            </label>
+            <p class="setting-desc" data-i18n="generateOrderManifestDesc">在每个知识库根目录生成 V1 顺序清单，导入 Obsidian 后用于播种语雀目录顺序。</p>
+          </div>
+          <div class="setting-item">
+            <label class="toggle-label">
+              <input id="writeOrderField" type="checkbox">
+              <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8h10M7 12h4m4 0h2M7 16h4m4 0h2"/></svg>
+              <span data-i18n="writeOrderFieldLabel">写入 order 排序字段</span>
+            </label>
+            <p class="setting-desc" data-i18n="writeOrderFieldDesc">V1 顺序由 manifest 和插件 data.json 承载，不再写入每篇笔记的 order 字段；仅为旧排序插件兼容时开启。</p>
           </div>
           <div class="setting-item">
             <label class="toggle-label">

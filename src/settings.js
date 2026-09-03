@@ -1,11 +1,11 @@
 import { applyI18n, i18n } from './ui/i18n.js';
 
 const SETTINGS_KEYS = [
-  'subfolder', 'requestInterval',
+  'subfolder', 'groupBooksBySpace', 'requestInterval',
   'downloadImages', 'imageConcurrency',
   'docExportFormat', 'sheetExportFormat', 'tableExportFormat', 'boardExportFormat',
   'showBubble', 'skipEncryptedBookmarks', 'markdownMode', 'sheetMode',
-  'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode', 'attachmentFolderName', 'fileConflict', 'exportConfirm'
+  'useOrderPrefix', 'writeGuid', 'generateOrderManifest', 'writeOrderField', 'useFolderNote', 'generateReadme', 'attachmentMode', 'attachmentFolderName', 'fileConflict', 'exportConfirm'
 ];
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -31,6 +31,7 @@ async function loadSettings() {
   const data = await chrome.storage.local.get(SETTINGS_KEYS);
 
   setVal('subfolder', data.subfolder ?? '语雀备份');
+  setChecked('groupBooksBySpace', data.groupBooksBySpace === true);
   setVal('requestInterval', data.requestInterval || 500);
   setChecked('downloadImages', data.downloadImages !== false);
   setVal('imageConcurrency', data.imageConcurrency || 3);
@@ -42,7 +43,10 @@ async function loadSettings() {
   setChecked('skipEncryptedBookmarks', data.skipEncryptedBookmarks === true);
   setVal('markdownMode', data.markdownMode || 'local');
   setVal('sheetMode', data.sheetMode || 'local');
-  setChecked('useOrderPrefix', data.useOrderPrefix !== false);
+  setChecked('useOrderPrefix', data.useOrderPrefix === true);
+  setChecked('writeGuid', data.writeGuid !== false);
+  setChecked('generateOrderManifest', data.generateOrderManifest !== false);
+  setChecked('writeOrderField', data.writeOrderField === true);
   setChecked('useFolderNote', data.useFolderNote !== false);
   setChecked('generateReadme', data.generateReadme !== false);
   setVal('attachmentMode', data.attachmentMode || 'book');
@@ -79,6 +83,7 @@ function bindAutoSave() {
 async function saveAllSettings() {
   const settings = {
     subfolder: getVal('subfolder'),
+    groupBooksBySpace: getChecked('groupBooksBySpace'),
     downloadImages: getChecked('downloadImages'),
     requestInterval: Number(getVal('requestInterval')) || 500,
     imageConcurrency: Number(getVal('imageConcurrency')) || 3,
@@ -91,6 +96,9 @@ async function saveAllSettings() {
     markdownMode: getVal('markdownMode') || 'local',
     sheetMode: getVal('sheetMode') || 'local',
     useOrderPrefix: getChecked('useOrderPrefix'),
+    writeGuid: getChecked('writeGuid'),
+    generateOrderManifest: getChecked('generateOrderManifest'),
+    writeOrderField: getChecked('writeOrderField'),
     useFolderNote: getChecked('useFolderNote'),
     generateReadme: getChecked('generateReadme'),
     attachmentMode: getVal('attachmentMode') || 'book',
