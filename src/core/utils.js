@@ -85,6 +85,23 @@ export function formatOrderLabel(orderSegments) {
 }
 
 /**
+ * Return the stable identity used by the Obsidian order plugin.
+ * Yuque document ids are preferred; the generated fallback is cached on the
+ * in-memory export item so one export run never changes an id accidentally.
+ */
+export function getYuqueGuid(file) {
+  if (file?.guid) return String(file.guid);
+  if (file?.id !== undefined && file?.id !== null && String(file.id)) {
+    file.guid = `yq-${String(file.id)}`;
+    return file.guid;
+  }
+
+  const randomUuid = globalThis.crypto?.randomUUID?.();
+  file.guid = `obs-${randomUuid || `${Date.now()}-${Math.random().toString(36).slice(2)}`}`;
+  return file.guid;
+}
+
+/**
  * Build Obsidian-friendly relative path segments for an exported file.
  * Shared by exporter.js and downloads.js so every save path stays consistent.
  *
@@ -163,6 +180,38 @@ export function withOrderFrontmatter(mdText, file) {
   }
 
   return `---\norder: ${order}\n---\n\n${text}`;
+}
+
+/**
+ * Merge the V1 identity field and the optional legacy order field into the
+ * existing Markdown frontmatter without overwriting user-defined keys.
+ */
+export function withExportFrontmatter(mdText, file, options = {}) {
+  const { writeGuid = true, writeOrderField = false } = options;
+  const fields = [];
+  const guid = getYuqueGuid(file);
+  const text = String(mdText || '');
+  const match = text.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*(?:\r?\n|$)/);
+  const frontmatter = match?.[1] || '';
+
+  if (writeGuid && !/^guid\s*:/m.test(frontmatter)) {
+    fields.push(`guid: ${guid}`);
+  }
+  if (
+    writeOrderField &&
+    Array.isArray(file?.orderSegments) &&
+    file.orderSegments.length &&
+    !/^order\s*:/m.test(frontmatter)
+  ) {
+    fields.push(`order: ${formatOrderLabel(file.orderSegments)}`);
+  }
+
+  if (!fields.length) return text;
+  if (match) {
+    const insertAt = match[0].indexOf('\n', 4);
+    return text.slice(0, insertAt + 1) + fields.map(field => `${field}\n`).join('') + text.slice(insertAt + 1);
+  }
+  return `---\n${fields.join('\n')}\n---\n\n${text}`;
 }
 
 /**

@@ -5,7 +5,7 @@ import { lakeToMarkdown } from './lake-converter.js';
 import { convertLakeSheet } from './sheet-converter.js';
 import { convertBoardToSvg, convertBoardToMermaid, convertBoardToECharts } from './board-converter.js';
 import { saveBlobToDisk, saveContentToDisk, downloadUrlToDisk, saveTextToRelativePath } from './downloads.js';
-import { delay, sanitizePathComponent, sanitizePathSegments, guessImageExt, buildExportRelativeSegments, withOrderFrontmatter, padNumber, escapeMarkdownLinkPath } from './utils.js';
+import { delay, sanitizePathComponent, sanitizePathSegments, guessImageExt, buildExportRelativeSegments, withExportFrontmatter, padNumber, escapeMarkdownLinkPath } from './utils.js';
 import { refreshAbortController, abortActiveTasks } from './task-controller.js';
 import { EXPORT_FORMATS, DEFAULT_SETTINGS, DOC_TYPES, DOC_TYPE_EXPORT_OPTIONS, SMART_EXPORT_KEY, BOOKMARKS_VIRTUAL_BOOK_ID, BOOKMARKS_VIRTUAL_BOOK_NAME, BOOKMARKS_LOOSE_DOCS_FOLDER, SUPPORTED_DOC_TYPES } from './constants.js';
 
@@ -275,6 +275,9 @@ async function handleGetFileInfo(data, sendResponse) {
       exportState.userInfo = authInfo;
     }
 
+    const pathSettings = await chrome.storage.local.get(['groupBooksBySpace']);
+    exportState.groupBooksBySpace = pathSettings.groupBooksBySpace === true;
+
     sendLog('开始获取文档列表...');
     const allFiles = [];
     let totalFolders = 0;
@@ -393,10 +396,11 @@ async function handleStartExport(data, sendResponse) {
 
     const settings = await chrome.storage.local.get([
       'subfolder', 'requestInterval',
+      'groupBooksBySpace',
       'downloadImages', 'imageConcurrency',
       'docExportFormat', 'sheetExportFormat', 'boardExportFormat', 'tableExportFormat',
       'markdownMode', 'sheetMode',
-      'useOrderPrefix', 'useFolderNote', 'generateReadme', 'attachmentMode', 'attachmentFolderName', 'fileConflict'
+      'useOrderPrefix', 'writeGuid', 'generateOrderManifest', 'writeOrderField', 'useFolderNote', 'generateReadme', 'attachmentMode', 'attachmentFolderName', 'fileConflict'
     ]);
 
     exportState.isExporting = true;
@@ -404,6 +408,7 @@ async function handleStartExport(data, sendResponse) {
     exportState.currentFileIndex = 0;
     exportState.exportType = data?.exportType || 'smart';
     exportState.subfolder = settings.subfolder ?? DEFAULT_SETTINGS.subfolder;
+    exportState.groupBooksBySpace = settings.groupBooksBySpace === true;
     exportState.requestInterval = Number(settings.requestInterval) || DEFAULT_SETTINGS.requestInterval;
     exportState.downloadImages = settings.downloadImages !== false;
     exportState.imageConcurrency = settings.imageConcurrency || DEFAULT_SETTINGS.imageConcurrency;
@@ -413,7 +418,10 @@ async function handleStartExport(data, sendResponse) {
     exportState.tableExportFormat = settings.tableExportFormat || DEFAULT_SETTINGS.tableExportFormat;
     exportState.markdownMode = settings.markdownMode || DEFAULT_SETTINGS.markdownMode;
     exportState.sheetMode = settings.sheetMode || DEFAULT_SETTINGS.sheetMode;
-    exportState.useOrderPrefix = settings.useOrderPrefix !== false;
+    exportState.useOrderPrefix = settings.useOrderPrefix === true;
+    exportState.writeGuid = settings.writeGuid !== false;
+    exportState.generateOrderManifest = settings.generateOrderManifest !== false;
+    exportState.writeOrderField = settings.writeOrderField === true;
     exportState.useFolderNote = settings.useFolderNote !== false;
     exportState.generateReadme = settings.generateReadme !== false;
     exportState.attachmentMode = settings.attachmentMode || DEFAULT_SETTINGS.attachmentMode;
@@ -457,9 +465,9 @@ async function handleRetryFailedFiles(sendResponse) {
     if (!authInfo.isLoggedIn) throw new Error('登录态已过期');
 
     const settings = await chrome.storage.local.get([
-      'subfolder', 'exportType', 'requestInterval', 'downloadImages', 'imageConcurrency',
+      'subfolder', 'groupBooksBySpace', 'exportType', 'requestInterval', 'downloadImages', 'imageConcurrency',
       'docExportFormat', 'sheetExportFormat', 'boardExportFormat', 'tableExportFormat',
-      'markdownMode', 'sheetMode'
+      'markdownMode', 'sheetMode', 'useOrderPrefix', 'writeGuid', 'generateOrderManifest', 'writeOrderField', 'useFolderNote'
     ]);
 
     exportState.fileList.forEach(file => {
@@ -473,6 +481,7 @@ async function handleRetryFailedFiles(sendResponse) {
     exportState.isPaused = false;
     exportState.currentFileIndex = 0;
     exportState.subfolder = settings.subfolder ?? DEFAULT_SETTINGS.subfolder;
+    exportState.groupBooksBySpace = settings.groupBooksBySpace === true;
     exportState.requestInterval = Number(settings.requestInterval) || DEFAULT_SETTINGS.requestInterval;
     exportState.exportType = settings.exportType || 'smart';
     exportState.docExportFormat = settings.docExportFormat || DEFAULT_SETTINGS.docExportFormat;
@@ -481,6 +490,11 @@ async function handleRetryFailedFiles(sendResponse) {
     exportState.tableExportFormat = settings.tableExportFormat || DEFAULT_SETTINGS.tableExportFormat;
     exportState.markdownMode = settings.markdownMode || DEFAULT_SETTINGS.markdownMode;
     exportState.sheetMode = settings.sheetMode || DEFAULT_SETTINGS.sheetMode;
+    exportState.useOrderPrefix = settings.useOrderPrefix === true;
+    exportState.writeGuid = settings.writeGuid !== false;
+    exportState.generateOrderManifest = settings.generateOrderManifest !== false;
+    exportState.writeOrderField = settings.writeOrderField === true;
+    exportState.useFolderNote = settings.useFolderNote !== false;
     // Keep existing logs for retry context
 
     refreshAbortController();
@@ -522,12 +536,13 @@ async function handleReExportFile(data, sendResponse) {
     if (!authInfo.isLoggedIn) throw new Error('登录态已过期');
 
     const settings = await chrome.storage.local.get([
-      'subfolder', 'requestInterval', 'downloadImages', 'imageConcurrency',
+      'subfolder', 'groupBooksBySpace', 'requestInterval', 'downloadImages', 'imageConcurrency',
       'docExportFormat', 'sheetExportFormat', 'boardExportFormat', 'tableExportFormat',
-      'markdownMode', 'sheetMode'
+      'markdownMode', 'sheetMode', 'useOrderPrefix', 'writeGuid', 'writeOrderField', 'useFolderNote'
     ]);
 
     exportState.subfolder = settings.subfolder ?? DEFAULT_SETTINGS.subfolder;
+    exportState.groupBooksBySpace = settings.groupBooksBySpace === true;
     exportState.requestInterval = Number(settings.requestInterval) || DEFAULT_SETTINGS.requestInterval;
     exportState.downloadImages = settings.downloadImages !== false;
     exportState.imageConcurrency = settings.imageConcurrency || DEFAULT_SETTINGS.imageConcurrency;
@@ -537,6 +552,10 @@ async function handleReExportFile(data, sendResponse) {
     exportState.tableExportFormat = settings.tableExportFormat || DEFAULT_SETTINGS.tableExportFormat;
     exportState.markdownMode = settings.markdownMode || DEFAULT_SETTINGS.markdownMode;
     exportState.sheetMode = settings.sheetMode || DEFAULT_SETTINGS.sheetMode;
+    exportState.useOrderPrefix = settings.useOrderPrefix === true;
+    exportState.writeGuid = settings.writeGuid !== false;
+    exportState.writeOrderField = settings.writeOrderField === true;
+    exportState.useFolderNote = settings.useFolderNote !== false;
 
     refreshAbortController();
     resetThrottle();
@@ -706,7 +725,12 @@ async function exportFiles(runToken) {
                 await downloadUrlToDisk(result.url, savedPath);
               } else if (perTypeFormat === 'md' && result.blob) {
                 let mdText = await result.blob.text();
-                if (exportState.useOrderPrefix) mdText = withOrderFrontmatter(mdText, file);
+                if (exportState.writeGuid || exportState.writeOrderField) {
+                  mdText = withExportFrontmatter(mdText, file, {
+                    writeGuid: exportState.writeGuid,
+                    writeOrderField: exportState.writeOrderField,
+                  });
+                }
                 if (exportState.downloadImages) {
                   const { localizedMd, imageCount, failedImages } = await localizeMarkdownImages(mdText, file);
                   await saveContentToDisk(localizedMd, file, format.extension, 'text/markdown');
@@ -822,7 +846,12 @@ async function exportFiles(runToken) {
       }
     }
 
-    // Obsidian: generate README.md order indexes for knowledge bases
+    // Obsidian: generate the V1 order manifest and the optional README index.
+    try {
+      await generateOrderManifests();
+    } catch (manifestErr) {
+      sendLog('生成 _yuque_order.json 失败: ' + manifestErr.message);
+    }
     try {
       await generateReadmeIndex();
     } catch (readmeErr) {
@@ -1085,6 +1114,8 @@ function msg(key, fallback) {
 
 function buildBookFolderPath(book) {
   const name = sanitizePathComponent(book.name);
+  if (!exportState.groupBooksBySpace) return name;
+
   const personal = msg('personalSpace', '个人空间');
   const myOwn = msg('myOwn', '我个人的');
   const collab = msg('invitedCollab', '邀请协作的');
@@ -1125,6 +1156,71 @@ function buildFilePath(file, extension) {
     useOrderPrefix: exportState.useOrderPrefix,
     useFolderNote: exportState.useFolderNote,
   }).join('/');
+}
+
+/**
+ * Build and write the V1 manifest consumed by the Obsidian Order Drag plugin.
+ * The tree contains Markdown-capable Yuque documents only; TITLE nodes from
+ * the Yuque TOC are represented by the exported path rather than invented
+ * identities, because they do not have a stable document id of their own.
+ */
+async function generateOrderManifests() {
+  if (!exportState.generateOrderManifest || !Array.isArray(exportState.fileList)) return;
+
+  const groups = new Map();
+  exportState.fileList.forEach(file => {
+    if (!file?.bookId || file.id === undefined || file.id === null) return;
+    if (!groups.has(file.bookId)) groups.set(file.bookId, []);
+    groups.get(file.bookId).push(file);
+  });
+
+  for (const [bookId, files] of groups) {
+    const book = exportState.bookList.find(item => String(item.id) === String(bookId));
+    const childrenByParent = new Map();
+    files.forEach(file => {
+      const parentKey = file.parentDocId === undefined || file.parentDocId === null
+        ? '__root__'
+        : String(file.parentDocId);
+      if (!childrenByParent.has(parentKey)) childrenByParent.set(parentKey, []);
+      childrenByParent.get(parentKey).push(file);
+    });
+
+    const sortByTocOrder = (a, b) => {
+      const ax = Number.isFinite(Number(a.tocIndex)) ? Number(a.tocIndex) : Number.MAX_SAFE_INTEGER;
+      const bx = Number.isFinite(Number(b.tocIndex)) ? Number(b.tocIndex) : Number.MAX_SAFE_INTEGER;
+      if (ax !== bx) return ax - bx;
+      return String(a.title || '').localeCompare(String(b.title || ''), 'zh-CN');
+    };
+
+    const makeTree = (parentKey, prefix = '') => {
+      const siblings = (childrenByParent.get(parentKey) || []).slice().sort(sortByTocOrder);
+      return siblings.map((file, index) => {
+        const order = prefix ? `${prefix}.${index + 1}` : String(index + 1);
+        return {
+          guid: file.guid || `yq-${String(file.id)}`,
+          title: file.title || '未命名文档',
+          order,
+          children: makeTree(String(file.id), order),
+        };
+      });
+    };
+
+    const bookName = book?.name || files[0]?.bookName || String(bookId);
+    const rootPath = [
+      ...sanitizePathSegments(exportState.subfolder),
+      ...sanitizePathSegments(files[0]?.bookName || bookName),
+    ].join('/');
+    const manifest = {
+      version: 1,
+      source: 'yuque',
+      book: bookName,
+      generatedAt: new Date().toISOString(),
+      tree: makeTree('__root__'),
+    };
+    const manifestPath = [rootPath, '_yuque_order.json'].filter(Boolean).join('/');
+    await saveTextToRelativePath(`${JSON.stringify(manifest, null, 2)}\n`, manifestPath, 'application/json');
+    sendLog('已生成顺序清单: ' + manifestPath);
+  }
 }
 
 /**
@@ -1260,7 +1356,12 @@ async function exportViaLakeContent(file, format, perTypeFormat) {
     file.missingImages = (file.missingImages || []).concat(failedImages);
   }
   const markdown = lakeToMarkdown(contentWithBoards);
-  const finalMarkdown = exportState.useOrderPrefix ? withOrderFrontmatter(markdown, file) : markdown;
+  const finalMarkdown = (exportState.writeGuid || exportState.writeOrderField)
+    ? withExportFrontmatter(markdown, file, {
+      writeGuid: exportState.writeGuid,
+      writeOrderField: exportState.writeOrderField,
+    })
+    : markdown;
 
 
   if (exportState.downloadImages) {
@@ -1690,7 +1791,7 @@ async function handleQuickExport(data, sendResponse) {
     // Step 1: Load user settings early so we can determine whether we need full content
     const settings = await chrome.storage.local.get([
       'subfolder', 'docExportFormat', 'sheetExportFormat', 'boardExportFormat',
-      'markdownMode', 'sheetMode', 'downloadImages', 'imageConcurrency'
+      'markdownMode', 'sheetMode', 'downloadImages', 'imageConcurrency', 'writeGuid', 'writeOrderField'
     ]);
 
     const subfolder = settings.subfolder ?? DEFAULT_SETTINGS.subfolder;
@@ -1698,6 +1799,8 @@ async function handleQuickExport(data, sendResponse) {
     const markdownMode = settings.markdownMode || DEFAULT_SETTINGS.markdownMode;
     const sheetMode = settings.sheetMode || DEFAULT_SETTINGS.sheetMode;
     const imageConcurrency = settings.imageConcurrency || DEFAULT_SETTINGS.imageConcurrency;
+    const writeGuid = settings.writeGuid !== false;
+    const writeOrderField = settings.writeOrderField === true;
 
     const docType = pageDocType || DOC_TYPES.DOC;
 
@@ -1791,7 +1894,9 @@ async function handleQuickExport(data, sendResponse) {
     } else if (perTypeFormat === 'md' && (markdownMode === 'local' || noPermission) && content) {
       const imgBase = segments.slice(0, -1).filter(Boolean).join('/'); // subfolder path without filename
       const { content: contentWithBoards } = await renderEmbeddedBoardsToAssets(content, file, imgBase, () => {});
-      const markdown = lakeToMarkdown(contentWithBoards);
+      const markdown = (writeGuid || writeOrderField)
+        ? withExportFrontmatter(lakeToMarkdown(contentWithBoards), file, { writeGuid, writeOrderField })
+        : lakeToMarkdown(contentWithBoards);
       if (downloadImages) {
         const { localizedMd } = await localizeMarkdownImages(markdown, file, imgBase, imageConcurrency, () => {});
         await saveText(localizedMd, 'text/markdown');
