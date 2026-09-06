@@ -134,7 +134,13 @@ export function buildExportRelativeSegments(file, extension, opts = {}) {
   );
 
   // Parent chain folders, each with its sibling-order prefix when enabled.
-  if (Array.isArray(file?.folderSegments) && file.folderSegments.length) {
+  // V1 同级重名处理后 uniqueFolders 为已去重的目录链（优先使用）。
+  const uniqueFolders = Array.isArray(file?.uniqueFolders) && file.uniqueFolders.length
+    ? file.uniqueFolders
+    : null;
+  if (uniqueFolders) {
+    segments.push(...uniqueFolders);
+  } else if (Array.isArray(file?.folderSegments) && file.folderSegments.length) {
     file.folderSegments.forEach((title, i) => {
       const seg = sanitizePathComponent(title);
       if (!seg) return;
@@ -146,8 +152,9 @@ export function buildExportRelativeSegments(file, extension, opts = {}) {
     segments.push(...sanitizePathSegments(file.folderPath));
   }
 
+
   // Base file name (no extension), with sibling-order prefix when enabled.
-  const title = sanitizePathComponent(file?.title) || '未命名文档';
+  const title = file?.uniqueName || sanitizePathComponent(file?.title) || '未命名文档';
   const baseName = hasOrder ? `${padNumber(file.siblingOrder)}-${title}` : title;
 
   // Folder-note mode: parent docs (with children) exported as md live inside

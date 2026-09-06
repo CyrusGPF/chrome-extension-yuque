@@ -136,11 +136,10 @@ export function renderBookDropdown(books) {
     bookSelectOptions.appendChild(empty);
   }
 
-  // Default: select all (including bookmarks)
-  toggleAllBooks(true);
+  // 打开插件时默认不勾选任何知识库；popup.js 在渲染后调用
+  // restoreBookSelection() 恢复上次保存的选择（无历史选择时保持全不选）。
   updateBookDropdownLabel();
   updateSelectedCount();
-  saveBookSelection();
 
   // Setup trigger click (once)
   if (bookSelectTrigger && !bookSelectTrigger._bound) {
@@ -177,7 +176,7 @@ function appendSelectAllOption(container) {
   const cb = document.createElement('input');
   cb.type = 'checkbox';
   cb.className = 'book-option-cb select-all-cb';
-  cb.checked = true; // default all selected
+  cb.checked = false; // 实际状态由 syncSelectAllCheckbox() 同步；打开插件默认不全选
 
   const info = document.createElement('div');
   info.className = 'book-option-info';
@@ -363,6 +362,8 @@ export async function restoreBookSelection() {
       btn.click(); // Triggers the handler which adds to selectedBookIdSet
     }
   });
+  // 选择恢复后刷新按钮/计数状态（默认不全选时，按钮随选择实时可用/禁用）。
+  syncUiWithState(uiState);
 }
 
 export function getSelectedDocsCount() {

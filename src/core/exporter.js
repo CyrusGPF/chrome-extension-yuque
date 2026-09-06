@@ -16,6 +16,10 @@ const MAX_DEFER_COUNT = 4;
 const MAX_HARD_INTERRUPTS = 3;
 const DEFERRED_RETRY_ALARM = 'yuqueout-deferred-retry';
 
+// 运行时内容缓存（预扫描写入，导出阶段复用，避免重复请求）：file.id -> lake 内容字符串
+// 空字符串表示文档正文为空（规则 2/4 用）；键不存在表示尚未扫描或扫描失败。
+const contentCache = new Map();
+
 class DeferredExportError extends Error {
   constructor(message) {
     super(message);
@@ -606,7 +610,8 @@ async function handleReExportFile(data, sendResponse) {
     }
 
     file.status = 'success';
-    file.localPath = buildFilePath(file, format.extension);
+          // 空正文父级（规则 2）已由 writeEmptyDoc 设为目录路径，勿覆盖。
+          if (!file.localPath) file.localPath = buildFilePath(file, format.extension);
     file.endTime = Date.now();
     file.duration = file.endTime - file.startTime;
     await saveStateSafely();
@@ -640,6 +645,11 @@ async function exportFiles(runToken) {
     const filesToProcess = exportState.fileList;
     const totalCount = filesToProcess.length;
     normalizeDeferredFiles();
+
+    // V1：预扫描文档内容（判定空文档，供规则 2/4 与同级重名命名使用），
+    // 并为同级重名目录/文档分配 -N 后缀（首个保留原名）。
+    await prepareContentFlags(runToken);
+    assignUniqueExportNames();
 
     let i = findNextRunnableIndex(exportState.currentFileIndex);
     while (i >= 0) {
@@ -725,6 +735,10 @@ async function exportFiles(runToken) {
                 await downloadUrlToDisk(result.url, savedPath);
               } else if (perTypeFormat === 'md' && result.blob) {
                 let mdText = await result.blob.text();
+                if (!mdText.trim()) {
+                  await writeEmptyDoc(file);
+                  return;
+                }
                 if (exportState.writeGuid || exportState.writeOrderField) {
                   mdText = withExportFrontmatter(mdText, file, {
                     writeGuid: exportState.writeGuid,
@@ -764,7 +778,8 @@ async function exportFiles(runToken) {
           if (!isCurrentRun(runToken)) return;
           resetRetryMetadata(file);
           file.status = 'success';
-          file.localPath = buildFilePath(file, format.extension);
+          // 空正文父级（规则 2）已由 writeEmptyDoc 设为目录路径，勿覆盖。
+          if (!file.localPath) file.localPath = buildFilePath(file, format.extension);
           file.endTime = Date.now();
           file.duration = file.endTime - file.startTime;
           sendLog('导出完成: ' + file.title + ' (耗时 ' + (file.duration / 1000).toFixed(2) + 's)');
@@ -1017,8 +1032,11 @@ function buildImagePath(file, localName) {
   if (file.bookName) segments.push(...sanitizePathSegments(file.bookName));
 
   // Folder segments must match the document path (order prefixes included).
-  if (exportState.useOrderPrefix && Array.isArray(file.folderSegments) && file.folderSegments.length) {
-    file.folderSegments.forEach((title, i) => {
+  // V1 同级重名处理后 uniqueFolders 为已去重的目录链（优先使用）。
+    if (Array.isArray(file?.uniqueFolders) && file.uniqueFolders.length) {
+      segments.push(...file.uniqueFolders);
+    } else if (exportState.useOrderPrefix && Array.isArray(file.folderSegments) && file.folderSegments.length) {
+        file.folderSegments.forEach((title, i) => {
       const seg = sanitizePathComponent(title);
       if (seg) segments.push(`${padNumber(file.folderOrders?.[i])}-${seg}`);
     });
@@ -1029,7 +1047,7 @@ function buildImagePath(file, localName) {
   // Folder-note mode: assets of a parent doc (with children, exported as md)
   // live in the same folder as the doc itself.
   if (exportState.useFolderNote && file.hasChildren) {
-    const title = sanitizePathComponent(file.title) || '未命名文档';
+    const title = file.uniqueName || sanitizePathComponent(file.title) || '未命名文档';
     const baseName = exportState.useOrderPrefix ? `${padNumber(file.siblingOrder)}-${title}` : title;
     segments.push(baseName);
   }
@@ -1333,14 +1351,226 @@ function buildReadmeDocPath(file) {
  * Export a doc by fetching Lake HTML content and converting to Markdown locally.
  * Used for: bookmark docs (no export permission) and when markdownMode='local'.
  */
+/**
+ * 判断文档正文是否为空（规则 2/4）。未预扫描时按非空处理（保留同名笔记占位）。
+ */
+function isEmptyDoc(file) {
+  // 优先使用持久化的判定结果（上次预扫描/导出阶段已写入，随任务状态保存，
+  // 中断恢复后无需重新逐个请求正文）。
+  if (file.isEmpty !== undefined && file.isEmpty !== null) return file.isEmpty === true;
+  const cached = contentCache.get(String(file.id));
+  if (cached !== undefined) return cached === '';
+  return false;
+}
+
+/**
+ * 预扫描本次导出涉及的 Markdown 文档内容并缓存到 contentCache，
+ * 供导出阶段复用，并用于判定空文档。仅本地转换模式需要。
+ */
+async function prepareContentFlags(runToken) {
+  contentCache.clear();
+  if (exportState.markdownMode !== 'local') return;
+
+  // 仅需预扫描：本地模式 + 尚未持久化 isEmpty 判定的文档。
+  // 空文档判定用于规则 2/4；持久化到文件对象后，中断恢复无需重复请求正文。
+  const files = (exportState.fileList || []).filter(file =>
+    file && file.slug && (file.bookSourceId || file.bookId) &&
+    (file.docType || DOC_TYPES.DOC) === DOC_TYPES.DOC &&
+    (file.isEmpty === undefined || file.isEmpty === null)
+  );
+  if (!files.length) return;
+
+  // ⚠️ 风控保护：与正式导出循环完全一致的串行节奏（requestInterval + 随机抖动），
+  // 绝不并发、绝不加速；只通过进度日志让用户知道扫描在正常进行。
+  const interval = Number(exportState.requestInterval) || DEFAULT_SETTINGS.requestInterval;
+  const every = Math.max(10, Math.round(files.length / 20)); // 约每 5% 一次进度
+  const estMinutes = Math.max(1, Math.ceil((files.length * 1100) / 60000)); // 每篇约1.1s（限速+网络）
+  sendLog(`开始预扫描文档内容（共 ${files.length} 篇，用于空文档判定，预计约 ${estMinutes} 分钟，请稍候）…`);
+  await saveStateSafely();
+  let done = 0;
+  for (const file of files) {
+    if (!isCurrentRun(runToken) || !exportState.isExporting) return;
+    await waitIfPaused();
+    if (!isCurrentRun(runToken) || !exportState.isExporting) return;
+    try {
+      const { content } = await fetchDocContent(file.slug, file.bookSourceId || file.bookId, file.bookHost || null);
+      const isEmpty = !content;
+      contentCache.set(String(file.id), content || '');
+      file.isEmpty = isEmpty;
+    } catch {
+      // 扫描失败不写判定：导出阶段会重试获取并按其结果处理。
+    }
+    done += 1;
+    if (done % every === 0 || done === files.length) {
+      sendLog(`预扫描文档内容 (${done}/${files.length})…`);
+      await saveStateSafely();
+    }
+    // 与正式导出一致的风控节奏（串行、不加速）。
+    await delay(interval + Math.random() * 500);
+  }
+  sendLog(`预扫描文档内容完成 (${files.length} 篇)。`);
+  await saveStateSafely();
+}
+
+/**
+ * 空正文文档处理（规则 2/4）：
+ * - 有子级（规则 2）：仅建立目录（由子级写盘创建），不写同名文档；localPath 指向目录，
+ *   供 README 生成目录链接。
+ * - 无子级（规则 4）：直接写同名 A.md，内容与文档一致（空正文，仅保留 guid frontmatter）。
+ */
+async function writeEmptyDoc(file) {
+  if (file.hasChildren && exportState.useFolderNote) {
+    sendLog(`  空文档(有子级)，仅建立目录: ${file.title}`);
+    const segments = buildExportRelativeSegments(file, 'md', {
+      subfolder: exportState.subfolder || '',
+      useOrderPrefix: exportState.useOrderPrefix,
+      useFolderNote: exportState.useFolderNote,
+    });
+    file.localPath = segments.slice(0, -1).join('/') + '/';
+    return;
+  }
+  sendLog(`  文档正文为空，写入空文档: ${file.title}`);
+  const md = (exportState.writeGuid || exportState.writeOrderField)
+    ? withExportFrontmatter('', file, {
+        writeGuid: exportState.writeGuid,
+        writeOrderField: exportState.writeOrderField,
+      })
+    : '';
+  await saveContentToDisk(md, file, 'md', 'text/markdown');
+}
+
+/**
+ * V1 同级重名处理（规则五）：按语雀目录（TOC）顺序，同一层的重名目录/重名文档组内
+ * 首个保留原名，其余依次加 -1、-2…。目录名与文档名是两个独立空间；父级同名笔记占用
+ * 其目录内的文档空间，因此同名子级文档会被追加 -N 后缀（父级空正文时无笔记占位，子级
+ * 保持原名）。结果写入 file.uniqueName（去重后的基础名）与 file.uniqueFolders（去重后的
+ * 父链目录名）。开启 useOrderPrefix 时序号前缀已保证唯一，跳过。
+ */
+function assignUniqueExportNames() {
+  const files = (exportState.fileList || []).filter(file => file && file.bookId && Array.isArray(file.folderSegments));
+  files.forEach(file => { delete file.uniqueName; delete file.uniqueFolders; });
+  if (exportState.useOrderPrefix || !files.length) return;
+
+  const baseOf = (file) => sanitizePathComponent(file.title) || '未命名文档';
+  const tocKeyOf = (file, idx) => {
+    const t = Number(file.tocIndex);
+    return Number.isFinite(t) ? t : Number.MAX_SAFE_INTEGER + idx;
+  };
+
+  // 组内命名：第一阶段登记全部原名（组内首个/唯一成员），第二阶段为其余成员分配 -N。
+  const nameGroup = (items, used) => {
+    const groups = new Map();
+    items.forEach(item => {
+      if (!groups.has(item.base)) groups.set(item.base, []);
+      groups.get(item.base).push(item);
+    });
+    const pending = [];
+    for (const [base, list] of groups) {
+      list.sort((a, b) => tocKeyOf(a.file, a.idx) - tocKeyOf(b.file, b.idx));
+      const first = list[0];
+      first.name = base;
+      used.add(base);
+      for (let i = 1; i < list.length; i++) pending.push({ item: list[i], base });
+    }
+    pending.sort((a, b) => tocKeyOf(a.item.file, a.idx) - tocKeyOf(b.item.file, b.idx));
+    for (const { item, base } of pending) {
+      for (let n = 1; ; n++) {
+        const cand = `${base}-${n}`;
+        if (!used.has(cand)) { item.name = cand; used.add(cand); break; }
+      }
+    }
+  };
+
+  const byBook = new Map();
+  files.forEach(file => {
+    if (!byBook.has(file.bookId)) byBook.set(file.bookId, []);
+    byBook.get(file.bookId).push(file);
+  });
+
+  for (const [bookId, bookFiles] of byBook) {
+    const childrenByParent = new Map();
+    bookFiles.forEach(file => {
+      const parentKey = (file.parentDocId === undefined || file.parentDocId === null) ? '__root__' : String(file.parentDocId);
+      if (!childrenByParent.has(parentKey)) childrenByParent.set(parentKey, []);
+      childrenByParent.get(parentKey).push(file);
+    });
+
+    const rebuildFolders = (file, parentNode) => {
+      const ancestors = [];
+      let cur = parentNode;
+      while (cur) { ancestors.unshift(cur); cur = cur.parent; }
+      const kept = [];
+      for (const a of ancestors) if (a.rawSeg !== '') kept.push(a.name);
+      const segs = file.folderSegments || [];
+      const flags = Array.isArray(file.folderSegmentDocFlags) ? file.folderSegmentDocFlags : null;
+      let ptr = 0;
+      const out = [];
+      segs.forEach((seg, i) => {
+        const raw = sanitizePathComponent(seg);
+        if (!raw) return;
+        const isDoc = flags ? Boolean(flags[i]) : true;
+        out.push(isDoc ? (ptr < kept.length ? kept[ptr++] : raw) : raw);
+      });
+      return out;
+    };
+
+    const visit = (parentKey, parentNode) => {
+      const siblings = (childrenByParent.get(parentKey) || [])
+        .map((file, idx) => ({ file, idx }))
+        .sort((a, b) => tocKeyOf(a.file, a.idx) - tocKeyOf(b.file, b.idx));
+
+      // 目录空间：有子级文档 -> 自身同名目录
+      const dirItems = siblings.filter(s => s.file.hasChildren).map(s => ({ ...s, base: baseOf(s.file) }));
+      const dirUsed = new Set();
+      nameGroup(dirItems, dirUsed);
+      const dirNameById = new Map(dirItems.map(d => [String(d.file.id), d.name]));
+
+      // 文档空间：无子级文档 -> 直接文档；有子级且非空 -> 目录内同名笔记占位
+      const fileItems = [];
+      siblings.forEach(s => {
+        if (!s.file.hasChildren) {
+          fileItems.push({ ...s, base: baseOf(s.file) });
+        } else if (!isEmptyDoc(s.file)) {
+          fileItems.push({ ...s, base: dirNameById.get(String(s.file.id)), isNote: true });
+        }
+      });
+      const fileUsed = new Set();
+      nameGroup(fileItems, fileUsed);
+
+      siblings.forEach(({ file }) => {
+        const node = { file, parent: parentNode, name: '', rawSeg: sanitizePathComponent(file.title) };
+        if (file.hasChildren) {
+          file.uniqueName = dirNameById.get(String(file.id));
+        } else {
+          const leaf = fileItems.find(f => !f.isNote && String(f.file.id) === String(file.id));
+          file.uniqueName = leaf ? leaf.name : baseOf(file);
+        }
+        node.name = file.uniqueName;
+        file.uniqueFolders = rebuildFolders(file, parentNode);
+        if (file.hasChildren) visit(String(file.id), node);
+      });
+    };
+
+    visit('__root__', null);
+  }
+}
+
 async function exportViaLakeContent(file, format, perTypeFormat) {
   const bookId = file.bookSourceId || file.bookId;
   sendLog(`  使用本地转换模式...`);
 
-  let { content } = await fetchDocContent(file.slug, bookId, file.bookHost || null);
+  const cached = contentCache.get(String(file.id));
+  let content;
+  if (cached !== undefined) {
+    content = cached;
+  } else {
+    ({ content } = await fetchDocContent(file.slug, bookId, file.bookHost || null));
+  }
 
   if (!content) {
-    throw new Error('文档内容为空');
+    // 空正文文档：规则 2/4（仅建目录或写空文档），不再标记失败。
+    await writeEmptyDoc(file);
+    return;
   }
 
   // For Table type, records are stored separately — fetch and inject them
