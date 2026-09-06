@@ -395,6 +395,7 @@ export function buildDocListFromApiDocs(docs, toc = []) {
       orderSegments: info?.orderSegments || null,
       siblingOrder: info?.siblingOrder || 1,
       folderSegments: info?.folderSegments || null,
+      folderSegmentDocFlags: info?.folderSegmentDocFlags || null,
       folderOrders: info?.folderOrders || null,
       hasChildren: info?.hasChildren || false,
       parentDocId: info?.parentDocId || null,
@@ -487,6 +488,7 @@ function buildFolderPathMapFromToc(toc = []) {
 
     const orderSegments = [siblingOrder.get(item.uuid) || 1];
     const folderSegments = [];
+    const folderSegmentDocFlags = [];
     const folderOrders = [];
     let parentDocId = null;
     let current = item;
@@ -507,6 +509,7 @@ function buildFolderPathMapFromToc(toc = []) {
       // Both TITLE and DOC nodes can represent folders for descendants.
       if (current.type === 'TITLE' || current.type === 'DOC') {
         folderSegments.unshift(title);
+        folderSegmentDocFlags.unshift(current.type === 'DOC');
         folderOrders.unshift(siblingOrder.get(current.uuid) || 1);
       }
     }
@@ -516,6 +519,7 @@ function buildFolderPathMapFromToc(toc = []) {
       orderSegments,
       siblingOrder: siblingOrder.get(item.uuid) || 1,
       folderSegments,
+      folderSegmentDocFlags,
       folderOrders,
       hasChildren: hasDocChildren.has(item.uuid),
       parentDocId,
