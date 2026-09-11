@@ -22,6 +22,7 @@ Use these commands from the repository root:
 
 ```bash
 npm install
+npm test
 npm run build
 npm run build:watch
 npm run pack
@@ -33,7 +34,7 @@ Notes:
 - `npm run build` outputs to `dist/`.
 - `npm run pack` creates `build/chrome-extension-yuque-export.zip`.
 - `dist/`, `build/`, `node_modules/`, and `.DS_Store` are ignored and should not be committed.
-- `npm test` is currently a placeholder that exits with failure; do not report it as a meaningful test suite.
+- `npm test` runs the lightweight Node contract tests for GUID generation and export metadata.
 
 ## Architecture
 

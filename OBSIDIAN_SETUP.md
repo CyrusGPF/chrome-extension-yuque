@@ -1,6 +1,6 @@
 # Obsidian 导出结构与插件配置说明
 
-> 当前 V1 方案以 [OBSIDIAN_ORDER_DRAG_V1.md](./OBSIDIAN_ORDER_DRAG_V1.md) 为准：使用 `guid` + `_yuque_order.json` + Yuque Order Drag 插件。本文下面保留的旧版前缀/order/第三方排序插件说明仅用于历史兼容。
+> 当前方案以 [OBSIDIAN_ORDER_DRAG_V1.md](./OBSIDIAN_ORDER_DRAG_V1.md) 为准：使用类型化 `guid` + 一次性 `_yuque_order.json` + Yuque Order Drag 插件。本文下面的前缀/order/第三方排序插件说明仅用于历史兼容。
 
 本文档整理 YuqueOut 导出到 Obsidian 的目录展示方案，以及两个配套插件（Folder Notes、Custom File Explorer Sorting）的配置方法与踩坑经验。适用于将语雀知识库批量导出后，导入 Obsidian 长期使用、并保留语雀原始目录顺序与嵌套层级的场景。
 
@@ -19,7 +19,7 @@
     │   └── 02-子文档2.md
     ├── 02-文档.md                 // 普通顶层文档
     ├── attachment/                // 图片等附件按知识库集中（可自定义名字）
-    └── README.md                  // 按语雀顺序生成的索引
+    └── _yuque_order.json          // 一次性顺序初始化清单
 ```
 
 导入 Obsidian 后：文件树按名称即保持语雀目录顺序（01 在 02 前、嵌套层级正确）；点击文件夹打开父文档；附件独立一个文件夹，删库连带删除。
@@ -32,9 +32,10 @@
 父级文档存为 `父目录/父目录.md` 的"文件夹笔记"结构，子文档平铺其下。配合 Folder Notes 插件，点击文件夹名即可打开父文档。
 **设置**：导出结构 → 嵌套文档文件夹笔记模式（默认开，仅影响 Markdown）。
 
-### 3. README 索引
-每个知识库根目录生成 `README.md`，按语雀原始顺序缩进列出全部文档链接，作为知识库的导航首页。若图片下载失败，会在末尾生成"未下载成功的图片"小节（含原始链接），方便手动补充。
-**设置**：导出结构 → 生成 README 索引（默认开）。
+### 3. 顺序初始化清单
+每个知识库根目录自动生成 `_yuque_order.json`，供 Yuque Order Drag 显式初始化一次语雀原始顺序。清单的 `resources` 区域登记已下载附件及其目录，附件参与完整性检查但不干扰语雀正文顺序。新版不再生成 README 索引。
+
+同一次导出选择多个同名知识库时，后续知识库根目录自动追加 `-1`、`-2`。正文、附件和 `_yuque_order.json` 全部使用同一个最终根路径，因此各知识库内部顺序不会混合。两次彼此独立的导出任务仍应选择不同目标目录，因为浏览器扩展不能可靠枚举任意外部目录的现状。
 
 ### 4. frontmatter 写入 order 字段
 每篇 md 文件头部写入 `order: 1.1`（层级序号），例如：
@@ -149,7 +150,7 @@ Obsidian 默认"文件夹优先排序"，导致 `父目录.md`（folder note 文
 3. 把该文件夹放入（或复制进）Obsidian vault
 4. 安装并配置 Folder Notes（隐藏同名笔记）+ Custom File Explorer Sorting（sortspec.md）
 5. `Ctrl + R` 重载 Obsidian 让设置生效
-6. 打开 `README.md` 作导航，按目录顺序浏览
+6. 在插件设置中显式执行一次语雀清单初始化，然后按原目录顺序浏览
 
 做完这些，Obsidian 里的文件树顺序与语雀一致，点击文件夹直接打开父文档，附件按库独立，重新导出不留副本。
 ---

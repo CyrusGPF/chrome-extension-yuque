@@ -5,7 +5,7 @@ const SETTINGS_KEYS = [
   'downloadImages', 'imageConcurrency',
   'docExportFormat', 'sheetExportFormat', 'tableExportFormat', 'boardExportFormat',
   'showBubble', 'skipEncryptedBookmarks', 'markdownMode', 'sheetMode',
-  'useOrderPrefix', 'writeGuid', 'generateOrderManifest', 'writeOrderField', 'useFolderNote', 'generateReadme', 'attachmentMode', 'attachmentFolderName', 'fileConflict', 'exportConfirm'
+  'useOrderPrefix', 'guidBits', 'writeOrderField', 'useFolderNote', 'attachmentMode', 'attachmentFolderName', 'fileConflict', 'exportConfirm'
 ];
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -44,11 +44,9 @@ async function loadSettings() {
   setVal('markdownMode', data.markdownMode || 'local');
   setVal('sheetMode', data.sheetMode || 'local');
   setChecked('useOrderPrefix', data.useOrderPrefix === true);
-  setChecked('writeGuid', data.writeGuid !== false);
-  setChecked('generateOrderManifest', data.generateOrderManifest !== false);
+  setVal('guidBits', String(data.guidBits || 64));
   setChecked('writeOrderField', data.writeOrderField === true);
   setChecked('useFolderNote', data.useFolderNote !== false);
-  setChecked('generateReadme', data.generateReadme !== false);
   setVal('attachmentMode', data.attachmentMode || 'book');
   setVal('attachmentFolderName', data.attachmentFolderName || 'attachment');
   setVal('fileConflict', data.fileConflict || 'overwrite');
@@ -96,11 +94,9 @@ async function saveAllSettings() {
     markdownMode: getVal('markdownMode') || 'local',
     sheetMode: getVal('sheetMode') || 'local',
     useOrderPrefix: getChecked('useOrderPrefix'),
-    writeGuid: getChecked('writeGuid'),
-    generateOrderManifest: getChecked('generateOrderManifest'),
+    guidBits: Number(getVal('guidBits')) === 72 ? 72 : 64,
     writeOrderField: getChecked('writeOrderField'),
     useFolderNote: getChecked('useFolderNote'),
-    generateReadme: getChecked('generateReadme'),
     attachmentMode: getVal('attachmentMode') || 'book',
     attachmentFolderName: getVal('attachmentFolderName') || 'attachment',
     fileConflict: getVal('fileConflict') || 'overwrite',

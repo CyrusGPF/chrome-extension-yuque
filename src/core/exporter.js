@@ -5,7 +5,11 @@ import { lakeToMarkdown } from './lake-converter.js';
 import { convertLakeSheet } from './sheet-converter.js';
 import { convertBoardToSvg, convertBoardToMermaid, convertBoardToECharts } from './board-converter.js';
 import { saveBlobToDisk, saveContentToDisk, downloadUrlToDisk, saveTextToRelativePath } from './downloads.js';
-import { delay, sanitizePathComponent, sanitizePathSegments, guessImageExt, buildExportRelativeSegments, withExportFrontmatter, padNumber, escapeMarkdownLinkPath } from './utils.js';
+import { delay, sanitizePathComponent, sanitizePathSegments, guessImageExt, buildExportRelativeSegments, withExportFrontmatter, getYuqueGuid, padNumber } from './utils.js';
+import { createTypedGuid, normalizeGuidBits, pairedGuid } from './guid.mjs';
+import { assignUniqueNames } from './export-names.mjs';
+import { assignUniqueBookRoots } from './book-roots.mjs';
+import { buildAuxiliaryResources, recordExportedResource } from './manifest-resources.mjs';
 import { refreshAbortController, abortActiveTasks } from './task-controller.js';
 import { EXPORT_FORMATS, DEFAULT_SETTINGS, DOC_TYPES, DOC_TYPE_EXPORT_OPTIONS, SMART_EXPORT_KEY, BOOKMARKS_VIRTUAL_BOOK_ID, BOOKMARKS_VIRTUAL_BOOK_NAME, BOOKMARKS_LOOSE_DOCS_FOLDER, SUPPORTED_DOC_TYPES } from './constants.js';
 
@@ -19,6 +23,22 @@ const DEFERRED_RETRY_ALARM = 'yuqueout-deferred-retry';
 // 运行时内容缓存（预扫描写入，导出阶段复用，避免重复请求）：file.id -> lake 内容字符串
 // 空字符串表示文档正文为空（规则 2/4 用）；键不存在表示尚未扫描或扫描失败。
 const contentCache = new Map();
+let usedExportGuids = new Set();
+
+function resourceGuid(kind, path) {
+  if (!exportState.resourceGuids || typeof exportState.resourceGuids !== 'object') exportState.resourceGuids = {};
+  const normalizedPath = String(path || '').replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+  const key = `${kind}:${normalizedPath}`;
+  if (!exportState.resourceGuids[key]) {
+    exportState.resourceGuids[key] = createTypedGuid(kind === 'folder' ? 'd' : 'f', exportState.guidBits, usedExportGuids);
+  }
+  usedExportGuids.add(exportState.resourceGuids[key]);
+  return exportState.resourceGuids[key];
+}
+
+function rememberExportedResource(file, path) {
+  return recordExportedResource(file, path, (kind, normalizedPath) => resourceGuid(kind, normalizedPath));
+}
 
 class DeferredExportError extends Error {
   constructor(message) {
@@ -404,7 +424,7 @@ async function handleStartExport(data, sendResponse) {
       'downloadImages', 'imageConcurrency',
       'docExportFormat', 'sheetExportFormat', 'boardExportFormat', 'tableExportFormat',
       'markdownMode', 'sheetMode',
-      'useOrderPrefix', 'writeGuid', 'generateOrderManifest', 'writeOrderField', 'useFolderNote', 'generateReadme', 'attachmentMode', 'attachmentFolderName', 'fileConflict'
+      'useOrderPrefix', 'guidBits', 'writeOrderField', 'useFolderNote', 'attachmentMode', 'attachmentFolderName', 'fileConflict'
     ]);
 
     exportState.isExporting = true;
@@ -423,11 +443,13 @@ async function handleStartExport(data, sendResponse) {
     exportState.markdownMode = settings.markdownMode || DEFAULT_SETTINGS.markdownMode;
     exportState.sheetMode = settings.sheetMode || DEFAULT_SETTINGS.sheetMode;
     exportState.useOrderPrefix = settings.useOrderPrefix === true;
-    exportState.writeGuid = settings.writeGuid !== false;
-    exportState.generateOrderManifest = settings.generateOrderManifest !== false;
+    exportState.guidBits = normalizeGuidBits(settings.guidBits);
     exportState.writeOrderField = settings.writeOrderField === true;
     exportState.useFolderNote = settings.useFolderNote !== false;
-    exportState.generateReadme = settings.generateReadme !== false;
+    usedExportGuids = new Set();
+    exportState.resourceGuids = {};
+    exportState.fileList.forEach(file => { delete file.guid; delete file.exportedResources; });
+    exportState.exportId = createTypedGuid('f', exportState.guidBits, usedExportGuids).slice(2);
     exportState.attachmentMode = settings.attachmentMode || DEFAULT_SETTINGS.attachmentMode;
     exportState.attachmentFolderName = settings.attachmentFolderName || DEFAULT_SETTINGS.attachmentFolderName;
     exportState.fileConflict = settings.fileConflict || DEFAULT_SETTINGS.fileConflict;
@@ -471,7 +493,7 @@ async function handleRetryFailedFiles(sendResponse) {
     const settings = await chrome.storage.local.get([
       'subfolder', 'groupBooksBySpace', 'exportType', 'requestInterval', 'downloadImages', 'imageConcurrency',
       'docExportFormat', 'sheetExportFormat', 'boardExportFormat', 'tableExportFormat',
-      'markdownMode', 'sheetMode', 'useOrderPrefix', 'writeGuid', 'generateOrderManifest', 'writeOrderField', 'useFolderNote'
+      'markdownMode', 'sheetMode', 'useOrderPrefix', 'guidBits', 'writeOrderField', 'useFolderNote'
     ]);
 
     exportState.fileList.forEach(file => {
@@ -495,8 +517,7 @@ async function handleRetryFailedFiles(sendResponse) {
     exportState.markdownMode = settings.markdownMode || DEFAULT_SETTINGS.markdownMode;
     exportState.sheetMode = settings.sheetMode || DEFAULT_SETTINGS.sheetMode;
     exportState.useOrderPrefix = settings.useOrderPrefix === true;
-    exportState.writeGuid = settings.writeGuid !== false;
-    exportState.generateOrderManifest = settings.generateOrderManifest !== false;
+    exportState.guidBits = normalizeGuidBits(settings.guidBits);
     exportState.writeOrderField = settings.writeOrderField === true;
     exportState.useFolderNote = settings.useFolderNote !== false;
     // Keep existing logs for retry context
@@ -542,7 +563,7 @@ async function handleReExportFile(data, sendResponse) {
     const settings = await chrome.storage.local.get([
       'subfolder', 'groupBooksBySpace', 'requestInterval', 'downloadImages', 'imageConcurrency',
       'docExportFormat', 'sheetExportFormat', 'boardExportFormat', 'tableExportFormat',
-      'markdownMode', 'sheetMode', 'useOrderPrefix', 'writeGuid', 'writeOrderField', 'useFolderNote'
+      'markdownMode', 'sheetMode', 'useOrderPrefix', 'guidBits', 'writeOrderField', 'useFolderNote'
     ]);
 
     exportState.subfolder = settings.subfolder ?? DEFAULT_SETTINGS.subfolder;
@@ -557,7 +578,7 @@ async function handleReExportFile(data, sendResponse) {
     exportState.markdownMode = settings.markdownMode || DEFAULT_SETTINGS.markdownMode;
     exportState.sheetMode = settings.sheetMode || DEFAULT_SETTINGS.sheetMode;
     exportState.useOrderPrefix = settings.useOrderPrefix === true;
-    exportState.writeGuid = settings.writeGuid !== false;
+    exportState.guidBits = normalizeGuidBits(settings.guidBits);
     exportState.writeOrderField = settings.writeOrderField === true;
     exportState.useFolderNote = settings.useFolderNote !== false;
 
@@ -649,7 +670,11 @@ async function exportFiles(runToken) {
     // V1：预扫描文档内容（判定空文档，供规则 2/4 与同级重名命名使用），
     // 并为同级重名目录/文档分配 -N 后缀（首个保留原名）。
     await prepareContentFlags(runToken);
+    assignUniqueBookRoots(exportState.fileList, sanitizePathSegments)
+      .forEach(({ to }) => sendLog(`知识库根目录重名，已使用独立目录：${to}`));
     assignUniqueExportNames();
+    usedExportGuids = new Set(exportState.fileList.map(file => file.guid).filter(Boolean));
+    exportState.fileList.forEach(file => getYuqueGuid(file, exportState.guidBits, usedExportGuids));
 
     let i = findNextRunnableIndex(exportState.currentFileIndex);
     while (i >= 0) {
@@ -739,10 +764,12 @@ async function exportFiles(runToken) {
                   await writeEmptyDoc(file);
                   return;
                 }
-                if (exportState.writeGuid || exportState.writeOrderField) {
+                if (true) {
                   mdText = withExportFrontmatter(mdText, file, {
-                    writeGuid: exportState.writeGuid,
+                    writeGuid: true,
                     writeOrderField: exportState.writeOrderField,
+                    guidBits: exportState.guidBits,
+                    usedGuids: usedExportGuids,
                   });
                 }
                 if (exportState.downloadImages) {
@@ -861,18 +888,12 @@ async function exportFiles(runToken) {
       }
     }
 
-    // Obsidian: generate the V1 order manifest and the optional README index.
+    // Obsidian: generate the one-time V2 order initialization manifest.
     try {
       await generateOrderManifests();
     } catch (manifestErr) {
       sendLog('生成 _yuque_order.json 失败: ' + manifestErr.message);
     }
-    try {
-      await generateReadmeIndex();
-    } catch (readmeErr) {
-      sendLog('生成 README 索引失败: ' + readmeErr.message);
-    }
-
     sendComplete();
   } catch (error) {
     if (error.name === 'AbortError') {
@@ -912,7 +933,7 @@ async function localizeMarkdownImages(mdText, file, imageBasePath, imageConcurre
   // Pre-assign sequential index to each image to avoid race conditions
   const tasks = images.map((img, idx) => ({ ...img, idx: idx + 1 }));
   const results = []; // { fullMatch, alt, ref }
-  const failedImages = []; // images that failed to download, surfaced in the README index
+  const failedImages = [];
 
   const queue = [...tasks];
   const workers = Array(Math.min(concurrency, queue.length)).fill(null).map(async () => {
@@ -934,6 +955,7 @@ async function localizeMarkdownImages(mdText, file, imageBasePath, imageConcurre
         }
         const cleanUrl = task.url.replace(/x-oss-process=image%2Fwatermark%2C[^&]*/, '');
         await downloadUrlToDisk(cleanUrl, downloadPath);
+        rememberExportedResource(file, downloadPath);
 
         results.push({ fullMatch: task.fullMatch, alt: task.alt, ref });
       } catch (e) {
@@ -961,7 +983,7 @@ async function renderEmbeddedBoardsToAssets(lakeHtml, file, imageBasePath, logFn
 
   let boardIndex = 0;
   let renderedCount = 0;
-  const failedImages = []; // boards that failed to render, surfaced in the README index
+  const failedImages = [];
   // Lake may serialize cards as either `<card></card>` or self-closing
   // `<card />`; both forms must be replaced before the Markdown pass.
   const cardRegex = /<card\s+([^>]*?)(?:>\s*<\/card>|\/>)/gi;
@@ -1000,6 +1022,7 @@ async function renderEmbeddedBoardsToAssets(lakeHtml, file, imageBasePath, logFn
         ref = p.ref;
       }
       await saveBlobToDisk(new Blob([svg], { type: 'image/svg+xml' }), downloadPath);
+      rememberExportedResource(file, downloadPath);
 
       const mermaid = convertBoardToMermaid(data);
       const echarts = mermaid ? '' : convertBoardToECharts(data);
@@ -1029,7 +1052,8 @@ async function renderEmbeddedBoardsToAssets(lakeHtml, file, imageBasePath, logFn
 function buildImagePath(file, localName) {
   const segments = [];
   if (exportState.subfolder) segments.push(...sanitizePathSegments(exportState.subfolder));
-  if (file.bookName) segments.push(...sanitizePathSegments(file.bookName));
+  const bookName = file.exportBookName || file.bookName;
+  if (bookName) segments.push(...sanitizePathSegments(bookName));
 
   // Folder segments must match the document path (order prefixes included).
   // V1 同级重名处理后 uniqueFolders 为已去重的目录链（优先使用）。
@@ -1071,7 +1095,8 @@ function buildImagePath(file, localName) {
  * @returns {{ savePath: string, ref: string }}
  */
 function resolveAssetPaths(file, filename) {
-  const perBook = exportState.attachmentMode === 'book' && Boolean(file.bookName);
+  const bookName = file.exportBookName || file.bookName;
+  const perBook = exportState.attachmentMode === 'book' && Boolean(bookName);
   const folderNote = Boolean(exportState.useFolderNote && file.hasChildren);
   const dirDepth = (Array.isArray(file.folderSegments) ? file.folderSegments.length : 0) + (folderNote ? 1 : 0);
 
@@ -1079,7 +1104,7 @@ function resolveAssetPaths(file, filename) {
     const folderName = sanitizePathComponent(exportState.attachmentFolderName) || 'attachment';
     const savePath = [
       ...sanitizePathSegments(exportState.subfolder),
-      ...sanitizePathSegments(file.bookName),
+      ...sanitizePathSegments(bookName),
       folderName,
       sanitizePathComponent(filename),
     ].filter(Boolean).join('/');
@@ -1177,13 +1202,11 @@ function buildFilePath(file, extension) {
 }
 
 /**
- * Build and write the V1 manifest consumed by the Obsidian Order Drag plugin.
- * The tree contains Markdown-capable Yuque documents only; TITLE nodes from
- * the Yuque TOC are represented by the exported path rather than invented
- * identities, because they do not have a stable document id of their own.
+ * Build the V2 one-time initialization manifest from final filesystem paths.
+ * Directory arrays preserve Yuque sibling order without requiring README files.
  */
 async function generateOrderManifests() {
-  if (!exportState.generateOrderManifest || !Array.isArray(exportState.fileList)) return;
+  if (!Array.isArray(exportState.fileList)) return;
 
   const groups = new Map();
   exportState.fileList.forEach(file => {
@@ -1194,80 +1217,109 @@ async function generateOrderManifests() {
 
   for (const [bookId, files] of groups) {
     const book = exportState.bookList.find(item => String(item.id) === String(bookId));
-    const childrenByParent = new Map();
-    files.forEach(file => {
-      const parentKey = file.parentDocId === undefined || file.parentDocId === null
-        ? '__root__'
-        : String(file.parentDocId);
-      if (!childrenByParent.has(parentKey)) childrenByParent.set(parentKey, []);
-      childrenByParent.get(parentKey).push(file);
-    });
-
-    const sortByTocOrder = (a, b) => {
-      const ax = Number.isFinite(Number(a.tocIndex)) ? Number(a.tocIndex) : Number.MAX_SAFE_INTEGER;
-      const bx = Number.isFinite(Number(b.tocIndex)) ? Number(b.tocIndex) : Number.MAX_SAFE_INTEGER;
-      if (ax !== bx) return ax - bx;
-      return String(a.title || '').localeCompare(String(b.title || ''), 'zh-CN');
-    };
-
-    const makeTree = (parentKey, prefix = '') => {
-      const siblings = (childrenByParent.get(parentKey) || []).slice().sort(sortByTocOrder);
-      return siblings.map((file, index) => {
-        const order = prefix ? `${prefix}.${index + 1}` : String(index + 1);
-        return {
-          guid: file.guid || `yq-${String(file.id)}`,
-          title: file.title || '未命名文档',
-          order,
-          children: makeTree(String(file.id), order),
-        };
-      });
-    };
-
     const bookName = book?.name || files[0]?.bookName || String(bookId);
     const rootPath = [
       ...sanitizePathSegments(exportState.subfolder),
-      ...sanitizePathSegments(files[0]?.bookName || bookName),
+      ...sanitizePathSegments(files[0]?.exportBookName || files[0]?.bookName || bookName),
     ].join('/');
+    const rootPrefix = rootPath ? `${rootPath}/` : '';
+    const directoryGuids = new Map();
+    const directoryItems = new Map([['', []]]);
+    const orderByDirectoryPath = new Map();
+    const ensureDirectory = (path, preferredGuid = null) => {
+      if (!path) return;
+      const segments = path.split('/');
+      let current = '';
+      for (const segment of segments) {
+        const parent = current;
+        current = current ? `${current}/${segment}` : segment;
+        if (!directoryGuids.has(current)) {
+          const guid = current === path && preferredGuid
+            ? preferredGuid : createTypedGuid('d', exportState.guidBits, usedExportGuids);
+          usedExportGuids.add(guid);
+          directoryGuids.set(current, guid);
+          if (!directoryItems.has(parent)) directoryItems.set(parent, []);
+          directoryItems.get(parent).push({ path: current, kind: 'folder', guid, orderKey: [] });
+          directoryItems.set(current, []);
+        } else if (current === path && preferredGuid && directoryGuids.get(current) !== preferredGuid) {
+          const old = directoryGuids.get(current);
+          directoryGuids.set(current, preferredGuid);
+          const entry = directoryItems.get(parent)?.find(item => item.path === current && item.guid === old);
+          if (entry) entry.guid = preferredGuid;
+        }
+      }
+    };
+    const orderedFiles = files.slice().sort((a, b) => compareOrderArrays(a.orderSegments || [], b.orderSegments || []));
+    orderedFiles.forEach(file => getYuqueGuid(file, exportState.guidBits, usedExportGuids));
+    // Reserve document-folder pairs before allocating TITLE/structural folders.
+    orderedFiles.filter(file => file.hasChildren).forEach(file => usedExportGuids.add(pairedGuid('d', file.guid)));
+    orderedFiles.forEach(file => {
+      if (!file.hasChildren) return;
+      const ownSegments = buildExportRelativeSegments(file, 'md', {
+        subfolder: '', includeBookName: false, useOrderPrefix: exportState.useOrderPrefix, useFolderNote: false,
+      });
+      ensureDirectory(ownSegments.join('/').replace(/\.md$/i, ''), pairedGuid('d', file.guid));
+    });
+    orderedFiles.forEach(file => {
+      let fullPath = String(file.localPath || '');
+      if (rootPrefix && fullPath.startsWith(rootPrefix)) fullPath = fullPath.slice(rootPrefix.length);
+      fullPath = fullPath.replace(/^\/+|\/+$/g, '');
+      if (!fullPath || String(file.localPath || '').endsWith('/')) return;
+      const slash = fullPath.lastIndexOf('/');
+      const parent = slash < 0 ? '' : fullPath.slice(0, slash);
+      ensureDirectory(parent);
+      if (parent) {
+        const segments = parent.split('/');
+        let current = '';
+        for (const segment of segments) {
+          current = current ? `${current}/${segment}` : segment;
+          if (!orderByDirectoryPath.has(current)) orderByDirectoryPath.set(current, file.orderSegments || []);
+        }
+      }
+      if (!directoryItems.has(parent)) directoryItems.set(parent, []);
+      directoryItems.get(parent).push({
+        path: fullPath, kind: 'file', guid: file.guid, orderKey: file.orderSegments || [],
+      });
+    });
+    const ownerByFolderGuid = new Map(orderedFiles.filter(file => file.hasChildren)
+      .map(file => [pairedGuid('d', file.guid), file]));
+    for (const [path, items] of directoryItems) {
+      items.forEach(item => {
+        if (item.kind !== 'folder') return;
+        const owner = ownerByFolderGuid.get(item.guid);
+        if (owner) item.orderKey = owner.orderSegments || [];
+        else item.orderKey = orderByDirectoryPath.get(item.path) || [];
+      });
+      items.sort((a, b) => {
+        const byOrder = compareOrderArrays(a.orderKey, b.orderKey);
+        if (byOrder) return byOrder;
+        if (a.kind !== b.kind) return a.kind === 'folder' ? -1 : 1;
+        return a.path.localeCompare(b.path, 'zh-CN');
+      });
+      items.forEach(item => { delete item.orderKey; });
+    }
+    const resources = buildAuxiliaryResources(
+      files,
+      rootPath,
+      directoryGuids.keys(),
+      (kind, relativePath) => resourceGuid(kind, [rootPath, relativePath].filter(Boolean).join('/')),
+    );
     const manifest = {
-      version: 1,
+      version: 2,
       source: 'yuque',
+      exportId: `${exportState.exportId || createTypedGuid('f', exportState.guidBits, usedExportGuids).slice(2)}-${bookId}`,
+      guidBits: exportState.guidBits,
       book: bookName,
       generatedAt: new Date().toISOString(),
-      tree: makeTree('__root__'),
+      directories: [...directoryItems].map(([path, items]) => ({ path, guid: directoryGuids.get(path) || null, items })),
+      resources,
     };
     const manifestPath = [rootPath, '_yuque_order.json'].filter(Boolean).join('/');
+    // Persist generated resource identities before writing the manifest so a
+    // retry after interruption reuses the same values.
+    await saveStateSafely();
     await saveTextToRelativePath(`${JSON.stringify(manifest, null, 2)}\n`, manifestPath, 'application/json');
     sendLog('已生成顺序清单: ' + manifestPath);
-  }
-}
-
-/**
- * Generate a README.md index for every knowledge base that has TOC order
- * info, listing all documents in the original Yuque directory order.
- * Runs once at the end of a full export.
- */
-async function generateReadmeIndex() {
-  if (!exportState.generateReadme || !Array.isArray(exportState.fileList)) return;
-
-  const byBook = new Map();
-  exportState.fileList.forEach(file => {
-    if (!file.bookId || !file.bookName) return;
-    if (!Array.isArray(file.orderSegments) || !file.orderSegments.length) return;
-    if (!byBook.has(file.bookId)) byBook.set(file.bookId, { book: null, files: [] });
-    byBook.get(file.bookId).files.push(file);
-  });
-
-  for (const [bookId, group] of byBook) {
-    group.book = exportState.bookList.find(b => String(b.id) === String(bookId)) || null;
-    const content = buildReadmeContent(group);
-    const readmePath = [
-      ...sanitizePathSegments(exportState.subfolder),
-      ...sanitizePathSegments(group.files[0].bookName),
-      'README.md',
-    ].filter(Boolean).join('/');
-    if (!readmePath) continue;
-    await saveTextToRelativePath(content, readmePath, 'text/markdown');
-    sendLog('已生成索引: ' + readmePath);
   }
 }
 
@@ -1283,68 +1335,6 @@ function compareOrderArrays(a, b) {
     if (x !== y) return x - y;
   }
   return a.length - b.length;
-}
-
-function buildReadmeContent(group) {
-  const files = [...group.files].sort((x, y) => compareOrderArrays(x.orderSegments, y.orderSegments));
-  const lines = [];
-  lines.push(`# ${group.book?.name || '知识库'}`);
-  lines.push('');
-  lines.push(`> 本文档按语雀目录顺序自动生成，共 ${files.length} 篇。`);
-  lines.push('');
-  files.forEach(file => {
-    const depth = Array.isArray(file.folderSegments) ? file.folderSegments.length : 0;
-    const indent = '  '.repeat(depth);
-    const relPath = buildReadmeDocPath(file);
-    const display = relPath.split('/').pop().replace(/\.[^.]+$/, '') || file.title || '未命名文档';
-    const failed = file.status === 'failed' ? '（导出失败）' : '';
-    lines.push(`${indent}- [${display}](${escapeMarkdownLinkPath(relPath)})${failed}`);
-  });
-
-  // Report images that could not be downloaded so the user can add them manually.
-  const missing = [];
-  files.forEach(file => {
-    if (Array.isArray(file.missingImages) && file.missingImages.length) {
-      file.missingImages.forEach(m => missing.push({ doc: file.title || '未命名文档', alt: m.alt, url: m.url }));
-    }
-  });
-
-  if (missing.length) {
-    lines.push('');
-    lines.push('## 未下载成功的图片');
-    lines.push('');
-    lines.push('以下图片下载失败，可打开原始链接手动补充：');
-    lines.push('');
-    missing.forEach(m => {
-      const link = m.url ? ' [原始链接](' + escapeMarkdownLinkPath(m.url) + ')' : '';
-      lines.push('- ' + m.doc + (m.alt ? ' - ' + m.alt : '') + link);
-    });
-    lines.push('');
-  }
-
-  lines.push('');
-  return lines.join('\n');
-}
-
-/**
- * Relative path from the knowledge base root (bookName) to the exported file.
- * Prefers the actual saved localPath; falls back to an md path build.
- */
-function buildReadmeDocPath(file) {
-  const localPath = file.localPath || '';
-  const bookPrefix = [
-    ...sanitizePathSegments(exportState.subfolder),
-    ...sanitizePathSegments(file.bookName),
-  ].join('/');
-  if (bookPrefix && localPath.startsWith(bookPrefix + '/')) {
-    return localPath.slice(bookPrefix.length + 1);
-  }
-  return buildExportRelativeSegments(file, 'md', {
-    subfolder: '',
-    includeBookName: false,
-    useOrderPrefix: exportState.useOrderPrefix,
-    useFolderNote: exportState.useFolderNote,
-  }).join('/');
 }
 
 /**
@@ -1415,7 +1405,7 @@ async function prepareContentFlags(runToken) {
 /**
  * 空正文文档处理（规则 2/4）：
  * - 有子级（规则 2）：仅建立目录（由子级写盘创建），不写同名文档；localPath 指向目录，
- *   供 README 生成目录链接。
+ *   供最终路径和顺序清单构建使用。
  * - 无子级（规则 4）：直接写同名 A.md，内容与文档一致（空正文，仅保留 guid frontmatter）。
  */
 async function writeEmptyDoc(file) {
@@ -1430,12 +1420,12 @@ async function writeEmptyDoc(file) {
     return;
   }
   sendLog(`  文档正文为空，写入空文档: ${file.title}`);
-  const md = (exportState.writeGuid || exportState.writeOrderField)
-    ? withExportFrontmatter('', file, {
-        writeGuid: exportState.writeGuid,
+  const md = withExportFrontmatter('', file, {
+        writeGuid: true,
         writeOrderField: exportState.writeOrderField,
-      })
-    : '';
+        guidBits: exportState.guidBits,
+        usedGuids: usedExportGuids,
+      });
   await saveContentToDisk(md, file, 'md', 'text/markdown');
 }
 
@@ -1457,29 +1447,9 @@ function assignUniqueExportNames() {
     return Number.isFinite(t) ? t : Number.MAX_SAFE_INTEGER + idx;
   };
 
-  // 组内命名：第一阶段登记全部原名（组内首个/唯一成员），第二阶段为其余成员分配 -N。
-  const nameGroup = (items, used) => {
-    const groups = new Map();
-    items.forEach(item => {
-      if (!groups.has(item.base)) groups.set(item.base, []);
-      groups.get(item.base).push(item);
-    });
-    const pending = [];
-    for (const [base, list] of groups) {
-      list.sort((a, b) => tocKeyOf(a.file, a.idx) - tocKeyOf(b.file, b.idx));
-      const first = list[0];
-      first.name = base;
-      used.add(base);
-      for (let i = 1; i < list.length; i++) pending.push({ item: list[i], base });
-    }
-    pending.sort((a, b) => tocKeyOf(a.item.file, a.idx) - tocKeyOf(b.item.file, b.idx));
-    for (const { item, base } of pending) {
-      for (let n = 1; ; n++) {
-        const cand = `${base}-${n}`;
-        if (!used.has(cand)) { item.name = cand; used.add(cand); break; }
-      }
-    }
-  };
+  const nameGroup = (items, used) => assignUniqueNames(
+    items, used, item => tocKeyOf(item.file, item.idx),
+  );
 
   const byBook = new Map();
   files.forEach(file => {
@@ -1525,16 +1495,15 @@ function assignUniqueExportNames() {
       nameGroup(dirItems, dirUsed);
       const dirNameById = new Map(dirItems.map(d => [String(d.file.id), d.name]));
 
-      // 文档空间：无子级文档 -> 直接文档；有子级且非空 -> 目录内同名笔记占位
-      const fileItems = [];
-      siblings.forEach(s => {
-        if (!s.file.hasChildren) {
-          fileItems.push({ ...s, base: baseOf(s.file) });
-        } else if (!isEmptyDoc(s.file)) {
-          fileItems.push({ ...s, base: dirNameById.get(String(s.file.id)), isNote: true });
-        }
-      });
+      // 当前目录的文件空间只包含无子级文档。父文档的同名笔记
+      // 位于它自己的目录中，因此要在访问子级时作为保留名，而不是
+      // 和父级兄弟文件一起参与命名。
+      const fileItems = siblings.filter(s => !s.file.hasChildren)
+        .map(s => ({ ...s, base: baseOf(s.file) }));
       const fileUsed = new Set();
+      if (parentNode?.file && !isEmptyDoc(parentNode.file) && parentNode.name) {
+        fileUsed.add(parentNode.name);
+      }
       nameGroup(fileItems, fileUsed);
 
       siblings.forEach(({ file }) => {
@@ -1542,7 +1511,7 @@ function assignUniqueExportNames() {
         if (file.hasChildren) {
           file.uniqueName = dirNameById.get(String(file.id));
         } else {
-          const leaf = fileItems.find(f => !f.isNote && String(f.file.id) === String(file.id));
+          const leaf = fileItems.find(f => String(f.file.id) === String(file.id));
           file.uniqueName = leaf ? leaf.name : baseOf(file);
         }
         node.name = file.uniqueName;
@@ -1586,12 +1555,12 @@ async function exportViaLakeContent(file, format, perTypeFormat) {
     file.missingImages = (file.missingImages || []).concat(failedImages);
   }
   const markdown = lakeToMarkdown(contentWithBoards);
-  const finalMarkdown = (exportState.writeGuid || exportState.writeOrderField)
-    ? withExportFrontmatter(markdown, file, {
-      writeGuid: exportState.writeGuid,
+  const finalMarkdown = withExportFrontmatter(markdown, file, {
+      writeGuid: true,
       writeOrderField: exportState.writeOrderField,
-    })
-    : markdown;
+      guidBits: exportState.guidBits,
+      usedGuids: usedExportGuids,
+    });
 
 
   if (exportState.downloadImages) {
@@ -2021,7 +1990,7 @@ async function handleQuickExport(data, sendResponse) {
     // Step 1: Load user settings early so we can determine whether we need full content
     const settings = await chrome.storage.local.get([
       'subfolder', 'docExportFormat', 'sheetExportFormat', 'boardExportFormat',
-      'markdownMode', 'sheetMode', 'downloadImages', 'imageConcurrency', 'writeGuid', 'writeOrderField'
+      'markdownMode', 'sheetMode', 'downloadImages', 'imageConcurrency', 'guidBits', 'writeOrderField'
     ]);
 
     const subfolder = settings.subfolder ?? DEFAULT_SETTINGS.subfolder;
@@ -2029,7 +1998,7 @@ async function handleQuickExport(data, sendResponse) {
     const markdownMode = settings.markdownMode || DEFAULT_SETTINGS.markdownMode;
     const sheetMode = settings.sheetMode || DEFAULT_SETTINGS.sheetMode;
     const imageConcurrency = settings.imageConcurrency || DEFAULT_SETTINGS.imageConcurrency;
-    const writeGuid = settings.writeGuid !== false;
+    const guidBits = normalizeGuidBits(settings.guidBits);
     const writeOrderField = settings.writeOrderField === true;
 
     const docType = pageDocType || DOC_TYPES.DOC;
@@ -2124,9 +2093,9 @@ async function handleQuickExport(data, sendResponse) {
     } else if (perTypeFormat === 'md' && (markdownMode === 'local' || noPermission) && content) {
       const imgBase = segments.slice(0, -1).filter(Boolean).join('/'); // subfolder path without filename
       const { content: contentWithBoards } = await renderEmbeddedBoardsToAssets(content, file, imgBase, () => {});
-      const markdown = (writeGuid || writeOrderField)
-        ? withExportFrontmatter(lakeToMarkdown(contentWithBoards), file, { writeGuid, writeOrderField })
-        : lakeToMarkdown(contentWithBoards);
+      const markdown = withExportFrontmatter(lakeToMarkdown(contentWithBoards), file, {
+        writeGuid: true, writeOrderField, guidBits,
+      });
       if (downloadImages) {
         const { localizedMd } = await localizeMarkdownImages(markdown, file, imgBase, imageConcurrency, () => {});
         await saveText(localizedMd, 'text/markdown');

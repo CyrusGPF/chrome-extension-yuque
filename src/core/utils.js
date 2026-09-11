@@ -1,3 +1,5 @@
+import { createTypedGuid } from './guid.mjs';
+
 export function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -89,15 +91,9 @@ export function formatOrderLabel(orderSegments) {
  * Yuque document ids are preferred; the generated fallback is cached on the
  * in-memory export item so one export run never changes an id accidentally.
  */
-export function getYuqueGuid(file) {
+export function getYuqueGuid(file, bits = 64, used = null) {
   if (file?.guid) return String(file.guid);
-  if (file?.id !== undefined && file?.id !== null && String(file.id)) {
-    file.guid = `yq-${String(file.id)}`;
-    return file.guid;
-  }
-
-  const randomUuid = globalThis.crypto?.randomUUID?.();
-  file.guid = `obs-${randomUuid || `${Date.now()}-${Math.random().toString(36).slice(2)}`}`;
+  file.guid = createTypedGuid('f', bits, used);
   return file.guid;
 }
 
@@ -125,7 +121,8 @@ export function buildExportRelativeSegments(file, extension, opts = {}) {
 
   const segments = [];
   if (subfolder) segments.push(...sanitizePathSegments(subfolder));
-  if (includeBookName && file?.bookName) segments.push(...sanitizePathSegments(file.bookName));
+  const bookName = file?.exportBookName || file?.bookName;
+  if (includeBookName && bookName) segments.push(...sanitizePathSegments(bookName));
 
   const hasOrder = Boolean(
     useOrderPrefix &&
@@ -190,13 +187,13 @@ export function withOrderFrontmatter(mdText, file) {
 }
 
 /**
- * Merge the V1 identity field and the optional legacy order field into the
+ * Merge the typed identity field and the optional legacy order field into the
  * existing Markdown frontmatter without overwriting user-defined keys.
  */
 export function withExportFrontmatter(mdText, file, options = {}) {
-  const { writeGuid = true, writeOrderField = false } = options;
+  const { writeGuid = true, writeOrderField = false, guidBits = 64, usedGuids = null } = options;
   const fields = [];
-  const guid = getYuqueGuid(file);
+  const guid = getYuqueGuid(file, guidBits, usedGuids);
   const text = String(mdText || '');
   const match = text.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*(?:\r?\n|$)/);
   const frontmatter = match?.[1] || '';
