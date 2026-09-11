@@ -12,13 +12,13 @@ function createInitialState() {
     groupBooksBySpace: false,
     requestInterval: 500,
     downloadImages: true,
-    // Obsidian Order Drag V1 settings (loaded from storage at export start)
+    // Obsidian Order Drag settings (loaded from storage at export start)
     useOrderPrefix: false,
-    writeGuid: true,
-    generateOrderManifest: true,
+    guidBits: 64,
     writeOrderField: false,
     useFolderNote: true,
-    generateReadme: true,
+    exportId: '',
+    resourceGuids: {},
     attachmentMode: 'book',
     attachmentFolderName: 'attachment',
     fileConflict: 'overwrite',
