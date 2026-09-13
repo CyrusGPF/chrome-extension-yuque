@@ -146,9 +146,19 @@ Settings (settings.html)
 
 ```bash
 npm install         # 安装依赖
-npm run build       # 生产构建
 npm run build:watch # 监听开发
-npm run pack        # 打包为 zip
+```
+
+构建扩展产物到 `dist/`：
+
+```bash
+npm run build
+```
+
+打包扩展：
+
+```bash
+npm run pack
 ```
 
 ## 隐私
