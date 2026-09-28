@@ -8,7 +8,6 @@ import {
   handleCheckAuth, handleLoginClick, handleGetFileInfo, handleGetBooks,
   handlePause, handleReset, handleRetryFailed, handleStart, saveSettings
 } from './ui/actions.js';
-import { initRatingModal } from './ui/rating.js';
 import { initRuntimeMessaging } from './ui/messaging.js';
 import { applyI18n } from './ui/i18n.js';
 
@@ -22,7 +21,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   await restorePersistedState();
   bindEventListeners();
   initExportTypeDropdown();
-  initRatingModal();
   initRuntimeMessaging();
 
   // Always refresh the knowledge base list on open so newly created books

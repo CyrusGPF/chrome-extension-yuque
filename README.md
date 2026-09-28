@@ -1,12 +1,6 @@
 # YuqueOut - 语雀导出助手
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Install-blue?logo=googlechrome)](https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc)
-[![GitHub Release](https://img.shields.io/github/v/release/Navyum/chrome-extension-yuque?label=Release)](https://github.com/Navyum/chrome-extension-yuque/releases)
-[![License](https://img.shields.io/badge/License-ISC-green)](https://opensource.org/licenses/ISC)
-
-> 一键批量导出语雀知识库的 Chrome 扩展。语雀官方不支持批量导出，YuqueOut 帮你 30 分钟搞定。
-
-**Chrome 商店**: [安装地址](https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc)
+Chrome Manifest V3 扩展，用于将有权访问的语雀知识库和收藏内容导出到本地文件。此仓库包含扩展源码、构建脚本和测试。
 
 ---
 
@@ -70,16 +64,10 @@
 | **零配置鉴权** | 自动读取浏览器 Cookie，无需 Token |
 | **中英双语** | 支持中文 / English 界面 |
 
-## 安装
-
-### Chrome Web Store（推荐）
-
-[点击安装 YuqueOut](https://chromewebstore.google.com/detail/icljaabdjepbbbhjpncinffplhghignc)
-
-### 本地加载
+## 从源码构建与加载
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/CyrusGPF/chrome-extension-yuque.git
 cd chrome-extension-yuque
 npm install
 npm run build
@@ -91,7 +79,7 @@ npm run build
 
 ## 使用方法
 
-1. **登录语雀** — 在浏览器中登录 [yuque.com](https://www.yuque.com)
+1. **登录语雀** — 在浏览器中登录语雀
 2. **选择知识库** — 点击扩展图标，勾选知识库（含收藏）
 3. **获取文件信息** — 点击按钮扫描文档列表
 4. **开始导出** — 等待完成，文件保存到浏览器下载目录
@@ -170,20 +158,6 @@ YuqueOut 纯本地处理，**零数据上传**。
 - 不连接任何第三方服务器
 - Cookie 仅用于访问语雀 API，不做任何存储或转发
 
-## 💖 赞助支持
-
-如果这个工具帮到了你，欢迎请作者喝杯咖啡：
-
-| 微信赞赏 | 支付宝 |
-| :---: | :---: |
-| <img src="assets/weixin.png" width="200" alt="微信赞赏码"> | <img src="assets/alipay.png" width="200" alt="支付宝收款码"> |
-
-## Star History
-
-如果觉得好用，请给个 Star 支持一下！
-
-[![Star History Chart](https://api.star-history.com/svg?repos=Navyum/chrome-extension-yuque&type=Date)](https://star-history.com/#Navyum/chrome-extension-yuque&Date)
-
 ## License
 
-[ISC](https://opensource.org/licenses/ISC)
+`package.json` 声明 ISC 许可。

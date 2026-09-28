@@ -179,9 +179,6 @@
   "versionCurrent": { "message": "Current Version" },
   "versionBrowser": { "message": "Compatible Browsers" },
   "versionI18n": { "message": "Languages" },
-  "contactTitle": { "message": "Contact & Feedback" },
-  "contactDesc": { "message": "If you encounter issues or have suggestions, feel free to reach out:" },
-  "linkEmail": { "message": "Email Feedback" },
   "adsTipsTitle": { "message": "Tips" },
   "tip1": { "message": "Request interval: 500ms+ recommended" },
   "tip2": { "message": "Image concurrency: ≤ 3 recommended" },
@@ -233,10 +230,5 @@
   "engineLocalSheet": { "message": "Local engine (recommended)" },
   "engineLocalFixed": { "message": "Local engine (fixed)" },
   "engineApi": { "message": "Official export API" },
-  "settingsBoardFormatDesc2": { "message": "Export format for Yuque Board/Whiteboard. Always uses local rendering engine." },
-  "ratingTitle": { "message": "🎉 Export Successful!" },
-  "ratingDesc": { "message": "If you find this useful, please leave a 5-star review" },
-  "ratingReviewBtn": { "message": "⭐ Rate Now" },
-  "ratingDismiss": { "message": "Don't show again" },
-  "ratingLater": { "message": "Maybe later" }
+  "settingsBoardFormatDesc2": { "message": "Export format for Yuque Board/Whiteboard. Always uses local rendering engine." }
 }

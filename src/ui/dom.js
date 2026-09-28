@@ -42,12 +42,6 @@ export const domRefs = {
   selectedCountSpan: null,
   selectedDocsSpan: null,
   selectionBar: null,
-  // Rating modal
-  ratingModal: null,
-  ratingModalClose: null,
-  ratingReviewBtn: null,
-  ratingDismissBtn: null,
-  ratingLaterBtn: null,
   // Re-export confirmation modal
   reExportModal: null,
   reExportModalClose: null,
@@ -102,12 +96,6 @@ export function cacheDomElements() {
   domRefs.selectedCountSpan = document.getElementById('selectedCount');
   domRefs.selectedDocsSpan = document.getElementById('selectedDocs');
   domRefs.selectionBar = document.getElementById('selectionBar');
-  // Rating modal
-  domRefs.ratingModal = document.getElementById('ratingModal');
-  domRefs.ratingModalClose = document.getElementById('ratingModalClose');
-  domRefs.ratingReviewBtn = document.getElementById('ratingReviewBtn');
-  domRefs.ratingDismissBtn = document.getElementById('ratingDismissBtn');
-  domRefs.ratingLaterBtn = document.getElementById('ratingLaterBtn');
   // Re-export confirmation modal
   domRefs.reExportModal = document.getElementById('reExportModal');
   domRefs.reExportModalClose = document.getElementById('reExportModalClose');

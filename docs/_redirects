@@ -1,5 +1,0 @@
-# HTTPS enforcement (Cloudflare handles this, but explicit for safety)
-# No custom redirects needed for static site
-
-# Ensure trailing slash consistency for blog directory
-/blog  /blog/  301
