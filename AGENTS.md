@@ -72,6 +72,15 @@ Popup UI modules live in `src/ui/` and should stay split by responsibility: DOM 
 - Avoid unrelated refactors while fixing bugs or adding narrow features.
 - Do not overwrite existing image or asset filenames unless the user explicitly asks for replacement. Add a descriptive sibling filename instead.
 
+## Public Release And Privacy
+
+- Treat commit and tag metadata, every public branch and its history, source files, examples, generated extension packages, website pages, release assets, store listings, and public profiles as published material. Checking only the current worktree is insufficient.
+- Do not newly expose private real names, personal email addresses or phone numbers, local absolute paths or user directories, private Yuque or Obsidian content, browser cookies, passwords, tokens, keys, or other credentials. Use fictional data in tests, samples, screenshots, and documentation. Preserve upstream attribution and contact details that their owners intentionally published.
+- Use the public identity `CyrusGPF` and a GitHub `users.noreply.github.com` address for this project's new commit and tag author metadata. Preserve attribution for upstream contributors; do not rewrite their identities merely to anonymize this fork.
+- Before committing, review staged filenames and content. Before publishing, scan the Git references and history that will become public, plus the built extension package, website output, release assets, and visible author/contact details. `.gitignore` does not remove data already present in Git history.
+- Keep machine-specific settings such as `.claude/settings.local.json`, environment files, exported vaults, and authentication material out of Git. If private data is found, stop publication, remove it from affected history, and rotate any exposed credentials. Verify the rewritten trees and build output before pushing. Old commit hashes, hosting caches, and other clones may remain accessible after a force push; report that limit and request host-side cleanup when needed.
+- Redact sensitive values in audit reports and logs. Give hosting support only the details needed to remove exposed data.
+
 ## Blog And Docs Workflow
 
 The static website lives under `docs/`; blog posts live under `docs/blog/`.
