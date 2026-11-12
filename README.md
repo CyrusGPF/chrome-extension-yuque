@@ -1,6 +1,10 @@
 # YuqueOut - 语雀导出助手
 
-Chrome Manifest V3 扩展，用于将有权访问的语雀知识库和收藏内容导出到本地文件。此仓库包含扩展源码、构建脚本和测试。
+本项目复刻自 [Navyum/chrome-extension-yuque（YuqueOut）](https://github.com/Navyum/chrome-extension-yuque)，并根据个人将语雀文档迁移到 Obsidian 的使用需求修改了源码。感谢原项目提供的语雀导出能力。
+
+本修改版需配合 Obsidian 插件 [yuque-sorting](https://github.com/CyrusGPF/yuque-sorting) 使用：浏览器扩展负责导出语雀文档、目录结构与顺序清单，yuque-sorting 负责在 Obsidian 中恢复目录顺序，并提供拖拽排序和文件夹笔记显示。两个插件共同完成从语雀到 Obsidian 的迁移，让迁移后的文档在 Obsidian 中拥有类似语雀目录的使用体验。
+
+这是用于导出有权访问的语雀知识库和收藏内容的 Chrome Manifest V3 扩展。本仓库提供源码、构建脚本和测试，修改版请按下文从源码构建并加载。
 
 ---
 
@@ -59,6 +63,7 @@ Chrome Manifest V3 扩展，用于将有权访问的语雀知识库和收藏内�
 |------|------|
 | **智能格式匹配** | 自动识别文档类型，按设置匹配最佳导出格式 |
 | **目录层级保留** | 按原始 TOC 结构创建文件夹 |
+| **Obsidian 配套迁移** | 导出稳定 GUID 与 `_yuque_order.json`，配合 yuque-sorting 恢复语雀目录顺序 |
 | **暂停/继续/重试** | 完整的导出流程控制 |
 | **单文件重新下载** | 设置页文件明细中可对单个文件重新导出，无需重跑整个任务 |
 | **零配置鉴权** | 自动读取浏览器 Cookie，无需 Token |
@@ -83,6 +88,21 @@ npm run build
 2. **选择知识库** — 点击扩展图标，勾选知识库（含收藏）
 3. **获取文件信息** — 点击按钮扫描文档列表
 4. **开始导出** — 等待完成，文件保存到浏览器下载目录
+
+## 与 Obsidian 配套使用
+
+| 项目 | 负责的工作 |
+|------|------------|
+| [chrome-extension-yuque（本修改版）](https://github.com/CyrusGPF/chrome-extension-yuque) | 从语雀导出文档、附件、目录层级、稳定 GUID 和原始顺序清单 |
+| [yuque-sorting（Obsidian 插件）](https://github.com/CyrusGPF/yuque-sorting) | 在 Obsidian 中手动恢复语雀目录顺序，并继续使用拖拽排序和文件夹笔记显示 |
+
+1. 使用本修改版完整导出知识库，文档格式选择 **Markdown**；GUID 和 `_yuque_order.json` 会自动生成。
+2. 将导出的知识库文件夹完整复制到 Obsidian Vault，保留目录结构、附件和 `_yuque_order.json`。
+3. 安装并启用 **yuque-sorting**。若缺少 `data.json`，先等待已有排序数据同步；全新 Vault 可在插件中显式初始化本地目录顺序。
+4. 在 Obsidian 命令面板或插件设置中执行 **恢复原语雀目录顺序**，核对预览后确认恢复。
+5. 此后使用 yuque-sorting 的拖拽排序和文件夹笔记显示，在 Obsidian 中继续组织文档。
+
+顺序清单只会在用户主动执行恢复操作并确认后应用。完整安装和操作步骤请参阅 [YuqueOut 与 Yuque Sorting 使用说明](https://github.com/CyrusGPF/yuque-sorting/blob/main/使用说明.md)。
 
 ## 设置说明
 
